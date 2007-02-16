@@ -8,7 +8,7 @@
  * It's based upon "simplevote.module".
  */
 
-if (module_exist('actions')){
+if (module_exist('actions')) {
   include_once('vote_up_down_actions.inc');
 }
 
@@ -28,7 +28,7 @@ function vote_up_down_help($section) {
  * Implementation of hook_perm().
  */
 function vote_up_down_perm() {
-  return array ('view up-down vote', 'use up-down vote', 'access up-down vote statistic', 'administer up-down vote');
+  return array('view up-down vote', 'use up-down vote', 'access up-down vote statistic', 'administer up-down vote');
 }
 
 /**
@@ -126,28 +126,6 @@ function vote_up_down_settings() {
   );
 
   return $form;
-}
-
-/**
- * Implementation of hook_form_alter().
- */
-function vote_up_down_form_alter($form_id, &$form) {
-  if ($form_id == 'userpoints_settings_form') {
-    $form['points']['userpoints_vote_up_down'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Points for voting on a node (requires the Vote up/down module)'),
-      '#default_value' => variable_get('userpoints_vote_up_down', 0),
-      '#size' => 5,
-      '#maxlength' => 5,
-    );
-    $form['points']['userpoints_actions'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Points for actions (requires the Actions module)'),
-      '#default_value' => variable_get('userpoints_actions', 0),
-      '#size' => 5,
-      '#maxlength' => 5,
-    );
-  }
 }
 
 /**
@@ -268,14 +246,33 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
 /**
  * Implementation of hook_userpoints().
  */
-function vote_up_down_userpoints($points, $uid = NULL) {
-  // If userpoints module exists, award points
-  if (module_exist('userpoints')) {
-    if ($uid == NULL) {
-      global $user;
-      $uid = $user->uid;
-    }
-    userpoints_userpoints($points, $uid, 'Vote up/down points');
+function vote_up_down_userpoints($op, $points = 0, $uid = 0, $event = NULL, $description = NULL) {
+  switch($op) {
+    case 'setting':
+      $form['vote_updown_points'] = array(
+          '#type' => 'fieldset',
+          '#collapsible' => TRUE,
+          '#collapsed' => TRUE,
+          '#title' => t('Vote up/down points'),
+      );
+     
+      $form['vote_updown_points']['userpoints_vote_up_down'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Points for voting on a node (requires the Vote up/down module)'),
+        '#default_value' => variable_get('userpoints_vote_up_down', 0),
+        '#size' => 5,
+        '#maxlength' => 5,
+      );
+      $form['vote_updown_points']['userpoints_actions'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Points for actions (requires the Actions module)'),
+        '#default_value' => variable_get('userpoints_actions', 0),
+        '#size' => 5,
+        '#maxlength' => 5,
+      );
+      
+      return $form;
+      break;
   }
 }
 
@@ -381,7 +378,7 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
       $node = db_fetch_object(db_query(db_rewrite_sql('SELECT n.uid FROM {node} n WHERE n.nid = %d'), $cid));
       $user_vote = votingapi_get_user_votes($type, $cid);
       if (!$user_vote && ($node->uid != $user->uid) && $vote->value != 0) {
-        vote_up_down_userpoints(variable_get('userpoints_vote_up_down', 0));
+        userpoints_userpointsapi('points', variable_get('userpoints_vote_up_down', 0), $user->uid, 'Vote up/down points');
       }
     }
 
