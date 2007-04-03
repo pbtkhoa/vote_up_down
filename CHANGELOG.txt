@@ -1,3 +1,13 @@
+April 3, 2007
+------------------
+[Fredrik Jonsson]
+vote_up_down.module:
+- Anonymous voting support
+- Users don't get points for voting on there own comments.
+- Added users/uid/votes that lists all the nodes a user has votet on.
+- Fixed the description for RSS feeds.
+- Minor coding style fixes.
+
 September 15, 2006
 ------------------
 [Fredrik Jonsson]
@@ -6,7 +16,7 @@ vote_storylink.module:
 vote_up_down.module:
 - User now don't get Userpoints when voting on ther own content.
 - Fixed Vote points display setting "Full page view" bug.
-- "Reset vote" now set the vote to = instead of removing it. 
+- "Reset vote" now set the vote to 0 instead of removing it.
   Seems to fix the voting action error.
 - Minor bug fixes.
 

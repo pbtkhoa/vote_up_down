@@ -117,6 +117,13 @@ function vote_up_down_settings() {
     '#default_value' => variable_get('vote_up_down_tag', 'vote'),
     '#description' => t('All votes from the Vote up/down module will be tagged with this term. Using a unique value here may be useful when you deploy various voting modules that all use the Voting API. (Default: vote)'),
   );
+  $form['vote_widget_settings_advanced']['vote_up_down_anonymous_vote'] = array(
+    '#type' => 'radios',
+    '#title' => t('Allow anonymous voting'),
+    '#default_value' => variable_get('vote_up_down_anonymous_vote', 0),
+    '#options' => array(0 => t('No'), 1 => t('Yes')),
+    '#description' => t('If yes anonymous users may cast votes, restricted to one vote per day and IP address.'),
+  );
   $form['vote_widget_settings_advanced']['vote_up_down_reset_vote'] = array(
     '#type' => 'radios',
     '#title' => t('Allow users to reset their votes'),
@@ -168,9 +175,19 @@ function vote_up_down_menu($may_cache) {
         'type' => MENU_LOCAL_TASK
       );
     }
+    if (arg(0) == 'user' && is_numeric(arg(1))) {
+      $items[] = array(
+        'path' => 'user/'. arg(1) .'/votes',
+        'title' => t('votes'),
+        'callback' => 'vote_up_down_user_votes',
+        'access' => user_access('access up-down vote statistic'),
+        'weight' => 5,
+        'type' => MENU_LOCAL_TASK
+      );
+    }
 
     drupal_set_html_head(theme_stylesheet_import(base_path() . drupal_get_path('module', 'vote_up_down') .'/vote_up_down.css'));
-    drupal_add_js(drupal_get_path('module', 'vote_up_down') . '/ajax_vote_up_down.js');
+    drupal_add_js(drupal_get_path('module', 'vote_up_down') .'/ajax_vote_up_down.js');
   }
 
   return $items;
@@ -247,7 +264,7 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
  * Implementation of hook_userpoints().
  */
 function vote_up_down_userpoints($op, $points = 0, $uid = 0, $event = NULL, $description = NULL) {
-  switch($op) {
+  switch ($op) {
     case 'setting':
       $form['vote_updown_points'] = array(
           '#type' => 'fieldset',
@@ -352,13 +369,48 @@ function vote_up_down_tracker() {
   }
 }
 
+/*
+ * Menu callback; display all votes for a user.
+ */
+function vote_up_down_user_votes() {
+  if ($account = user_load(array('uid' => arg(1), 'status' => 1))) {
+    if ($account->status || user_access('administer users')) {
+      $header = array(
+        array('data' => t('Node')),
+        array('data' => t('Vote')),
+        array('data' => t('Date'))
+      );
+      $sql = db_rewrite_sql("SELECT n.nid, n.title, v.value, v.timestamp FROM {node} n LEFT JOIN {votingapi_vote} v ON n.nid = v.content_id WHERE v.uid = %d AND v.tag = '%s' AND v.content_type = 'node' AND n.status = 1 ORDER BY v.timestamp DESC");
+      $result = pager_query($sql, 25, 0, NULL, $account->uid, variable_get('vote_up_down_tag', 'vote'));
+      while ($node = db_fetch_object($result)) {
+        $rows[] = array(
+          l($node->title, 'node/'. $node->nid),
+          $node->value,
+          t('%time ago', array('%time' => format_interval(time() - $node->timestamp)))
+        );
+      }
+      drupal_set_title(check_plain($account->name));
+      $output = theme('table', $header, $rows);
+      $output .= theme('pager', NULL, 25);
+
+      return $output;
+    }
+    else {
+      drupal_access_denied();
+    }
+  }
+  else {
+    drupal_not_found();
+  }
+}
+
 /**
  * An voting get handler with AJAX support
  */
 function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
   if (is_numeric($cid) && is_numeric($value)) {
 
-    // sanity-check the incoming values.
+    // Sanity-check the incoming values.
     if ($value > 0) {
       $vote->value = 1;
     }
@@ -372,19 +424,30 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
     $vote->value_type = 'points';
     $vote->tag = variable_get('vote_up_down_tag', 'vote');
 
-    //userpoints integration
+    // Userpoints integration.
     if (module_exist('userpoints')) {
       global $user;
-      $node = db_fetch_object(db_query(db_rewrite_sql('SELECT n.uid FROM {node} n WHERE n.nid = %d'), $cid));
-      $user_vote = votingapi_get_user_votes($type, $cid);
-      if (!$user_vote && ($node->uid != $user->uid) && $vote->value != 0) {
+      if ($type == 'node') {
+        $node = db_fetch_object(db_query(db_rewrite_sql('SELECT n.uid FROM {node} n WHERE n.nid = %d'), $cid));
+      } else {
+        $node = db_fetch_object(db_query(db_rewrite_sql('SELECT c.uid FROM {comments} c WHERE c.cid = %d'), $cid));
+      }
+      $user_vote = votingapi_get_user_votes($type, $cid, $user->uid);
+      if ($user->uid && !$user_vote && ($node->uid != $user->uid) && ($vote->value != 0)) {
         userpoints_userpointsapi('points', variable_get('userpoints_vote_up_down', 0), $user->uid, 'Vote up/down points');
       }
     }
 
 
-    // do the voting via voting api.
-    votingapi_set_vote($type, $cid, $vote);
+    // Do the voting via voting api.
+    if ($uid = _vote_up_down_get_uid()) {
+      if ($vote->value == 0) {
+        votingapi_unset_vote($type, $cid, $uid);
+      }
+      else {
+        votingapi_set_vote($type, $cid, $vote, $uid);
+      }
+    }
 
     if ($ajax) {
       $style = ($alt == TRUE ? '_alt' : '');
@@ -404,8 +467,8 @@ function theme_vote_up_down_widget($cid, $type) {
 
     $output = '<div class="vote-up-down-widget">';
 
-    if (user_access('use up-down vote') && $user->uid) {
-      $user_vote = votingapi_get_user_votes($type, $cid);
+    if (user_access('use up-down vote') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
+      $user_vote = votingapi_get_user_votes($type, $cid, _vote_up_down_get_uid());
 
       if ($user_vote[0]->value > 0) {
         $class = 'vote-up-act';
@@ -442,8 +505,8 @@ function theme_vote_up_down_widget_alt($cid, $type) {
     $output = '<div class="vote-up-down-widget-alt">';
     $output .= theme('vote_up_down_points_alt', $cid, $type);
 
-    if (user_access('use up-down vote') && $user->uid) {
-      $user_vote = votingapi_get_user_votes($type, $cid);
+    if (user_access('use up-down vote') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
+      $user_vote = votingapi_get_user_votes($type, $cid, _vote_up_down_get_uid());
 
       if ($user_vote[0]->value > 0) {
         $class = 'vote-up-act';
@@ -489,6 +552,30 @@ function theme_vote_up_down_points_alt($cid, $type) {
   $output .= '<div class="vote-points-label">'. t('points') .'</div></div>';
 
   return $output;
+}
+
+/**
+ * Get a uid for anonymous vs. registered voting
+ */
+function _vote_up_down_get_uid() {
+  global $user;
+
+  if ($user->uid) {
+    $uid = $user->uid;
+  }
+  else if (variable_get('vote_up_down_anonymous_vote', 0)) {
+    // Fake uid for anonymous users.
+    // If the IP is valid turn it into a integer and add the number of the current day.
+    // The current day is what limit anonymous voting to one vote per day and IP address.
+    if ($long = ip2long($_SERVER['REMOTE_ADDR'])) {
+      $uid = abs($long) + date('z');
+    }
+  }
+  else {
+    $uid = NULL;
+  }
+
+  return $uid;
 }
 
 ?>

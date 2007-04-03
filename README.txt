@@ -20,8 +20,6 @@ This is not a point and click solution. This project provide the missing
 pieces but you need to put them all together. Please try it out and
 report back with bugs you find and suggestions you have.
 
-Anonymous voting is not supported, not yet at least.
-
 
 Features and files:
 ------------------
@@ -104,6 +102,12 @@ javascript:location.href='http://www.example.com/node/add/storylink?edit[url]='+
 
 Replace "www.example.com" with your domain.
 
+
+Contributions:
+-------------
+* INSTALL.txt contributed by Ron Williams.
+  This has cut down on the support requst considerbly and
+  has made the package much more accessible for users.
 
 Last updated:
 ------------
