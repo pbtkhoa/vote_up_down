@@ -115,10 +115,10 @@ function vote_storylink_user($type, &$edit, &$account, $category = NULL) {
 function vote_storylink_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
   switch ($op) {
     case 'rss item':
-      if ($node->type == 'storylink' && variable_get('feed_item_length','teaser') == 'teaser') {
+      if ($node->type == 'storylink' && variable_get('feed_item_length', 'teaser') == 'teaser') {
         $node->teaser .= '<p><a href="'. check_url($node->vote_storylink_url) .'" title="'. t('Go to the original news source.') .'">'. t('original news source') .'</a></p>';
       }
-      elseif ($node->type == 'storylink' && variable_get('feed_item_length','teaser') == 'fulltext') {
+      elseif ($node->type == 'storylink' && variable_get('feed_item_length', 'teaser') == 'fulltext') {
         $node->body .= '<p><a href="'. check_url($node->vote_storylink_url) .'" title="'. t('Go to the original news source.') .'">'. t('original news source') .'</a></p>';
       }
       break;
@@ -195,7 +195,7 @@ function vote_storylink_load($node) {
  */
 function vote_storylink_prepare(&$node) {
   // Allow the following fields to be initialized via $_GET (e.g. for use
-  // with a "blog it" bookmarklet):
+  // with a "submit it" bookmarklet):
   foreach (array('title', 'body') as $field) {
     if ($_GET['edit'][$field]) {
       $node->$field = $_GET['edit'][$field];
@@ -219,8 +219,8 @@ function vote_storylink_prepare(&$node) {
  */
 function vote_storylink_validate(&$node) {
   vote_storylink_node_build($node);
-  if (db_num_rows(db_query("SELECT l.lid FROM {links} l INNER JOIN {links_node} ln ON l.lid = ln.lid WHERE ln.nid != %d AND LOWER(l.url) = LOWER('%s')", $node->nid, $node->vote_storylink_url)) > 0) {
-    form_set_error('vote_storylink_url', t('The URL is already submitted.'));
+  if ($nid = db_result(db_query("SELECT ln.nid FROM {links} l INNER JOIN {links_node} ln ON l.lid = ln.lid WHERE ln.nid != %d AND LOWER(l.url) = LOWER('%s')", $node->nid, $node->vote_storylink_url))) {
+    form_set_error('vote_storylink_url', t('This story is already submitted. %clickhere to view and vote on it.', array('%clickhere' => l('Click here', 'node/'. $nid))));
   }
 }
 
@@ -276,7 +276,7 @@ function vote_storylink_block($op = 'list', $delta = 0) {
     if (user_access('access content')) {
       switch ($delta) {
         case 0:
-          $title = t('Top story links');
+          $title = t('Top stories');
           $items = array();
           $items[] = l(t('this day'), 'storylink/top/day');
           $items[] = l(t('this week'), 'storylink/top/week');
@@ -555,10 +555,11 @@ function _vote_storylink_valid_url($formelement, $fieldname) {
  * this site allows "related links" for storylink nodes, that's handled
  * by the links_related module, not here.
  */
-function vote_storylink_node_build(&$node, $url='') {
+function vote_storylink_node_build(&$node, $url = '') {
   if (empty($url)) {
     $url = links_normalize_url($node->vote_storylink_url);
-  } else {
+  }
+  else {
     $url = links_normalize_url($url);
   }
   $node->vote_storylink_url = $url;
