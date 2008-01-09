@@ -459,7 +459,7 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
         $node = db_fetch_object(db_query(db_rewrite_sql('SELECT n.uid FROM {node} n WHERE n.nid = %d'), $cid));
       }
       else {
-        $node = db_fetch_object(db_query(db_rewrite_sql('SELECT c.uid FROM {comments} c WHERE c.cid = %d'), $cid));
+        $node = db_fetch_object(db_query(db_rewrite_sql('SELECT c.uid FROM {comments} c WHERE c.cid = %d', 'c', 'cid'), $cid));
       }
       $user_vote = votingapi_get_user_votes($type, $cid, $user->uid);
       if ($user->uid && !$user_vote && ($node->uid != $user->uid) && ($vote->value != 0)) {
