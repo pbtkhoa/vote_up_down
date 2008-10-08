@@ -183,7 +183,6 @@ function vote_up_down_menu() {
       'type' => MENU_LOCAL_TASK
     );
   }
-  
 
   if (arg(0) == 'user' && is_numeric(arg(1))) {
     $items['user/'.'%'.'/votesupdown'] = array(
@@ -194,7 +193,7 @@ function vote_up_down_menu() {
       'type' => MENU_LOCAL_TASK
     );
   }
-  
+
   drupal_add_css(drupal_get_path('module', 'vote_up_down') .'/vote_up_down.css');
   drupal_add_js(drupal_get_path('module', 'vote_up_down') .'/ajax_vote_up_down.js');
 

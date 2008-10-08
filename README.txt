@@ -1,6 +1,7 @@
-Drupal Vote up/down Package:
+Vote Up/Down Package:
 ---------------------------
 Author - Fredrik Jonsson fredrik at combonet dot se
+Maintainer - Pratul Kalia (lut4rp)
 Requires - Drupal 5
 License - GPL (see LICENSE)
 
