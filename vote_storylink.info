@@ -1,6 +1,6 @@
 ; $Id$
 name = Storylink
-description = Enables the creation of articles that links to websites, pages, documents etc., part of Vote up/down.
+description = Enables the creation of articles that links to websites, pages, documents etc. (Part of Vote Up/Down Package)
 dependencies[] = links
 package = Voting
 

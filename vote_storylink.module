@@ -3,8 +3,8 @@
 
 /*
  * @file
- * vote_storylink defines a "storylink" node type.
- * It's based upon "links_weblink.module".
+ * The Storylink module defines a "storylink" node type.
+ * It is a part of the Vote Up/Down Package.
  */
 
 /**
@@ -13,7 +13,7 @@
 function vote_storylink_help($path, $arg) {
   switch ($path) {
     case 'admin/help#vote_storylink':
-      return t('<p>This module is used to create articles that links to other resources -- websites, pages, documents, etc., part of Vote up/down.</p>');
+      return t('<p>This module is used to create articles that link to other resources -- websites, pages, documents etc. (Part of Vote Up/Down Package)</p>');
   }
 }
 
@@ -27,7 +27,7 @@ function vote_storylink_node_info() {
       'module' => 'vote_storylink',
       'has_title' => TRUE,
       'has_body' => TRUE,
-      'description' => t('A story link is an article whose main purpose is to create links to other resources -- websites, pages, documents, etc.'),
+      'description' => t('A story link is an article whose main purpose is to create links to other resources -- websites, pages, documents etc.'),
     ),
   );
 }
@@ -43,8 +43,6 @@ function vote_storylink_perm() {
  * Implementation of hook_access().
  */
 function vote_storylink_access($op, $node, $account) {
-
-
   switch ($op) {
     case 'view':
       return $node->status && user_access('view storylinks', $account);
@@ -58,15 +56,15 @@ function vote_storylink_access($op, $node, $account) {
 
 /**
  * Implementation of hook_settings().
-
+ */
 function vote_storylink_admin_settings() {
   if (!module_exists('links')) {
-    drupal_set_message(t('The &quot;links&quot; module is disabled or not installed. Storylinks will not function until this is corrected. Check the availability of
+    drupal_set_message(t('The Links module is disabled or not installed. Storylinks will not function until this is corrected. Check the availability of
 that module, and enable if needed, in the !modules.',array('!modules'=>l(t('modules administration page'),'admin/modules'))),'error');
   }
 
   return system_settings_form($form);
-} */
+}
 
 /**
  * Implementation of hook_menu().
@@ -75,39 +73,17 @@ function vote_storylink_menu() {
   global $user;
   $items = array();
 
-/* TODO
-   Non menu code that was placed in hook_menu under the '!$may_cache' block
-   so that it could be run during initialization, should now be moved to hook_init.
-   Previously we called hook_init twice, once early in the bootstrap process, second
-   just after the bootstrap has finished. The first instance is now called boot
-   instead of init.
-   
-   In Drupal 6, there are now two hooks that can be used by modules to execute code
-   at the beginning of a page request. hook_boot() replaces hook_boot() in Drupal 5
-   and runs on each page request, even for cached pages. hook_boot() now only runs
-   for non-cached pages and thus can be used for code that was previously placed in
-   hook_menu() with $may_cache = FALSE:
-   
-   Dynamic menu items under a '!$may_cache' block can often be simplified
-   to remove references to arg(n) and use of '%<function-name>' to check
-   conditions. See http://drupal.org/node/103114.
-   
-   The title and description arguments should not have strings wrapped in t(),
-   because translation of these happen in a later stage in the menu system.
-*/
-  if ($may_cache) {
-    $items['storylink'] = array(
-      'title' => 'Story links',
-      'page callback' => 'vote_storylink_page',
-      'access arguments' => array('access content'),
-      'type' => MENU_CALLBACK
-    );
-    $items['storylink/'. $user->uid] = array(
-      'title' => 'My story links',
-      'access arguments' => array('create storylinks'),
-      'type' => MENU_DYNAMIC_ITEM
-    );
-  }
+  $items['storylink'] = array(
+    'title' => 'Story links',
+    'page callback' => 'vote_storylink_page',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+  $items['storylink/'.$user->uid] = array(
+    'title' => 'My story links',
+    'access arguments' => array('create storylinks'),
+    'type' => MENU_DYNAMIC_ITEM
+  );
 
   return $items;
 }
@@ -119,11 +95,7 @@ function vote_storylink_user($type, &$edit, &$account, $category = NULL) {
   if ($type == 'view' && user_access('create storylinks', $account)) {
     $items[] = array(
       'title' => t('Story links'),
-      'value' => /* TODO
-   Please manually fix the parameters on the l() or url() function on the next line.
-   Typically, this was not changed because of a function call inside an array call like
-   array('title' => t('View user profile.')).*/
-l(t('view recent story links'), "storylink/$account->uid", array('title' => t("Read @username's latest story links.", array('@username' => $account->name)))),
+      'value' => array('title' => t('View user profile.')), l(t('View recent story links'), "storylink/$account->uid", array('title' => t("Read @username's latest story links.", array('@username' => $account->name)))),
       'class' => 'storylink',
     );
     return array(t('History') => $items);
@@ -150,7 +122,6 @@ function vote_storylink_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
  * Implementation of hook_form().
  */
 function vote_storylink_form(&$node, &$param) {
-
   $form['title'] = array(
     '#type' => 'textfield',
     '#title' => t('Title'),
@@ -395,7 +366,7 @@ function vote_storylink_page($a = NULL, $b = NULL, $c = NULL) {
 }
 
 /**
- * Display views of the storylinks
+ * Display different views of the storylinks
  */
 function vote_storylink_page_new() {
   drupal_set_title($title = t('New story links'));
