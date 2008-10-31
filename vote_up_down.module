@@ -171,29 +171,25 @@ function vote_up_down_menu() {
     'access arguments' => array('access vote up/down statistics'),
   );
 
-  if (arg(0) == 'node' && is_numeric(arg(1))) {
-    $node = menu_get_object();
-    $vote_access = (user_access('access vote up/down statistics') && in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE));
-    $items['node/'.'%'.'/votesupdown'] = array(
-      'title' => 'Votes',
-      'page callback' => 'vote_up_down_tracker',
-      'access arguments' => $vote_access,
-      'weight' => 5,
-      'type' => MENU_LOCAL_TASK
-    );
-  }
 
-  if (arg(0) == 'user' && is_numeric(arg(1))) {
-    $items['user/'.'%'.'/votesupdown'] = array(
-      'title' => 'Votes',
-      'page callback' => 'vote_up_down_user_votes',
-      'access arguments' => array('access vote up/down statistics'),
-      'weight' => 5,
-      'type' => MENU_LOCAL_TASK
-    );
+  $vote_access = (user_access('access vote up/down statistics') && in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE));
+  $items['node/'.'%'.'/votesupdown'] = array(
+    'title' => 'Votes',
+    'page callback' => 'vote_up_down_tracker',
+    'access arguments' => array('$vote_access'),
+    'weight' => 5,
+    'type' => MENU_LOCAL_TASK
+  );
 
-  }
-  
+
+  $items['user/'.'%'.'/votesupdown'] = array(
+    'title' => 'Votes',
+    'page callback' => 'vote_up_down_user_votes',
+    'access arguments' => array('access vote up/down statistics'),
+    'weight' => 5,
+    'type' => MENU_LOCAL_TASK
+  );
+
   return $items;
 }
 
@@ -283,9 +279,29 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
 /**
  * Implementation of hook_block().
  */
+
+// function vote_up_down_block($op = 'list', $delta = 0) {
+//   if ($op == 'list') {
+//     $blocks[0]['info'] = t('Who voted on this?');
+//     return $blocks;
+//   }
+
+//   if ($op == 'view') {
+//     if (user_access('access content')) {
+//       switch ($delta) {
+//       case 0:
+// 	if (arg(0) == 'node' & is_numeric(arg(1))) {
+// 	  $title == 'Who voted on this?';
+	  
+// 	break;
+//       }
+//     }
+//   }
+// }
+
 function vote_up_down_block($op = 'list', $delta = 0) {
   if ($op == 'list') {
-    $blocks[0]['info'] = t('Who voted on it');
+    $blocks[0]['info'] = t('Who voted on this?');
     $blocks[1]['info'] = t('Details');
     return $blocks;
   }
@@ -294,7 +310,7 @@ function vote_up_down_block($op = 'list', $delta = 0) {
       switch ($delta) {
         case 0:
           if (arg(0) == 'node' & is_numeric(arg(1))) {
-            $title = t('Who voted on it');
+            $title = t('Who voted on this?');
             $nid = arg(1);
             $items = array();
             $votes = votingapi_select_votes(array('node', $nid));
@@ -357,7 +373,7 @@ function vote_up_down_userpoints($op, $points = 0, $uid = 0, $event = NULL, $des
   }
 }
 
-/*
+/**
  * Menu callback; Handles voteupdown and subpages.
  */
 function vote_up_down_page() {
@@ -376,7 +392,7 @@ function vote_up_down_page() {
   return $output;
 }
 
-/*
+/**
  * Users votes page for the vote_up_down data
  */
 function vote_up_down_users_votes() {
@@ -403,7 +419,7 @@ function vote_up_down_users_votes() {
   return $output;
 }
 
-/*
+/**
  * Menu callback; display all votes for a node.
  */
 function vote_up_down_tracker() {
@@ -433,7 +449,7 @@ function vote_up_down_tracker() {
   }
 }
 
-/*
+/**
  * Menu callback; display all votes for a user.
  */
 function vote_up_down_user_votes() {
@@ -469,7 +485,7 @@ function vote_up_down_user_votes() {
 }
 
 /**
- * An voting get handler with AJAX support
+ * A voting handler with Ajax support
  */
 function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
   if (is_numeric($cid) && is_numeric($value)) {
@@ -503,12 +519,22 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
       }
     }
 
-    // Do the voting via voting api.
+    // Do the voting via Voting API.
     if ($uid = _vote_up_down_get_uid()) {
       if ($vote->value == 0) {
+	$votes[] = array(
+	  'content_id' => $nid,
+	  'value_type' => 'points',
+	  'value' => 1,
+	);
         votingapi_delete_votes(array($type, $cid, $uid));
       }
       else {
+        $votes[] = array(
+	  'content_id' => $nid,
+	  'value_type' => 'points',
+	  'value' => 1,
+	);
         votingapi_set_votes($type, $cid, $vote, $uid);
       }
     }
