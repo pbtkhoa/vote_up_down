@@ -246,6 +246,7 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
   switch ($type) {
     case 'node':
       $node_type = in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE);
+      $style = variable_get('vote_up_down_widget_style_node', 0) == 1 ? '_alt' : '';
       if ($node_type && user_access('view up/down votes')) {
         if (variable_get('vote_up_down_reset_vote', 0) && user_access('use vote up/down')) {
           $links['vote_up_down_reset'] = array(
@@ -255,16 +256,16 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
             'query' => drupal_get_destination()
           );
         }
-        if ($teaser && variable_get('vote_up_down_link_node', 0) && variable_get('vote_up_down_link_node', 0) != 2) {
+        if ($teaser && variable_get('vote_up_down_link_node', 0) && variable_get('vote_up_down_link_node', 0) != 2 && $style != "_alt") {
           $links['vote_up_down_points'] = theme('vote_up_down_points', $node->nid, $type, TRUE);
         }
-        else if (!$teaser && variable_get('vote_up_down_link_node', 0) > 1) {
+        else if (!$teaser && variable_get('vote_up_down_link_node', 0) > 1 && $style != "_alt") {
           $links['vote_up_down_points'] = theme('vote_up_down_points', $node->nid, $type, TRUE);
         }
       }
       break;
     case 'comment':
-      if (variable_get('vote_up_down_reset_vote', 0) && user_access('use vote up/down') && variable_get('vote_up_down_widget_comment', 0)) {
+      if (variable_get('vote_up_down_reset_vote', 0) && user_access('use vote up/down') && (variable_get('vote_up_down_widget_comment', 0) || variable_get('vote_up_down_link_comment', 0))) {
         $links['vote_up_down_reset_c'] = array(
           'title' => t('Reset vote'),
           'href' => "vote_up_down/$type/$node->cid/0",
