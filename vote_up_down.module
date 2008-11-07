@@ -143,8 +143,8 @@ function vote_up_down_menu() {
   $items = array();
 
   $items['admin/settings/voteupdown'] = array(
-    'title' => 'Vote Up/Down',
-    'description' => 'Control the functioning of Vote up/down.',
+    'title' => t('Vote Up/Down'),
+    'description' => t('Control the functioning of Vote up/down.'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vote_up_down_admin_settings'),
     'access arguments' => array('administer vote up/down'),
@@ -152,38 +152,35 @@ function vote_up_down_menu() {
   );
 
   $items['vote_up_down'] = array(
-    'title' => 'Vote on content',
+    'title' => t('Vote on content'),
     'page callback' => 'vote_up_down_vote',
     'access arguments' => array('use vote up/down'),
     'type' => MENU_CALLBACK
   );
 
   $items['voteupdown'] = array(
-    'title' => 'Vote up/down',
-    'description' => 'Vote up/down vote summaries.',
+    'title' => t('Vote up/down'),
+    'description' => t('Vote up/down vote summaries.'),
     'page callback' => 'vote_up_down_page',
     'access arguments' => array('access vote up/down statistics'),
   );
 
   $items['voteupdown/usersvotes'] = array(
-    'title' => 'Users by votes',
+    'title' => t('Users by votes'),
     'page callback' => 'vote_up_down_page',
     'access arguments' => array('access vote up/down statistics'),
   );
 
-
-  $vote_access = (user_access('access vote up/down statistics') && in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE));
-  $items['node/'.'%'.'/votesupdown'] = array(
-    'title' => 'Votes',
+  $items['node/%node/votesupdown'] = array(
+    'title' => t('Votes'),
     'page callback' => 'vote_up_down_tracker',
-    'access arguments' => array('$vote_access'),
+    'access callback' => '_vote_access',
     'weight' => 5,
     'type' => MENU_LOCAL_TASK
   );
 
-
-  $items['user/'.'%'.'/votesupdown'] = array(
-    'title' => 'Votes',
+  $items['user/%node/votesupdown'] = array(
+    'title' => t('Votes'),
     'page callback' => 'vote_up_down_user_votes',
     'access arguments' => array('access vote up/down statistics'),
     'weight' => 5,
@@ -191,6 +188,14 @@ function vote_up_down_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Returns access permissions for node/%node/votesupdown menu item.
+ */
+function _vote_access($nid) {
+  $node = db_fetch_object(db_query("SELECT type FROM {node} WHERE nid = %d", $nid));
+  return (user_access('access vote up/down statistics') && in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE));
 }
 
 /**
