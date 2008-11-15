@@ -36,7 +36,6 @@ function vote_up_down_perm() {
  * Implementation of hook_settings().
  */
 function vote_up_down_admin_settings() {
-
   $form['vote_node_types'] = array(
     '#type' => 'fieldset',
     '#title' => t('Node types'),
@@ -143,8 +142,8 @@ function vote_up_down_menu() {
   $items = array();
 
   $items['admin/settings/voteupdown'] = array(
-    'title' => t('Vote Up/Down'),
-    'description' => t('Control the functioning of Vote up/down.'),
+    'title' => 'Vote Up/Down',
+    'description' => 'Control the functioning of Vote up/down.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vote_up_down_admin_settings'),
     'access arguments' => array('administer vote up/down'),
@@ -152,50 +151,42 @@ function vote_up_down_menu() {
   );
 
   $items['vote_up_down'] = array(
-    'title' => t('Vote on content'),
+    'title' => 'Vote on content',
     'page callback' => 'vote_up_down_vote',
     'access arguments' => array('use vote up/down'),
     'type' => MENU_CALLBACK
   );
 
   $items['voteupdown'] = array(
-    'title' => t('Vote up/down'),
-    'description' => t('Vote up/down vote summaries.'),
+    'title' => 'Vote up/down',
+    'description' => 'Vote up/down vote summaries.',
     'page callback' => 'vote_up_down_page',
     'access arguments' => array('access vote up/down statistics'),
   );
 
   $items['voteupdown/usersvotes'] = array(
-    'title' => t('Users by votes'),
+    'title' => 'Users by votes',
     'page callback' => 'vote_up_down_page',
     'access arguments' => array('access vote up/down statistics'),
   );
 
   $items['node/%node/votesupdown'] = array(
-    'title' => t('Votes'),
+    'title' => 'Voting details',
     'page callback' => 'vote_up_down_tracker',
-    'access callback' => '_vote_access',
-    'weight' => 5,
-    'type' => MENU_LOCAL_TASK
+    'page arguments' => array(1),
+    'access arguments' => array('access vote/up down statistics'),
+    'type' => MENU_LOCAL_TASK,
   );
 
-  $items['user/%node/votesupdown'] = array(
-    'title' => t('Votes'),
+  $items['user/%user/votesupdown'] = array(
+    'title' => 'Your votes',
     'page callback' => 'vote_up_down_user_votes',
+    'page arguments' => array(1),
     'access arguments' => array('access vote up/down statistics'),
-    'weight' => 5,
-    'type' => MENU_LOCAL_TASK
+    'type' => MENU_LOCAL_TASK,
   );
 
   return $items;
-}
-
-/**
- * Returns access permissions for node/%node/votesupdown menu item.
- */
-function _vote_access($nid) {
-  $node = db_fetch_object(db_query("SELECT type FROM {node} WHERE nid = %d", $nid));
-  return (user_access('access vote up/down statistics') && in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE));
 }
 
 /**
@@ -206,6 +197,9 @@ function vote_up_down_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
     case 'view':
       $node_type = in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE);
       if ($node_type) {
+	drupal_add_css(drupal_get_path('module', 'vote_up_down') .'/vote_up_down.css');
+	drupal_add_js(drupal_get_path('module', 'vote_up_down') .'/ajax_vote_up_down.js');
+
         $style = variable_get('vote_up_down_widget_style_node', 0) == 1 ? '_alt' : '';
         if ($teaser && variable_get('vote_up_down_widget_node', 0) && variable_get('vote_up_down_widget_node', 0) != 2) {
           $node->content['vote_up_down'] = array(
@@ -282,69 +276,41 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
   return $links;
 }
 
-/**
- * Implementation of hook_block().
- */
+// THIS IS NOT WORKING YET.
+// /**
+//  * Implementation of hook_block().
+//  */
 
 // function vote_up_down_block($op = 'list', $delta = 0) {
 //   if ($op == 'list') {
 //     $blocks[0]['info'] = t('Who voted on this?');
 //     return $blocks;
 //   }
-
-//   if ($op == 'view') {
+//   else if ($op == 'view') {
 //     if (user_access('access content')) {
 //       switch ($delta) {
-//       case 0:
-// 	if (arg(0) == 'node' & is_numeric(arg(1))) {
-// 	  $title == 'Who voted on this?';
-	  
-// 	break;
+//         case 0:
+//           if (arg(0) == 'node' & is_numeric(arg(1))) {
+//             $title = t('Who voted on this?');
+//             $nid = arg(1);
+//             $items = array();
+//             $votes = votingapi_select_votes(array('node', $nid));
+//             foreach ($votes as $vote) {
+//               $account = user_load(array('uid' => $vote[0]->uid, 'status' => 1));
+//               $items[] = theme('username', $account) .' ('. $vote[0]->value .')';
+//             }
+//             $output = theme('item_list', $items);
+//           }
+//           break;
 //       }
+
+//       $block['subject'] = $title;
+//       $block['content'] = $output;
+
+//       return $block;
 //     }
 //   }
 // }
-
-function vote_up_down_block($op = 'list', $delta = 0) {
-  if ($op == 'list') {
-    $blocks[0]['info'] = t('Who voted on this?');
-    $blocks[1]['info'] = t('Details');
-    return $blocks;
-  }
-  else if ($op == 'view') {
-    if (user_access('access content')) {
-      switch ($delta) {
-        case 0:
-          if (arg(0) == 'node' & is_numeric(arg(1))) {
-            $title = t('Who voted on this?');
-            $nid = arg(1);
-            $items = array();
-            $votes = votingapi_select_votes(array('node', $nid));
-            foreach ($votes as $vote) {
-              $account = user_load(array('uid' => $vote[0]->uid, 'status' => 1));
-              $items[] = theme('username', $account) .' ('. $vote[0]->value .')';
-            }
-            $output = theme('item_list', $items);
-          }
-          break;
-
-        case 1:
-          if (arg(0) == 'node' & is_numeric(arg(1))) {
-            $title = t('Details');
-            $items = array();
-            $votes = votingapi_select_votes(array('node', $node->nid));
-            $output = theme('item_list', $items);
-          }
-          break;
-      }
-
-      $block['subject'] = $title;
-      $block['content'] = $output;
-
-      return $block;
-    }
-  }
-}
 
 /**
  * Implementation of hook_userpoints().
@@ -399,7 +365,7 @@ function vote_up_down_page() {
 }
 
 /**
- * Users votes page for the vote_up_down data
+ * Users votes page for the vote_up_down_page data.
  */
 function vote_up_down_users_votes() {
   $sql = "SELECT COUNT(v.value) AS number_votes, SUM(v.value) AS total_votes, v.uid, v.tag, u.uid, u.name FROM {votingapi_vote} v INNER JOIN {users} u on v.uid = u.uid WHERE v.tag = '%s' GROUP BY u.name";
@@ -429,13 +395,14 @@ function vote_up_down_users_votes() {
  * Menu callback; display all votes for a node.
  */
 function vote_up_down_tracker() {
-  if ($node = menu_get_object(arg(1))) {
+  if ($node = node_load(arg(1))) {
     $header = array(
       array('data' => t('User')),
       array('data' => t('Vote')),
       array('data' => t('Date'))
     );
-    $votes = votingapi_select_votes(array('node', $node->nid));
+    $criteria = array('content_type' => 'node', 'content_id' => $node->nid);
+    $votes = votingapi_select_votes($criteria);
     foreach ($votes as $vote) {
       $account = user_load(array('uid' => $vote[0]->uid, 'status' => 1));
       $rows[] = array(
@@ -491,24 +458,24 @@ function vote_up_down_user_votes() {
 }
 
 /**
- * A voting handler with Ajax support
+ * Function for the main voting handler with Ajax support.
  */
 function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
   if (is_numeric($cid) && is_numeric($value)) {
-
+    $vote = array();
     // Sanity-check the incoming values.
     if ($value > 0) {
-      $vote->value = 1;
+      $vote['value'] = 1;
     }
     else if ($value < 0) {
-      $vote->value = -1;
+      $vote['value'] = -1;
     }
     else {
-      $vote->value = 0;
+      $vote['value'] = 0;
     }
 
-    $vote->value_type = 'points';
-    $vote->tag = variable_get('vote_up_down_tag', 'vote');
+    $vote['value_type'] = 'points';
+    $vote['tag'] = variable_get('vote_up_down_tag', 'vote');
 
     // Userpoints integration.
     if (module_exists('userpoints')) {
@@ -517,31 +484,27 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
         $node = db_fetch_object(db_query(db_rewrite_sql('SELECT n.uid FROM {node} n WHERE n.nid = %d'), $cid));
       }
       else {
-        $node = db_fetch_object(db_query(db_rewrite_sql('SELECT c.uid FROM {comments} c WHERE c.cid = %d'), $cid));
+        $node = db_fetch_object(db_query(db_rewrite_sql('SELECT c.uid FROM {comments} c WHERE c.cid = %d', 'c', 'cid'), $cid));
       }
-      $user_vote = votingapi_select_votes((array($type, $cid, $user->uid)));
-      if ($user->uid && !$user_vote && ($node->uid != $user->uid) && ($vote->value != 0)) {
+      $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => $user->uid);
+      $user_vote = votingapi_select_single_vote_value($criteria);
+      if ($user->uid && !$user_vote && ($node->uid != $user->uid) && ($vote['value'] != 0)) {
         userpoints_userpointsapi('points', variable_get('userpoints_vote_up_down', 0), $user->uid, 'Vote up/down points');
       }
     }
 
     // Do the voting via Voting API.
     if ($uid = _vote_up_down_get_uid()) {
-      if ($vote->value == 0) {
-	$votes[] = array(
-	  'content_id' => $nid,
-	  'value_type' => 'points',
-	  'value' => 1,
-	);
-        votingapi_delete_votes(array($type, $cid, $uid));
+      if ($vote['value'] == 0) {
+        $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => $uid);
+        votingapi_delete_votes(votingapi_select_votes($criteria));
+        votingapi_recalculate_results($type, $cid);
       }
       else {
-        $votes[] = array(
-	  'content_id' => $nid,
-	  'value_type' => 'points',
-	  'value' => 1,
-	);
-        votingapi_set_votes($type, $cid, $vote, $uid);
+        $vote['content_id'] = $cid;
+        $vote['content_type'] = $type;
+        $votes = array(0 => $vote);
+        votingapi_set_votes($votes);
       }
     }
 
