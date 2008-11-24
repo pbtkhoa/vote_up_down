@@ -528,13 +528,14 @@ function theme_vote_up_down_widget($cid, $type) {
     // let's start the div output
     $output = '<div class="vote-up-down-widget">';
     if (user_access('use vote up/down') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
-      $user_vote = votingapi_select_votes(array($type, $cid, _vote_up_down_get_uid()));
+      $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => _vote_up_down_get_uid());
+      $user_vote = votingapi_select_single_vote_value($criteria);
 
-      if ($user_vote[0]->value > 0) {
+      if ($user_vote > 0) {
         $class = 'vote-up-act';
         $class2 = 'vote-down-inact';
       }
-      else if ($user_vote[0]->value < 0) {
+      else if ($user_vote < 0) {
         $class = 'vote-up-inact';
         $class2 = 'vote-down-act';
       }
@@ -543,8 +544,8 @@ function theme_vote_up_down_widget($cid, $type) {
         $class2 = 'vote-down-inact';
       }
 
-      $output .= '<span id="vote_up_'. $type .'_'. $cid .'"class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1") .'">'. l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote up')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
-      $output .= '<span id="vote_down_'. $type .'_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/1") .'">'. l('', "vote_up_down/$type/$cid/-1", array('class' => $class2, 'title' => t('Vote down')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1") .'">'. l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote up')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
+      $output .= '<span id="vote_down_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/1") .'">'. l('', "vote_up_down/$type/$cid/-1", array('class' => $class2, 'title' => t('Vote down')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
     }
     else {
       $output .= '<span class="up-inact" title="'. t('You must login to vote!') .'"></span>';
@@ -566,17 +567,17 @@ function theme_vote_up_down_widget_alt($cid, $type) {
     $output .= theme('vote_up_down_points_alt', $cid, $type);
 
     if (user_access('use vote up/down') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
-      $user_vote = votingapi_select_votes(array($type, $cid, _vote_up_down_get_uid()));
+      $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => _vote_up_down_get_uid());
+      $user_vote = votingapi_select_single_vote_value($criteria);
 
-      if ($user_vote[0]->value > 0) {
+      if ($user_vote > 0) {
         $class = 'vote-up-act';
       }
       else {
         $class = 'vote-up-inact';
       }
 
-      $output .= '<span id="vote_up_'. $type .'_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1/1") .'">'. array('title' => t('View user profile.')) . l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
-
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1/1") .'">'. l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
     }
     else {
       $output .= '<span class="up-inact" title="'. t('You must login to vote!') .'"></span>';
@@ -589,27 +590,31 @@ function theme_vote_up_down_widget_alt($cid, $type) {
 }
 
 function theme_vote_up_down_points($cid, $type, $nodelink = FALSE) {
-  $vote_result = votingapi_select_results(array($type, $cid, 'points', variable_get('vote_up_down_tag', 'vote'), 'sum'));
+  //$vote_result = votingapi_get_voting_result($type, $cid, 'points', variable_get('vote_up_down_tag', 'vote'), 'sum');
+  // Romka
+  $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => variable_get('vote_up_down_tag', 'vote'), 'function' => 'sum');
+  $vote_result = votingapi_select_single_result_value($criteria);
+
   if ($nodelink) {
     if ($vote_result) {
       $output = array(
-        'title' => '<span id="vote_points_'. $type .'_'. $cid .'" class="vote-points">'. format_plural($vote_result->value, '1 point', '@count points') .'</span>',
+        'title' => '<span id="vote_points_'. $cid .'" class="vote-points">'. format_plural($vote_result, '1 point', '@count points') .'</span>',
         'html' => TRUE
       );
     }
     else {
       $output = array(
-        'title' => '<span id="vote_points_'. $type .'_'. $cid .'" class="vote-points">'. t('0 points') .'</span>',
+        'title' => '<span id="vote_points_'. $cid .'" class="vote-points">'. t('0 points') .'</span>',
         'html' => TRUE
       );
     }
   }
   else {
     if ($vote_result) {
-      $output = '<span id="vote_points_'. $type .'_'. $cid .'" class="vote-points">'. format_plural($vote_result->value, '1 point', '@count points') .'</span>';
+      $output = '<span id="vote_points_'. $cid .'" class="vote-points">'. format_plural($vote_result, '1 point', '@count points') .'</span>';
     }
     else {
-      $output = '<span id="vote_points_'. $type .'_'. $cid .'" class="vote-points">'. t('0 points') .'</span>';
+      $output = '<span id="vote_points_'. $cid .'" class="vote-points">'. t('0 points') .'</span>';
     }
   }
 
@@ -617,17 +622,19 @@ function theme_vote_up_down_points($cid, $type, $nodelink = FALSE) {
 }
 
 function theme_vote_up_down_points_alt($cid, $type) {
-  $vote_result = votingapi_select_results(array($type, $cid, 'points', variable_get('vote_up_down_tag', 'vote'), 'sum'));
+  $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => variable_get('vote_up_down_tag', 'vote'), 'function' => 'sum');
+  $vote_result = votingapi_select_single_result_value($criteria);
+
   if ($vote_result) {
-    $output = '<div id="vote_points_'. $type .'_'. $cid .'" class="vote-points">'. $vote_result->value;
+    $output = '<div id="vote_points_'. $cid .'" class="vote-points">'. $vote_result;
   }
   else {
-    $output = '<div id="vote_points_'. $type .'_'. $cid .'" class="vote-points">0';
+    $output = '<div id="vote_points_'. $cid .'" class="vote-points">0';
   }
-
-  $output .= '<div class="vote-points-label">'. format_plural($vote_result->value, 'point', 'points') .'</div></div>';
-
+  
+  $output .= '<div class="vote-points-label">'. format_plural($vote_result, 'point', 'points') .'</div></div>';
   return $output;
+
 }
 
 /**
@@ -643,7 +650,7 @@ function _vote_up_down_get_uid() {
     // Fake uid for anonymous users.
     // If the IP is valid turn it into a integer and add the number of the current day.
     // The current day is what limit anonymous voting to one vote per day and IP address.
-    $hostname = (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : ip_address();
+    $hostname = (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
     if ($long = ip2long($hostname)) {
       $uid = abs($long) + date('z');
     }
