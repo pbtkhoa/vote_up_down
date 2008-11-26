@@ -2,6 +2,6 @@
 name = Storylink
 description = Enables the creation of articles that links to websites, pages, documents etc. (Part of Vote Up/Down Package)
 dependencies[] = links
+dependencies[] = votingapi
 package = Voting
-
 core = 6.x
