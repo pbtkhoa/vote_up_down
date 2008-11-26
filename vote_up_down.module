@@ -21,7 +21,7 @@ if (module_exists('actions')) {
 function vote_up_down_help($path, $arg) {
   switch ($path) {
     case 'admin/help#vote_up_down':
-      return t('<p>This module is used to add a up/down voting widget to selected node types. (Part of Vote Up/Down Package)</p>');
+      return '<p>'. t('This module is used to add a up/down voting widget to selected node types. (Part of Vote Up/Down Package)') .'</p>';
   }
 }
 
