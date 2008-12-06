@@ -590,8 +590,6 @@ function theme_vote_up_down_widget_alt($cid, $type) {
 }
 
 function theme_vote_up_down_points($cid, $type, $nodelink = FALSE) {
-  //$vote_result = votingapi_get_voting_result($type, $cid, 'points', variable_get('vote_up_down_tag', 'vote'), 'sum');
-  // Romka
   $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => variable_get('vote_up_down_tag', 'vote'), 'function' => 'sum');
   $vote_result = votingapi_select_single_result_value($criteria);
 
