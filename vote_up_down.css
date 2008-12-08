@@ -25,16 +25,16 @@ a.vote-up-act, a.vote-down-act, span.vote-up-act, span.vote-down-act {
   cursor: default;
 }
 .vote-up-act, .vote-up-inact:hover {
-  background: url(a_up_act.png) no-repeat 0px 0px;
+  background: url(images/a_up_act.png) no-repeat 0px 0px;
 }
 .vote-up-inact, .up-inact {
-  background: url(a_up_inact.png) no-repeat 0px 0px;
+  background: url(images/a_up_inact.png) no-repeat 0px 0px;
 }
 .vote-down-act, .vote-down-inact:hover {
-  background: url(a_down_act.png) no-repeat 0px 0px;
+  background: url(images/a_down_act.png) no-repeat 0px 0px;
 }
 .vote-down-inact, .down-inact {
-  background: url(a_down_inact.png) no-repeat 0px 0px;
+  background: url(images/a_down_inact.png) no-repeat 0px 0px;
 }
 .vote-points {
   font-weight: bold;
@@ -81,11 +81,11 @@ a.vote-up-act, a.vote-down-act, span.vote-up-act, span.vote-down-act {
 }
 .vote-up-down-widget-alt .vote-up-act,
 .vote-up-down-widget-alt .vote-up-inact:hover {
-  background: url(plus_act.png) no-repeat center 3px;
+  background: url(images/plus_act.png) no-repeat center 3px;
 }
 .vote-up-down-widget-alt .vote-up-inact,
 .vote-up-down-widget-alt .up-inact {
-  background: url(plus_inact.png) no-repeat center 3px;
+  background: url(images/plus_inact.png) no-repeat center 3px;
 }
 
 .storylink .picture img {
