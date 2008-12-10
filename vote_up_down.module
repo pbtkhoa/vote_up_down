@@ -39,7 +39,7 @@ function vote_up_down_admin_settings() {
   $form['vote_node_types'] = array(
     '#type' => 'fieldset',
     '#title' => t('Node types'),
-    '#description' => t('Set the node types you want to activate voting on.'),
+    '#description' => t('Select the node types you want to activate voting on.'),
     '#collapsible' => TRUE,
   );
   $form['vote_node_types']['vote_up_down_node_types'] = array(
@@ -81,7 +81,7 @@ function vote_up_down_admin_settings() {
   $form['vote_widget_settings_comment'] = array(
     '#type' => 'fieldset',
     '#title' => t('Vote widget settings for comments'),
-    '#description' => t('For more control over the voting widget placement, it can be inserted directly in the theme. See the included node-storylink.tpl.php for an example. When this metod is used, turn off the widget display here.'),
+    '#description' => t('For more control over the voting widget placement, it can be inserted directly in the theme. See the included node-storylink.tpl.php for an example. When this method is used, turn off the widget display here.'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
@@ -142,24 +142,23 @@ function vote_up_down_menu() {
   $items = array();
 
   $items['admin/settings/voteupdown'] = array(
-    'title' => 'Vote Up/Down',
+    'title' => 'Vote Up/Down configuration',
     'description' => 'Control the functioning of Vote up/down.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vote_up_down_admin_settings'),
     'access arguments' => array('administer vote up/down'),
-    'type' => MENU_NORMAL_ITEM
+    'type' => MENU_NORMAL_ITEM,
   );
 
   $items['vote_up_down'] = array(
-    'title' => 'Vote on content',
+    'title' => 'Vote',
     'page callback' => 'vote_up_down_vote',
     'access arguments' => array('use vote up/down'),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
 
   $items['voteupdown'] = array(
-    'title' => 'Vote up/down',
-    'description' => 'Vote up/down vote summaries.',
+    'title' => 'Voting statistics',
     'page callback' => 'vote_up_down_page',
     'access arguments' => array('access vote up/down statistics'),
   );
@@ -358,7 +357,7 @@ function vote_up_down_page() {
     default:
       $items = array();
       $items[] = l(t('Users by votes'), 'voteupdown/usersvotes');
-      $output = theme('item_list', $items, t('Vote up/down statistics'));
+      $output = theme('item_list', $items);
   }
 
   return $output;
@@ -519,13 +518,15 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
   }
 }
 
+/**
+ * Themeing functions for widget and points display.
+ */
 function theme_vote_up_down_widget($cid, $type) {
   global $user;
   drupal_add_css(drupal_get_path('module', 'vote_up_down') .'/vote_up_down.css');
   drupal_add_js(drupal_get_path('module', 'vote_up_down') .'/ajax_vote_up_down.js');
   
   if (user_access('view up/down votes')) {
-    // let's start the div output
     $output = '<div class="vote-up-down-widget">';
     if (user_access('use vote up/down') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
       $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => _vote_up_down_get_uid());
@@ -636,7 +637,7 @@ function theme_vote_up_down_points_alt($cid, $type) {
 }
 
 /**
- * Get a uid for anonymous vs. registered voting
+ * Get a user ID for anonymous vs. registered voting
  */
 function _vote_up_down_get_uid() {
   global $user;
@@ -644,14 +645,9 @@ function _vote_up_down_get_uid() {
   if ($user->uid) {
     $uid = $user->uid;
   }
-  else if (variable_get('vote_up_down_anonymous_vote', 0)) {
-    // Fake uid for anonymous users.
-    // If the IP is valid turn it into a integer and add the number of the current day.
-    // The current day is what limit anonymous voting to one vote per day and IP address.
-    $hostname = (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
-    if ($long = ip2long($hostname)) {
-      $uid = abs($long) + date('z');
-    }
+  elseif (variable_get('vote_up_down_anonymous_vote', 0)) {
+    $long = ip2long(ip_address());
+    $uid = abs($long) + date('z');
   }
   else {
     $uid = NULL;
