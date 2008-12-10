@@ -1,5 +1,10 @@
 // $Id$
 
+// Global killswitch
+if (Drupal.jsEnabled) {
+  $(document).ready(Drupal.voteUpDownAutoAttach);
+}
+
 Drupal.voteUpDownAutoAttach = function() {
   var vdb = [];
   $('span.vote-up-inact, span.vote-down-inact, span.vote-up-act, span.vote-down-act').each(function () {
@@ -41,23 +46,14 @@ Drupal.VDB = function(elt, uri) {
       url: db.uri,
       success: function (data) {
         //update the voting arrows
-        $('#' + db.id + '.vote-' + db.dir1 + '-inact')
-          .removeClass('vote-' + db.dir1 + '-inact')
-          .addClass('vote-' + db.dir1 + '-act');
-        $('#vote_' + db.dir2 + '_' + db.type + '_' + db.cid)
-          .removeClass('vote-' + db.dir2 + '-act')
-          .addClass('vote-' + db.dir2 + '-inact');
+        $('#' + db.id + '.vote-' + db.dir1 + '-inact').removeClass('vote-' + db.dir1 + '-inact').addClass('vote-' + db.dir1 + '-act');
+        $('#vote_' + db.dir2 + '_' + db.type + '_' + db.cid).removeClass('vote-' + db.dir2 + '-act').addClass('vote-' + db.dir2 + '-inact');
         // update the points
         $('#vote_points_' + db.type + '_' + db.cid).html(data);
       },
       error: function (xmlhttp) {
-        alert('An HTTP error '+ xmlhttp.status +' occured.\n'+ db.uri);
+        alert('Uh oh... An HTTP '+ xmlhttp.status +' error occured. Your vote was not submitted!\n');
       }
     });
   });
-}
-
-// Global killswitch
-if (Drupal.jsEnabled) {
-  $(document).ready(Drupal.voteUpDownAutoAttach);
 }
