@@ -3,11 +3,11 @@
 /**
  * Pre-processing for the vote database object creation.
  */
-Drupal.voteUpDownAutoAttach = function() {
+Drupal.voteUpDownAutoAttach = function () {
   var vdb = [];
   $('span.vote-up-inact, span.vote-down-inact, span.vote-up-act, span.vote-down-act').each(function () {
     // Read in the path to the PHP handler.
-    uri = $(this).attr('title');
+    var uri = $(this).attr('title');
     // Remove the title, so no tooltip will displayed.
     $(this).removeAttr('title');
     // Remove the href link.
@@ -22,14 +22,14 @@ Drupal.voteUpDownAutoAttach = function() {
 /**
  * The Vote database object
  */
-Drupal.VDB = function(elt, uri, id) {
+Drupal.VDB = function (elt, uri) {
   var db = this;
   this.elt = elt;
   this.uri = uri;
   this.id = $(elt).attr('id');
   this.dir1 = this.id.indexOf('vote_up') > -1 ? 'up' : 'down';
   this.dir2 = this.dir1 == 'up' ? 'down' : 'up';
-  $(elt).click(function() {
+  $(elt).click(function () {
     // Ajax POST request for the voting data
     $.ajax({
       type: "POST",

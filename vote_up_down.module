@@ -3,17 +3,16 @@
 
 /**
  * @file
- * Vote Up/Down is a module that adds a widget for +1/-1 votes on nodes.
- * It depends upon Voting API.
+ * Adds a +1/-1 voting widget to selected node types and comments.
  */
 
-// if (module_exists('views')) {
-//   module_load_include('inc', 'vote_up_down', 'vote_up_down_views');
-// }
+if (module_exists('views')) {
+  module_load_include('inc', 'vote_up_down', 'vote_up_down_views');
+ }
 
 if (module_exists('actions')) {
   module_load_include('inc', 'vote_up_down', 'vote_up_down_actions');
-}
+ }
 
 /**
  * Implementation of hook_help().
@@ -21,7 +20,10 @@ if (module_exists('actions')) {
 function vote_up_down_help($path, $arg) {
   switch ($path) {
     case 'admin/help#vote_up_down':
-      return '<p>'. t('This module is used to add a up/down voting widget to selected node types. (Part of Vote Up/Down Package)') .'</p>';
+      $output .= '<p>'. t('This module is used to add a up/down voting widget to selected node types. (Part of Vote Up/Down Package)') .'</p>';
+      $output .= '<p>'. t('This project is an attempt to build a digg.com/reddit.com clone. There are voting widgets that mimic both, i.e. +1/-1 and +1 voting. It builds upon a number of other modules, see below. Ajax functionality is used for voting if the browser supports it (using drupal.js included in Druapl 4.7). Bookmarklets are supported for quickly submitting new story links. A number of RSS feeds are available. This is not a point and click solution. This project provide the missing pieces but you need to put them all together. Please try it out and report back with bugs you find and suggestions you have.') .'</p>';
+
+      return $output;
   }
 }
 
@@ -40,7 +42,6 @@ function vote_up_down_admin_settings() {
     '#type' => 'fieldset',
     '#title' => t('Node types'),
     '#description' => t('Select the node types you want to activate voting on.'),
-    '#collapsible' => TRUE,
   );
   $form['vote_node_types']['vote_up_down_node_types'] = array(
     '#type' => 'checkboxes',
@@ -53,8 +54,6 @@ function vote_up_down_admin_settings() {
     '#type' => 'fieldset',
     '#title' => t('Vote widget settings for nodes'),
     '#description' => t('For more control over the voting widget placement, it can be inserted directly in the theme. See the included template.php and node-storylink.tpl.php for an example. When this method is used, turn off the widget display here.'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
   );
   $form['vote_widget_settings_node']['vote_up_down_widget_style_node'] = array(
     '#type' => 'radios',
@@ -82,8 +81,6 @@ function vote_up_down_admin_settings() {
     '#type' => 'fieldset',
     '#title' => t('Vote widget settings for comments'),
     '#description' => t('For more control over the voting widget placement, it can be inserted directly in the theme. See the included node-storylink.tpl.php for an example. When this method is used, turn off the widget display here.'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
   );
   $form['vote_widget_settings_comment']['vote_up_down_widget_style_comment'] = array(
     '#type' => 'radios',
@@ -105,31 +102,33 @@ function vote_up_down_admin_settings() {
     '#options' => array(0 => t('Do not display link'), 1 => t('Display link')),
   );
 
+  return system_settings_form($form);
+}
+
+function vote_up_down_admin_advanced_settings($form) {
   $form['vote_widget_settings_advanced'] = array(
     '#type' => 'fieldset',
     '#title' => t('Advanced settings'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-  $form['vote_widget_settings_advanced']['vote_up_down_tag'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Vote tag'),
-    '#default_value' => variable_get('vote_up_down_tag', 'vote'),
-    '#description' => t('All votes from the Vote up/down module will be tagged with this term. Using a unique value here may be useful when you deploy various voting modules that all use the Voting API module. (Default: vote)'),
   );
   $form['vote_widget_settings_advanced']['vote_up_down_anonymous_vote'] = array(
     '#type' => 'radios',
     '#title' => t('Allow anonymous voting'),
     '#default_value' => variable_get('vote_up_down_anonymous_vote', 0),
     '#options' => array(0 => t('No'), 1 => t('Yes')),
-    '#description' => t('If yes, anonymous users may cast votes, restricted to one vote per day and IP address.'),
+    '#description' => t('If yes, anonymous users may cast votes, restricted to one vote per day per IP address.<br />This will not work if "use vote up/down" permission is not given to anonymous users.'),
   );
   $form['vote_widget_settings_advanced']['vote_up_down_reset_vote'] = array(
     '#type' => 'radios',
     '#title' => t('Allow users to reset their votes'),
     '#default_value' => variable_get('vote_up_down_reset_vote', 0),
     '#options' => array(0 => t('No'), 1 => t('Yes')),
-    '#description' => t('If yes, a link will be displayed on nodes and comments that will reset the users votes on that node/comment.'),
+    '#description' => t('If yes, a link will be displayed on nodes and comments that will allow users to reset their vote.'),
+  );
+  $form['vote_widget_settings_advanced']['vote_up_down_tag'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Voting API tag'),
+    '#default_value' => variable_get('vote_up_down_tag', 'vote'),
+    '#description' => t('Since Vote Up/Down uses Voting API, all votes will be tagged with this term. (default: vote)<br />This tag is useful is you have deployed various modules that use Voting API. It should always be a unique value. Usually, there is NO need to change this.'), 
   );
 
   return system_settings_form($form);
@@ -148,6 +147,21 @@ function vote_up_down_menu() {
     'page arguments' => array('vote_up_down_admin_settings'),
     'access arguments' => array('administer vote up/down'),
     'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['admin/settings/voteupdown/general'] = array(
+    'title' => 'General',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $items['admin/settings/voteupdown/advanced'] = array (
+    'title' => 'Advanced',
+    'description' => 'Advanced configuration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vote_up_down_admin_advanced_settings'),
+    'access arguments' => array('administer vote up/down'),
+    'type' => MENU_LOCAL_TASK,
   );
 
   $items['vote_up_down'] = array(
@@ -169,7 +183,7 @@ function vote_up_down_menu() {
     'access arguments' => array('access vote up/down statistics'),
   );
 
-  $items['node/%node/votesupdown'] = array(
+  $items['node/%node/votes'] = array(
     'title' => 'Voting details',
     'page callback' => 'vote_up_down_tracker',
     'page arguments' => array(1),
@@ -275,41 +289,42 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
   return $links;
 }
 
-// THIS IS NOT WORKING YET.
-// /**
-//  * Implementation of hook_block().
-//  */
+/**
+ * Implementation of hook_block().
+ */
 
-// function vote_up_down_block($op = 'list', $delta = 0) {
-//   if ($op == 'list') {
-//     $blocks[0]['info'] = t('Who voted on this?');
-//     return $blocks;
-//   }
-//   else if ($op == 'view') {
-//     if (user_access('access content')) {
-//       switch ($delta) {
-//         case 0:
-//           if (arg(0) == 'node' & is_numeric(arg(1))) {
-//             $title = t('Who voted on this?');
-//             $nid = arg(1);
-//             $items = array();
-//             $votes = votingapi_select_votes(array('node', $nid));
-//             foreach ($votes as $vote) {
-//               $account = user_load(array('uid' => $vote[0]->uid, 'status' => 1));
-//               $items[] = theme('username', $account) .' ('. $vote[0]->value .')';
-//             }
-//             $output = theme('item_list', $items);
-//           }
-//           break;
-//       }
+function vote_up_down_block($op = 'list', $delta = 0) {
+  if ($op == 'list') {
+    $blocks[0]['info'] = t('Who voted on this?');
+    return $blocks;
+  }
 
-//       $block['subject'] = $title;
-//       $block['content'] = $output;
+  if ($op == 'view') {
+    if (user_access('access content')) {
+      switch ($delta) {
+        case 0:
+          if (arg(0) == 'node' & is_numeric(arg(1))) {
+            $title = t('Who voted on this?');
+            $nid = arg(1);
+            $items = array();
+            $votes = array('content_id' => $nid);
+	    $voteresults = votingapi_select_votes($votes);
+            foreach ($voteresults as $vote) {
+              $account = user_load(array('uid' => $vote['uid'], 'status' => 1));
+              $items[] = theme('username', $account) .' ('. $vote['value'] .')';
+            }
+            $output = theme('item_list', $items);
+          }
+          break;
+      }
 
-//       return $block;
-//     }
-//   }
-// }
+      $block['subject'] = $title;
+      $block['content'] = $output;
+
+      return $block;
+    }
+  }
+}
 
 /**
  * Implementation of hook_userpoints().
@@ -403,11 +418,11 @@ function vote_up_down_tracker() {
     $criteria = array('content_type' => 'node', 'content_id' => $node->nid);
     $votes = votingapi_select_votes($criteria);
     foreach ($votes as $vote) {
-      $account = user_load(array('uid' => $vote[0]->uid, 'status' => 1));
+      $account = user_load(array('uid' => $vote['uid'], 'status' => 1));
       $rows[] = array(
         theme('username', $account),
-        $vote[0]->value,
-        array('data' => format_date($vote[0]->timestamp, 'small'), 'class' => 'nowrap')
+        $vote['value'],
+        array('data' => format_date($vote['timestamp'], 'small'), 'class' => 'nowrap')
       );
     }
     drupal_set_title(check_plain($node->title));
