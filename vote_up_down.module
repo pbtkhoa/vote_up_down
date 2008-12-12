@@ -6,13 +6,13 @@
  * Adds a +1/-1 voting widget to selected node types and comments.
  */
 
-if (module_exists('views')) {
-  module_load_include('inc', 'vote_up_down', 'vote_up_down_views');
- }
+// if (module_exists('views')) {
+//   module_load_include('inc', 'vote_up_down', 'vote_up_down_views');
+//  }
 
-if (module_exists('actions')) {
-  module_load_include('inc', 'vote_up_down', 'vote_up_down_actions');
- }
+// if (module_exists('actions')) {
+//   module_load_include('inc', 'vote_up_down', 'vote_up_down_actions');
+//  }
 
 /**
  * Implementation of hook_help().
@@ -560,8 +560,20 @@ function theme_vote_up_down_widget($cid, $type) {
         $class2 = 'vote-down-inact';
       }
 
-      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1") .'">'. l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote up')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
-      $output .= '<span id="vote_down_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/1") .'">'. l('', "vote_up_down/$type/$cid/-1", array('class' => $class2, 'title' => t('Vote down')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1") .'">'. 
+	l('', "vote_up_down/$type/$cid/1", array('attributes' => array('class' => $class, 'title' => t('Vote up')),
+						 'query' => drupal_get_destination(),
+						 'fragment' => NULL,
+						 'absolute' => FALSE,
+						 'html' => TRUE))
+	.'</span>';
+      $output .= '<span id="vote_down_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/1") .'">'. 
+	l('', "vote_up_down/$type/$cid/-1", array('attributes' => array('class' => $class2, 'title' => t('Vote down')),
+						  'query' => drupal_get_destination(),
+						  'fragment' => NULL,
+						  'absolute' => FALSE,
+						  'html' => TRUE))
+	.'</span>';
     }
     else {
       $output .= '<span class="up-inact" title="'. t('You must login to vote!') .'"></span>';
@@ -593,7 +605,13 @@ function theme_vote_up_down_widget_alt($cid, $type) {
         $class = 'vote-up-inact';
       }
 
-      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1/1") .'">'. l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1/1") .'">'. 
+	l('', "vote_up_down/$type/$cid/1", array('attributes' => array('class' => $class, 'title' => t('Vote')), 
+						 'query' => drupal_get_destination(),
+						 'fragment' => NULL,
+						 'absolute' => FALSE, 
+						 'html' => TRUE))
+	.'</span>';
     }
     else {
       $output .= '<span class="up-inact" title="'. t('You must login to vote!') .'"></span>';
