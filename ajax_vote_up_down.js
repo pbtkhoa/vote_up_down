@@ -3,7 +3,7 @@
 /**
  * Pre-processing for the vote database object creation.
  */
-Drupal.voteUpDownAutoAttach = function () {
+Drupal.behaviors.voteUpDownAutoAttach = function () {
   var vdb = [];
   $('span.vote-up-inact, span.vote-down-inact, span.vote-up-act, span.vote-down-act').each(function () {
     // Read in the path to the PHP handler.
@@ -49,9 +49,4 @@ Drupal.VDB = function (elt, uri) {
       }
     });
   });
-}
-
-// Global killswitch
-if (Drupal.jsEnabled) {
-  $(document).ready(Drupal.voteUpDownAutoAttach);
 }
