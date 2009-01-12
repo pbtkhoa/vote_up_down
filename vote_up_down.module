@@ -329,7 +329,7 @@ function vote_up_down_block($op = 'list', $delta = 0) {
 /**
  * Implementation of hook_userpoints().
  */
-function vote_up_down_userpoints($op, $points = 0, $uid = 0, $event = NULL, $description = NULL) {
+function vote_up_down_userpoints($op, $params = array()) {
   switch ($op) {
     case 'setting':
       $form['vote_updown_points'] = array(
