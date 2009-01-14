@@ -21,8 +21,6 @@ function vote_up_down_help($path, $arg) {
   switch ($path) {
     case 'admin/help#vote_up_down':
       $output .= '<p>'. t('This module is used to add a up/down voting widget to selected node types. (Part of Vote Up/Down Package)') .'</p>';
-      $output .= '<p>'. t('This project is an attempt to build a digg.com/reddit.com clone. There are voting widgets that mimic both, i.e. +1/-1 and +1 voting. It builds upon a number of other modules, see below. Ajax functionality is used for voting if the browser supports it (using drupal.js included in Druapl 4.7). Bookmarklets are supported for quickly submitting new story links. A number of RSS feeds are available. This is not a point and click solution. This project provide the missing pieces but you need to put them all together. Please try it out and report back with bugs you find and suggestions you have.') .'</p>';
-
       return $output;
   }
 }
@@ -103,6 +101,7 @@ function vote_up_down_admin_settings() {
   );
 
   return system_settings_form($form);
+
 }
 
 function vote_up_down_admin_advanced_settings($form) {
@@ -128,7 +127,7 @@ function vote_up_down_admin_advanced_settings($form) {
     '#type' => 'textfield',
     '#title' => t('Voting API tag'),
     '#default_value' => variable_get('vote_up_down_tag', 'vote'),
-    '#description' => t('Since Vote Up/Down uses Voting API, all votes will be tagged with this term. (default: vote)<br />This tag is useful is you have deployed various modules that use Voting API. It should always be a unique value. Usually, there is NO need to change this.'), 
+    '#description' => t('Since Vote Up/Down uses Voting API, all votes will be tagged with this term. (default: vote)<br />This tag is useful is you have deployed various modules that use Voting API. It should always be a unique value. Usually, there is NO need to change this.'),
   );
 
   return system_settings_form($form);
@@ -155,7 +154,7 @@ function vote_up_down_menu() {
     'weight' => -10,
   );
 
-  $items['admin/settings/voteupdown/advanced'] = array (
+  $items['admin/settings/voteupdown/advanced'] = array(
     'title' => 'Advanced',
     'description' => 'Advanced configuration',
     'page callback' => 'drupal_get_form',
@@ -210,8 +209,8 @@ function vote_up_down_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
     case 'view':
       $node_type = in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE);
       if ($node_type) {
-	drupal_add_css(drupal_get_path('module', 'vote_up_down') .'/vote_up_down.css');
-	drupal_add_js(drupal_get_path('module', 'vote_up_down') .'/ajax_vote_up_down.js');
+        drupal_add_css(drupal_get_path('module', 'vote_up_down') .'/vote_up_down.css');
+        drupal_add_js(drupal_get_path('module', 'vote_up_down') .'/ajax_vote_up_down.js');
 
         $style = variable_get('vote_up_down_widget_style_node', 0) == 1 ? '_alt' : '';
         if ($teaser && variable_get('vote_up_down_widget_node', 0) && variable_get('vote_up_down_widget_node', 0) != 2) {
@@ -248,7 +247,7 @@ function vote_up_down_comment(&$comment, $op) {
 /**
  * Implementation of hook_link().
  */
-function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
+function vote_up_down_link($type, $object, $teaser = FALSE) {
   $links = array();
   switch ($type) {
     case 'node':
@@ -308,7 +307,7 @@ function vote_up_down_block($op = 'list', $delta = 0) {
             $nid = arg(1);
             $items = array();
             $votes = array('content_id' => $nid);
-	    $voteresults = votingapi_select_votes($votes);
+            $voteresults = votingapi_select_votes($votes);
             foreach ($voteresults as $vote) {
               $account = user_load(array('uid' => $vote['uid'], 'status' => 1));
               $items[] = theme('username', $account) .' ('. $vote['value'] .')';
@@ -409,7 +408,7 @@ function vote_up_down_users_votes() {
  * Menu callback; display all votes for a node.
  */
 function vote_up_down_tracker() {
-  if ($node = node_load(arg(1))) {
+  if ($node = menu_get_object()) {
     $header = array(
       array('data' => t('User')),
       array('data' => t('Vote')),
@@ -540,7 +539,7 @@ function theme_vote_up_down_widget($cid, $type) {
   global $user;
   drupal_add_css(drupal_get_path('module', 'vote_up_down') .'/vote_up_down.css');
   drupal_add_js(drupal_get_path('module', 'vote_up_down') .'/ajax_vote_up_down.js');
-  
+
   if (user_access('view up/down votes')) {
     $output = '<div class="vote-up-down-widget">';
     if (user_access('use vote up/down') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
@@ -560,20 +559,20 @@ function theme_vote_up_down_widget($cid, $type) {
         $class2 = 'vote-down-inact';
       }
 
-      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1") .'">'. 
-	l('', "vote_up_down/$type/$cid/1", array('attributes' => array('class' => $class, 'title' => t('Vote up')),
-						 'query' => drupal_get_destination(),
-						 'fragment' => NULL,
-						 'absolute' => FALSE,
-						 'html' => TRUE))
-	.'</span>';
-      $output .= '<span id="vote_down_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/1") .'">'. 
-	l('', "vote_up_down/$type/$cid/-1", array('attributes' => array('class' => $class2, 'title' => t('Vote down')),
-						  'query' => drupal_get_destination(),
-						  'fragment' => NULL,
-						  'absolute' => FALSE,
-						  'html' => TRUE))
-	.'</span>';
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1") .'">'.
+        l('', "vote_up_down/$type/$cid/1", array('attributes' => array('class' => $class, 'title' => t('Vote up')),
+                                                 'query' => drupal_get_destination(),
+                                                 'fragment' => NULL,
+                                                 'absolute' => FALSE,
+                                                 'html' => TRUE))
+        .'</span>';
+      $output .= '<span id="vote_down_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/1") .'">'.
+        l('', "vote_up_down/$type/$cid/-1", array('attributes' => array('class' => $class2, 'title' => t('Vote down')),
+                                                  'query' => drupal_get_destination(),
+                                                  'fragment' => NULL,
+                                                  'absolute' => FALSE,
+                                                  'html' => TRUE))
+        .'</span>';
     }
     else {
       $output .= '<span class="up-inact" title="'. t('You must login to vote!') .'"></span>';
@@ -605,13 +604,13 @@ function theme_vote_up_down_widget_alt($cid, $type) {
         $class = 'vote-up-inact';
       }
 
-      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1/1") .'">'. 
-	l('', "vote_up_down/$type/$cid/1", array('attributes' => array('class' => $class, 'title' => t('Vote')), 
-						 'query' => drupal_get_destination(),
-						 'fragment' => NULL,
-						 'absolute' => FALSE, 
-						 'html' => TRUE))
-	.'</span>';
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1/1") .'">'.
+        l('', "vote_up_down/$type/$cid/1", array('attributes' => array('class' => $class, 'title' => t('Vote')),
+                                                 'query' => drupal_get_destination(),
+                                                 'fragment' => NULL,
+                                                 'absolute' => FALSE,
+                                                 'html' => TRUE))
+        .'</span>';
     }
     else {
       $output .= '<span class="up-inact" title="'. t('You must login to vote!') .'"></span>';
@@ -663,7 +662,7 @@ function theme_vote_up_down_points_alt($cid, $type) {
   else {
     $output = '<div id="vote_points_'. $cid .'" class="vote-points">0';
   }
-  
+
   $output .= '<div class="vote-points-label">'. format_plural($vote_result, 'point', 'points') .'</div></div>';
   return $output;
 
