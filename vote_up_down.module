@@ -247,7 +247,7 @@ function vote_up_down_comment(&$comment, $op) {
 /**
  * Implementation of hook_link().
  */
-function vote_up_down_link($type, $object, $teaser = FALSE) {
+function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
   $links = array();
   switch ($type) {
     case 'node':
