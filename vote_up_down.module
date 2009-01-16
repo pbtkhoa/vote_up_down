@@ -340,7 +340,7 @@ function vote_up_down_userpoints($op, $params = array()) {
 
       $form['vote_updown_points']['userpoints_vote_up_down'] = array(
         '#type' => 'textfield',
-        '#title' => t('Points for voting on a node (requires the Vote up/down module)'),
+        '#title' => t('Points for voting on a node (requires the Vote Up/Down module)'),
         '#default_value' => variable_get('userpoints_vote_up_down', 0),
         '#size' => 5,
         '#maxlength' => 5,
@@ -516,6 +516,7 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
       else {
         $vote['content_id'] = $cid;
         $vote['content_type'] = $type;
+        $vote['uid'] = $uid;
         $votes = array(0 => $vote);
         votingapi_set_votes($votes);
       }
@@ -677,8 +678,8 @@ function _vote_up_down_get_uid() {
   if ($user->uid) {
     $uid = $user->uid;
   }
-  elseif (variable_get('vote_up_down_anonymous_vote', 0)) {
-    $long = ip2long(ip_address());
+  if (variable_get('vote_up_down_anonymous_vote', 0)) {
+    $long = ip2long(long2ip(ip_address()));
     $uid = abs($long) + date('z');
   }
   else {
