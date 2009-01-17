@@ -688,7 +688,7 @@ function _vote_up_down_get_uid() {
   if ($user->uid) {
     $uid = $user->uid;
   }
-  if (variable_get('vote_up_down_anonymous_vote', 0)) {
+  elseif (variable_get('vote_up_down_anonymous_vote', 0)) {
     $long = ip2long(long2ip(ip_address()));
     $uid = abs($long) + date('z');
   }
