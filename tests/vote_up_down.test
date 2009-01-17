@@ -1,0 +1,236 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Test file for Vote Up/Down Package.
+ *
+ * TODO: check behaviour of every setting in the admin screens:
+ * - vote_up_down_node_types: make sure voting doesn't appear on other
+ *   and does appear on selected types
+ * - vote_up_down_widget_style_node: check each display
+ * - vote_up_down_widget_node
+ * - vote_up_down_link_node
+ * - vote_up_down_widget_style_comment
+ * - vote_up_down_widget_comment
+ * - vote_up_down_link_comment
+ * - vote_up_down_anonymous_vote
+ * - vote_up_down_reset_vote
+ * - vote_up_down_tag
+ *
+ * TODO:
+ * - test dodgy user behaviour
+ * - test XSS injection
+ * - ...
+ */
+include_once 'sites/all/modules/simpletest/drupal_web_test_case.php';
+
+class VoteUpDownTestCase extends DrupalWebTestCase {
+  /**
+   * Implementation of getInfo().
+   */
+  function getInfo() {
+    return array(
+      'name' => t('Vote Up/Down module'),
+      'desc' => t('Vote Up/Down module'),
+      'group' => t('Voting API Tests'));
+  }
+
+  function setUp() {
+    parent::setUp('votingapi', 'vote_up_down');
+
+    // Module permissions: array('view up/down votes', 'use vote up/down', 'access vote up/down statistics', 'administer vote up/down');
+
+    // Create users.
+    $this->admin_user = $this->drupalCreateUser(
+      array(
+        'access vote up/down statistics',
+        'administer vote up/down',
+        'use vote up/down',
+        'view up/down votes',
+        'administer permissions',
+      )
+    );
+
+    $this->web_user = $this->drupalCreateUser(
+      array(
+        'access vote up/down statistics',
+        'use vote up/down',
+        'view up/down votes',
+        'create story content',
+      )
+    );
+  }
+
+  function tearDown() {
+
+    parent::tearDown();
+  }
+
+  /**
+   * Ensure that the optional fields are truly optional.
+   */
+  function testBasicOperation() {
+    // Enable Vote Up/Down for Story node types. Everything else should be
+    // default settings.
+    $this->drupalLogin($this->admin_user);
+    $edit = array(
+      'vote_up_down_node_types[story]' => TRUE,
+    );
+    $this->drupalPost('admin/settings/voteupdown', $edit, 'Save configuration');
+    $this->assertText('The configuration options have been saved.');
+    $this->assertText('Vote Up/Down configuration');
+    // TODO: check for correct settings
+
+
+    // Check the Advanced configuration page.
+    $this->drupalGet('admin/settings/voteupdown/advanced');
+    $this->assertText('Vote Up/Down configuration');
+    $this->assertText('Advanced settings');
+    // TODO: check for correct settings
+
+
+    // Create a node using the node/add page.
+    $this->drupalLogin($this->web_user);
+    $node = array(
+      'title' => $this->randomName(20, 'NODE_'),
+      'body' => $this->randomName(20, 'BODY_'),
+    );
+    $this->drupalPost('node/add/story', $node, 'Save');
+    $this->assertText("Story $node[title] has been created.");
+    $this->assertText('0 points');
+    $this->assertRaw('<div class="vote-up-down-widget">');
+    $node_url = $this->getUrl();
+
+
+    // Check empty Voting details about this node.
+    $this->clickLink('Voting details'); // Bug #360139
+    $this->assertNoRaw('<td>', 'Non-heading rows found in table');
+    // TODO: check for empty
+
+
+    // Check empty Voting statistics.
+    $this->drupalGet($node_url);
+    $this->clickLink('Voting statistics');
+    $this->clickLink('Users by votes');
+    $this->assertNoRaw('<td>', 'Non-heading rows found in table');
+    // TODO: check for empty
+
+
+    // Cast a vote, and make sure the score was updated.
+    $this->drupalGet($node_url);
+    $this->castVote(TRUE);
+    $this->assertText('1 point');
+    $this->clickLink('Voting details');
+    $this->assertText($this->web_user->name);
+    $this->assertRaw('<td>1</td>');
+
+
+    // Change our vote to -1
+    $this->clickLink('View');
+    $this->castVote(FALSE);
+    $this->assertText('-1 points');
+    $this->clickLink('Voting details');
+    $this->assertText($this->web_user->name);
+    $this->assertRaw('<td>-1</td>');
+
+
+    // Add another user
+    $another_user = $this->drupalCreateUser(
+      array(
+        'access vote up/down statistics',
+        'use vote up/down',
+        'view up/down votes',
+      )
+    );
+    $this->drupalLogin($another_user);
+    $this->drupalGet($node_url);
+    $this->castVote(FALSE);
+    $this->assertText('-2 points');
+    $this->clickLink('Voting details');
+    $this->assertText($this->web_user->name);
+    $this->assertText($another_user->name);
+    $this->assertRaw('<td>-1</td>'); // twice
+
+
+    // TODO: Check anonymous user permissions
+    $this->drupalLogout();
+
+  }
+
+  /**
+   * Execute a (non-AJAX) vote from the current node.
+   * @param $up
+   *   If TRUE vote-up, otherwise vote-down.
+   *
+   * TODO: support multi-node pages, using xpath?
+   * TODO: better error messages.
+   */
+  function castVote($up) {
+    // The non-AJAX version uses a hyperlink with no inner text, so we can't
+    // just use clickLink().  We find the domain-relative URL using xpath, then
+    // prepend $base_root to get an absolute URL.
+    // $this->drupalGet($node_url);
+    if ($up) {
+      $urls = $this->xpath('//a[@class="vote-up-inact"]');
+    }
+    else {
+      $urls = $this->xpath('//a[@class="vote-down-inact"]');
+    }
+
+    $ok = $this->assertEqual(1, count($urls), 'One vote widget found');
+    if (!$ok) {
+      return;
+    }
+
+    $this->assertTrue(strpos($urls[0]['href'], base_path()) === 0, 'Vote Up URL starts with base_path()');
+
+    // We can't use drupalGet() because it messes up the URL. This is copied
+    // from that method, with just the URL parameter changed. We don't explictly
+    // handle redirects here, because curl did it for us.
+    global $base_root;
+    $out = $this->curlExec(array(CURLOPT_HTTPGET => TRUE, CURLOPT_URL => $base_root . $urls[0]['href']));
+    $this->refreshVariables();
+  }
+
+
+  /**
+   * Test the behaviour of the system when the Voting API tag is changed to
+   * something else on the advanced configuration screen.
+   */
+  /*
+  function testCustomTagOperation() {
+    // TODO: check there are no votes in the system
+    // TODO: enable voting for story, create a node
+    // TODO: check node voting details screen (should be empty!)
+    // TODO: vote +1 on it as user1
+    // TODO: check node voting details screen (should be user1+1)
+    // TODO: change vote_up_down_tag to something different
+    // TODO: check node voting details screen (should be empty!)
+    // TODO: vote -1 on it as user1
+    // TODO: check node voting details screen (should be user1-1)
+
+    // TODO: check /voteupdown/usersvotes (should show user1-1)
+    // TODO: check /user/%user/votesupdown (should show user1-1)
+  }
+  */
+
+
+  /**
+   * Write the given data to the given filename, relative to the Drupal
+   * temporary directory. This method is really useful for determining what was
+   * in the HTML page that DrupalWebTestCase actually saw.
+   *
+   * @param $filename
+   *   The filename to write (defaults to out.html).
+   * @param $data
+   *   The data that will be written to the above file (defaults to the content
+   *   of the current page).
+   */
+  function writeFile($filename = 'out.html', $data = NULL) {
+    $data = ($data == NULL) ?  $this->drupalGetContent() : $data;
+    $filename = file_directory_temp() . '/' . $filename;
+    $this->assertTrue(file_put_contents($filename, $data), t('Wrote content to %filename', array('%filename' => $filename)));
+    drupal_set_message("Wrote content to $filename");
+  }
+}
