@@ -186,7 +186,7 @@ function vote_up_down_menu() {
     'title' => 'Voting details',
     'page callback' => 'vote_up_down_tracker',
     'page arguments' => array(1),
-    'access arguments' => array('access vote/up down statistics'),
+    'access arguments' => array('access vote up/down statistics'),
     'type' => MENU_LOCAL_TASK,
   );
 
@@ -532,6 +532,16 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
     }
   }
 }
+
+/**
+ * Generate token for preventing spam votes.
+ */
+/* function _updown_generate_token($content_type, $content_id) { */
+/*   global $user; */
+/*   $token = md5('salt'. $content_type . $content_id . $user->uid . mt_rand(0, 100000)); */
+/*   db_query("INSERT INTO {updown_tokens} (cid, uid, token, type, expires) VALUES (%d, %d, '%s', '%s', '%s')", $content_id, $user->uid, $token, $content_type, time() + (60 * 60 * 24)); */
+/*   return $token; */
+/* } */
 
 /**
  * Themeing functions for widget and points display.
