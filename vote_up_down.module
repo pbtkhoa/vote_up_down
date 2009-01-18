@@ -312,14 +312,9 @@ function vote_up_down_block($op = 'list', $delta = 0) {
 
             $title = t('Who voted on this?');
             $nid = arg(1);
-            $items = array();
             $votes = array('content_id' => $nid);
             $voteresults = votingapi_select_votes($votes);
-            foreach ($voteresults as $vote) {
-              $account = user_load(array('uid' => $vote['uid'], 'status' => 1));
-              $items[] = theme('username', $account) .' ('. $vote['value'] .')';
-            }
-            $output = theme('item_list', $items);
+            $output = theme('vote_up_down_whovoted_block', $nid, $voteresults);
           }
           break;
       }
@@ -543,15 +538,20 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
 /**
  * Generate token for preventing spam votes.
  */
-/* function _updown_generate_token($content_type, $content_id) { */
+/* function _vote_up_down_generate_token($content_type, $content_id) { */
 /*   global $user; */
 /*   $token = md5('salt'. $content_type . $content_id . $user->uid . mt_rand(0, 100000)); */
-/*   db_query("INSERT INTO {updown_tokens} (cid, uid, token, type, expires) VALUES (%d, %d, '%s', '%s', '%s')", $content_id, $user->uid, $token, $content_type, time() + (60 * 60 * 24)); */
+/*   db_query(something here) */
 /*   return $token; */
 /* } */
 
 /**
  * Themeing functions for widget and points display.
+ * Each of the functions below has a separate description of its own.
+ */
+
+/**
+ * Theme function for the widget in the normal +1/-1 style.
  */
 function theme_vote_up_down_widget($cid, $type) {
   global $user;
@@ -603,6 +603,9 @@ function theme_vote_up_down_widget($cid, $type) {
   }
 }
 
+/**
+ * Theme function for the widget in the alternate +1 style.
+ */
 function theme_vote_up_down_widget_alt($cid, $type) {
   global $user;
 
@@ -640,6 +643,9 @@ function theme_vote_up_down_widget_alt($cid, $type) {
   }
 }
 
+/**
+ * Theme function for the points in the normal display style.
+ */
 function theme_vote_up_down_points($cid, $type, $nodelink = FALSE) {
   $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => variable_get('vote_up_down_tag', 'vote'), 'function' => 'sum');
   $vote_result = votingapi_select_single_result_value($criteria);
@@ -670,6 +676,9 @@ function theme_vote_up_down_points($cid, $type, $nodelink = FALSE) {
   return $output;
 }
 
+/**
+ * Theme function for the points in the alternate display style.
+ */
 function theme_vote_up_down_points_alt($cid, $type) {
   $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => variable_get('vote_up_down_tag', 'vote'), 'function' => 'sum');
   $vote_result = votingapi_select_single_result_value($criteria);
@@ -684,6 +693,24 @@ function theme_vote_up_down_points_alt($cid, $type) {
   $output .= '<div class="vote-points-label">'. format_plural($vote_result, 'point', 'points') .'</div></div>';
   return $output;
 
+}
+
+/**
+ * Theme function for the 'Who Voted' block.
+ */
+function theme_vote_up_down_whovoted_block($nid, $voteresults) {
+  if ($voteresults) {
+    $items = array();
+    foreach ($voteresults as $vote) {
+      $account = user_load(array('uid' => $vote['uid'], 'status' => 1));
+      $items[] = theme('username', $account) .' ('. $vote['value'] .')';
+    }
+    $output = theme('item_list', $items);
+  }
+  else {
+    $output = t('No one\'s voted yet! Why don\'t you?');
+  }
+  return $output;
 }
 
 /**
@@ -738,6 +765,13 @@ function vote_up_down_theme() {
       'arguments' => array(
         'cid' => NULL,
         'type' => NULL,
+      ),
+    ),
+    'vote_up_down_whovoted_block' => array(
+      'file' => 'vote_up_down.module',
+      'arguments' => array(
+        'nid' => NULL,
+        'voteresults' => NULL,
       ),
     ),
   );
