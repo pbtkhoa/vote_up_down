@@ -23,7 +23,9 @@
  * - test XSS injection
  * - ...
  */
-include_once 'sites/all/modules/simpletest/drupal_web_test_case.php';
+
+// Why is this required?  Sometimes?
+include_once drupal_get_path('module', 'simpletest') .  '/drupal_web_test_case.php';
 
 class VoteUpDownTestCase extends DrupalWebTestCase {
   /**
@@ -81,7 +83,6 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     $this->drupalPost('admin/settings/voteupdown', $edit, 'Save configuration');
     $this->assertText('The configuration options have been saved.');
     $this->assertText('Vote Up/Down configuration');
-    // TODO: check for correct settings
 
 
     // Check the Advanced configuration page.
@@ -89,6 +90,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     $this->assertText('Vote Up/Down configuration');
     $this->assertText('Advanced settings');
     // TODO: check for correct settings
+
 
 
     // Create a node using the node/add page.
@@ -106,16 +108,18 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
 
     // Check empty Voting details about this node.
     $this->clickLink('Voting details'); // Bug #360139
-    $this->assertNoRaw('<td>', 'Non-heading rows found in table');
-    // TODO: check for empty
-
+    $this->assertNoRaw('<td>', 'Non-heading rows found in voting-details table');
 
     // Check empty Voting statistics.
-    $this->drupalGet($node_url);
     $this->clickLink('Voting statistics');
     $this->clickLink('Users by votes');
-    $this->assertNoRaw('<td>', 'Non-heading rows found in table');
-    // TODO: check for empty
+    $this->assertNoRaw('<td>', 'Non-heading rows found in users-by-votes table');
+
+    // Check empty user account votes
+    $this->clickLink('My account');
+    $this->clickLink('Your votes');
+    $this->assertNoRaw('<td>', 'Non-heading rows found in your-votes table');
+
 
 
     // Cast a vote, and make sure the score was updated.
@@ -126,7 +130,6 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     $this->assertText($this->web_user->name);
     $this->assertRaw('<td>1</td>');
 
-
     // Change our vote to -1
     $this->clickLink('View');
     $this->castVote(FALSE);
@@ -136,7 +139,24 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     $this->assertRaw('<td>-1</td>');
 
 
-    // Add another user
+
+    // Check NON-empty Voting details about this node.
+    $this->clickLink('Voting details'); // Bug #360139
+    $this->assertRaw('<td>', 'Non-heading rows found in voting-details table');
+
+    // Check NON-empty Voting statistics.
+    $this->clickLink('Voting statistics');
+    $this->clickLink('Users by votes');
+    $this->assertRaw('<td>', 'Non-heading rows found in users-by-votes table');
+
+    // Check NON-empty user account votes
+    $this->clickLink('My account');
+    $this->clickLink('Your votes');
+    $this->assertRaw('<td>', 'Non-heading rows found in your-votes table');
+
+
+
+    // Add another user, and use them to cast another -1 vote.
     $another_user = $this->drupalCreateUser(
       array(
         'access vote up/down statistics',
@@ -154,9 +174,49 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     $this->assertRaw('<td>-1</td>'); // twice
 
 
+
+    // Now, change the Voting API Tag to something else...
+    $this->drupalLogin($this->admin_user);
+    $edit = array(
+      'vote_up_down_tag' => $this->randomName(),
+    );
+    $this->drupalPost('admin/settings/voteupdown/advanced', $edit, 'Save configuration');
+    $this->assertText('The configuration options have been saved.');
+
+    // ...and check that the score on the node is 0 (not -2)
+    $this->drupalLogin($this->web_user);
+    $this->drupalGet($node_url);
+    $this->assertText('0 points');
+
+    // Check empty Voting details about this node.
+    $this->clickLink('Voting details'); // Bug #360139
+    $this->assertNoRaw('<td>', 'Non-heading rows found in voting-details table');
+    $this->writeFile('voting-details.html');
+
+    // Check empty Voting statistics.
+    $this->clickLink('Voting statistics');
+    $this->clickLink('Users by votes');
+    $this->assertNoRaw('<td>', 'Non-heading rows found in users-by-votes table');
+    $this->writeFile('users-by-votes.html');
+
+    // Check user account
+    $this->clickLink('My account');
+    $this->clickLink('Your votes');
+    $this->assertNoRaw('<td>', 'Non-heading rows found in your-votes table');
+    $this->writeFile('your-votes.html');
+
+
+
+    // Vote and check.
+    $this->drupalGet($node_url);
+    $this->castVote(FALSE); // if this fails, it may be because this users has already voted
+    $this->assertText('-1 points');
+    $this->writeFile('alt-tag-vote.html');
+
+
+
     // TODO: Check anonymous user permissions
     $this->drupalLogout();
-
   }
 
   /**
@@ -171,50 +231,33 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     // The non-AJAX version uses a hyperlink with no inner text, so we can't
     // just use clickLink().  We find the domain-relative URL using xpath, then
     // prepend $base_root to get an absolute URL.
-    // $this->drupalGet($node_url);
     if ($up) {
-      $urls = $this->xpath('//a[@class="vote-up-inact"]');
+      $inact_urls = $this->xpath('//a[@class="vote-up-inact"]');
+      $act_urls = $this->xpath('//a[@class="vote-up-act"]');
     }
     else {
-      $urls = $this->xpath('//a[@class="vote-down-inact"]');
+      $inact_urls = $this->xpath('//a[@class="vote-down-inact"]');
+      $act_urls = $this->xpath('//a[@class="vote-down-act"]');
     }
 
-    $ok = $this->assertEqual(1, count($urls), 'One vote widget found');
-    if (!$ok) {
-      return;
+    $this->assertEqual(count($inact_urls), 1, 'One inactive vote widget found');
+    if (count($inact_urls) != 1) {
+      // If we couldn't find the inactive widget we need to click on, try
+      // looking for the active version. This would normally mean that we've
+      // already voted (in this direction) on this node.
+      $this->assertEqual(count($act_urls), 0, 'No active vote widget found');
+      return; // no point in continuing
     }
 
-    $this->assertTrue(strpos($urls[0]['href'], base_path()) === 0, 'Vote Up URL starts with base_path()');
+    $this->assertTrue(strpos($inact_urls[0]['href'], base_path()) === 0, 'Vote Up URL starts with base_path()');
 
     // We can't use drupalGet() because it messes up the URL. This is copied
     // from that method, with just the URL parameter changed. We don't explictly
     // handle redirects here, because curl did it for us.
     global $base_root;
-    $out = $this->curlExec(array(CURLOPT_HTTPGET => TRUE, CURLOPT_URL => $base_root . $urls[0]['href']));
+    $out = $this->curlExec(array(CURLOPT_HTTPGET => TRUE, CURLOPT_URL => $base_root . $inact_urls[0]['href']));
     $this->refreshVariables();
   }
-
-
-  /**
-   * Test the behaviour of the system when the Voting API tag is changed to
-   * something else on the advanced configuration screen.
-   */
-  /*
-  function testCustomTagOperation() {
-    // TODO: check there are no votes in the system
-    // TODO: enable voting for story, create a node
-    // TODO: check node voting details screen (should be empty!)
-    // TODO: vote +1 on it as user1
-    // TODO: check node voting details screen (should be user1+1)
-    // TODO: change vote_up_down_tag to something different
-    // TODO: check node voting details screen (should be empty!)
-    // TODO: vote -1 on it as user1
-    // TODO: check node voting details screen (should be user1-1)
-
-    // TODO: check /voteupdown/usersvotes (should show user1-1)
-    // TODO: check /user/%user/votesupdown (should show user1-1)
-  }
-  */
 
 
   /**
