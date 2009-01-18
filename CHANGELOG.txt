@@ -6,7 +6,8 @@ XXXXXXXX XX, XXXX - 6.x-1.0
 - Code ported to work with Drupal 6 core.
 - Lots of old PHP functions were replaced by newer ones.
 - The Administration page was re-structured.
-- New arrow images were taken from the Ideapoll project. 
+- Added SimpleTests.
+- Forked Storylink into a separate project. (see http://drupal.org/project/storylink)
 
 September 30, 2008 - 6.x-1.x-dev
 --------------------------------
