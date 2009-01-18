@@ -309,19 +309,19 @@ function vote_up_down_block($op = 'list', $delta = 0) {
             if (!vote_up_down_node_access($node)) {
               return;
             }
-
             $title = t('Who voted on this?');
             $nid = arg(1);
-            $votes = array('content_id' => $nid);
+            $tag = variable_get('vote_up_down_tag', 'vote');
+            $votes = array('content_id' => $nid, 'tag' => $tag);
+            // TODO: support multiple 'tag' in a nested table?
+
             $voteresults = votingapi_select_votes($votes);
             $output = theme('vote_up_down_whovoted_block', $nid, $voteresults);
           }
           break;
       }
-
       $block['subject'] = $title;
       $block['content'] = $output;
-
       return $block;
     }
   }
@@ -416,7 +416,8 @@ function vote_up_down_tracker() {
       array('data' => t('Vote')),
       array('data' => t('Date'))
     );
-    $criteria = array('content_type' => 'node', 'content_id' => $node->nid);
+    $tag = variable_get('vote_up_down_tag', 'vote');
+    $criteria = array('content_type' => 'node', 'content_id' => $node->nid, 'tag' => $tag);
     $votes = votingapi_select_votes($criteria);
     foreach ($votes as $vote) {
       $account = user_load(array('uid' => $vote['uid'], 'status' => 1));
@@ -490,7 +491,9 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
     }
 
     $vote['value_type'] = 'points';
-    $vote['tag'] = variable_get('vote_up_down_tag', 'vote');
+
+    $tag = variable_get('vote_up_down_tag', 'vote');
+    $vote['tag'] = $tag;
 
     // Userpoints integration.
     if (module_exists('userpoints')) {
@@ -501,7 +504,7 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
       else {
         $node = db_fetch_object(db_query(db_rewrite_sql('SELECT c.uid FROM {comments} c WHERE c.cid = %d', 'c', 'cid'), $cid));
       }
-      $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => $user->uid);
+      $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => $user->uid, 'tag' => $tag);
       $user_vote = votingapi_select_single_vote_value($criteria);
       if ($user->uid && !$user_vote && ($node->uid != $user->uid) && ($vote['value'] != 0)) {
         userpoints_userpointsapi('points', variable_get('userpoints_vote_up_down', 0), $user->uid, 'Vote up/down points');
@@ -511,7 +514,7 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
     // Do the voting via Voting API.
     if ($uid = _vote_up_down_get_uid()) {
       if ($vote['value'] == 0) {
-        $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => $uid);
+        $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => $uid, 'tag' => $tag);
         votingapi_delete_votes(votingapi_select_votes($criteria));
         votingapi_recalculate_results($type, $cid);
       }
@@ -561,7 +564,8 @@ function theme_vote_up_down_widget($cid, $type) {
   if (user_access('view up/down votes')) {
     $output = '<div class="vote-up-down-widget">';
     if (user_access('use vote up/down') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
-      $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => _vote_up_down_get_uid());
+      $tag = variable_get('vote_up_down_tag', 'vote');
+      $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => _vote_up_down_get_uid(), 'tag' => $tag);
       $user_vote = votingapi_select_single_vote_value($criteria);
 
       if ($user_vote > 0) {
@@ -615,7 +619,8 @@ function theme_vote_up_down_widget_alt($cid, $type) {
     $output .= theme('vote_up_down_points_alt', $cid, $type);
 
     if (user_access('use vote up/down') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
-      $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => _vote_up_down_get_uid());
+      $tag = variable_get('vote_up_down_tag', 'vote');
+      $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => _vote_up_down_get_uid(), 'tag' => $tag);
       $user_vote = votingapi_select_single_vote_value($criteria);
 
       if ($user_vote > 0) {
@@ -647,7 +652,8 @@ function theme_vote_up_down_widget_alt($cid, $type) {
  * Theme function for the points in the normal display style.
  */
 function theme_vote_up_down_points($cid, $type, $nodelink = FALSE) {
-  $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => variable_get('vote_up_down_tag', 'vote'), 'function' => 'sum');
+  $tag = variable_get('vote_up_down_tag', 'vote');
+  $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => $tag, 'function' => 'sum');
   $vote_result = votingapi_select_single_result_value($criteria);
 
   if ($nodelink) {
@@ -680,7 +686,8 @@ function theme_vote_up_down_points($cid, $type, $nodelink = FALSE) {
  * Theme function for the points in the alternate display style.
  */
 function theme_vote_up_down_points_alt($cid, $type) {
-  $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => variable_get('vote_up_down_tag', 'vote'), 'function' => 'sum');
+  $tag = variable_get('vote_up_down_tag', 'vote');
+  $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => $tag, 'function' => 'sum');
   $vote_result = votingapi_select_single_result_value($criteria);
 
   if ($vote_result) {
