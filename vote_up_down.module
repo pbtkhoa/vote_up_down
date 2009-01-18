@@ -186,7 +186,8 @@ function vote_up_down_menu() {
     'title' => 'Voting details',
     'page callback' => 'vote_up_down_tracker',
     'page arguments' => array(1),
-    'access arguments' => array('access vote up/down statistics'),
+    'access callback' => 'vote_up_down_node_access',
+    'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
   );
 
@@ -303,6 +304,12 @@ function vote_up_down_block($op = 'list', $delta = 0) {
       switch ($delta) {
         case 0:
           if (arg(0) == 'node' & is_numeric(arg(1))) {
+            // Check that this node type is enabled for vote_up_down, and if not don't display the block.
+            $node = node_load(arg(1));
+            if (!vote_up_down_node_access($node)) {
+              return;
+            }
+
             $title = t('Who voted on this?');
             $nid = arg(1);
             $items = array();
@@ -734,4 +741,21 @@ function vote_up_down_theme() {
       ),
     ),
   );
+}
+
+/**
+ * Check whether the current user has access to the given permission for the
+ * given node. This requires both that they have access the required permission,
+ * and that the node type is enabled for vote up/down.
+ * @param $node
+ *   A node object
+ * @param $perm
+ *   (Optional) the name of a permission to pass to user_access()
+ * @return boolean TRUE if the user has access to the node vote up/down statistics.
+ */
+function vote_up_down_node_access($node, $perm = 'access vote up/down statistics') {
+  if (user_access($perm)) {
+    return in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE);
+  }
+  return FALSE;
 }
