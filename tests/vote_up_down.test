@@ -34,7 +34,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
   function getInfo() {
     return array(
       'name'        => t('Vote Up/Down'),
-      'description' => t('First check-in of basic test cases. For relevant issue see http://drupal.org/node/360121'),
+      'description' => t('For the relevant issue in the Vote Up/Down queue, see http://drupal.org/node/360121'),
       'group'       => t('Voting API Tests')
     );
   }
