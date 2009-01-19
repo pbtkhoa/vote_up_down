@@ -52,6 +52,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
         'use vote up/down',
         'view up/down votes',
         'administer permissions',
+        'administer blocks',
       )
     );
 
@@ -61,6 +62,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
         'use vote up/down',
         'view up/down votes',
         'create story content',
+        'create page content',
       )
     );
   }
@@ -91,9 +93,16 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     $this->assertText('Advanced settings');
     // TODO: check for correct settings
 
+    // Enable the "Who voted on this?" block, and check it's NOT shown on /
+    $edit = array();
+    $edit['vote_up_down_0[region]'] = 'left';
+    $this->drupalPost('admin/build/block', $edit, t('Save blocks'));
+    $this->assertText('The block settings have been updated.');
+    $this->drupalGet('/');
+    $this->assertNoText('Who voted on this?', 'Vote Up/Down block should not appear on non-node pages');
 
 
-    // Create a node using the node/add page.
+    // Create a STORY node using the node/add page.
     $this->drupalLogin($this->web_user);
     $node = array(
       'title' => $this->randomName(20, 'NODE_'),
@@ -104,11 +113,28 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     $this->assertText('0 points');
     $this->assertRaw('<div class="vote-up-down-widget">');
     $node_url = $this->getUrl();
+    $this->assertText('Who voted on this?', 'Vote Up/Down block is on node pages');
+    $this->assertText('Voting details', 'Voting details tab is on node pages');
 
 
-    // Check empty Voting details about this node.
+    // Create a PAGE node using the node/add page.
+    // Check that the Vote Up/Down information does NOT show for this node type.
+    $page_node = array(
+      'title' => $this->randomName(20, 'NODE_'),
+      'body' => $this->randomName(20, 'BODY_'),
+    );
+    $this->drupalPost('node/add/page', $page_node, 'Save');
+    $this->assertText("Page $page_node[title] has been created.");
+    $this->assertNoText('0 points');
+    $this->assertNoRaw('<div class="vote-up-down-widget">');
+    $this->assertNoText('Who voted on this?', 'Block should not be shown when content-type is not enabled for Vote Up/Down');
+    $this->assertNoText('Voting details', 'Voting Details should not be shown when content-type is not enabled for Vote Up/Down');
+
+
+    // Back to the Story node: Check empty Voting details about this node.
+    $this->drupalGet($node_url);
     $this->clickLink('Voting details'); // Bug #360139
-    $this->assertNoRaw('<td>', 'Non-heading rows found in voting-details table');
+    $this->assertNoRaw('<td>', 'Voting Details Records found on new Story node');
 
     // Check empty Voting statistics.
     $this->clickLink('Voting statistics');
@@ -142,7 +168,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
 
     // Check NON-empty Voting details about this node.
     $this->clickLink('Voting details'); // Bug #360139
-    $this->assertRaw('<td>', 'Non-heading rows found in voting-details table');
+    $this->assertRaw('<td>', 'Voting Details records found');
 
     // Check NON-empty Voting statistics.
     $this->clickLink('Voting statistics');
@@ -191,19 +217,19 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     // Check empty Voting details about this node.
     $this->clickLink('Voting details'); // Bug #360139
     $this->assertNoRaw('<td>', 'Non-heading rows found in voting-details table');
-    $this->writeFile('voting-details.html');
+    // $this->writeFile('voting-details.html');
 
     // Check empty Voting statistics.
     $this->clickLink('Voting statistics');
     $this->clickLink('Users by votes');
     $this->assertNoRaw('<td>', 'Non-heading rows found in users-by-votes table');
-    $this->writeFile('users-by-votes.html');
+    // $this->writeFile('users-by-votes.html');
 
     // Check user account
     $this->clickLink('My account');
     $this->clickLink('Your votes');
     $this->assertNoRaw('<td>', 'Non-heading rows found in your-votes table');
-    $this->writeFile('your-votes.html');
+    // $this->writeFile('your-votes.html');
 
 
 
@@ -211,7 +237,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     $this->drupalGet($node_url);
     $this->castVote(FALSE); // if this fails, it may be because this users has already voted
     $this->assertText('-1 points');
-    $this->writeFile('alt-tag-vote.html');
+    // $this->writeFile('alt-tag-vote.html');
 
 
 
