@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Adds a +1/-1 voting widget to selected node types and comments.
+ * Allows adding an up/down voting widget to selected content types & comments.
  */
 
 // if (module_exists('views')) {
@@ -20,7 +20,7 @@
 function vote_up_down_help($path, $arg) {
   switch ($path) {
     case 'admin/help#vote_up_down':
-      $output .= '<p>'. t('This module is used to add a up/down voting widget to selected node types. (Part of Vote Up/Down Package)') .'</p>';
+      $output .= '<p>'. t('This module can be used to add an up/down voting widget to selected node types and comments.') .'</p>';
       return $output;
   }
 }
@@ -141,7 +141,7 @@ function vote_up_down_menu() {
 
   $items['admin/settings/voteupdown'] = array(
     'title' => 'Vote Up/Down configuration',
-    'description' => 'Control the functioning of Vote up/down.',
+    'description' => 'Control the functioning of Vote Up/Down.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vote_up_down_admin_settings'),
     'access arguments' => array('administer vote up/down'),

@@ -1,7 +1,7 @@
-Vote Up/Down 5.x installation documentation:
+Vote Up/Down Installation Documentation:
 ---------------------------------------------
 Author - Ron Williams ron at ronsnexus dot com
-Requires - Drupal 5
+Requires - Drupal 5/6
 License - GPL (see LICENSE)
 
 
@@ -10,8 +10,6 @@ Requirements:
 
 You will need to download the following items:
   * Vote Up/Down Package http://drupal.org/project/vote_up_down
-  * Links Package http://drupal.org/project/links
-    (only needed with storylink module)
   * Voting API http://drupal.org/project/votingapi
 
 To be able to automatically promote story links that have a specified
