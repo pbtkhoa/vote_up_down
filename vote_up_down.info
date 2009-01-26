@@ -1,6 +1,6 @@
 ; $Id$
 name = Vote Up/Down
 description = "Allows adding an up/down voting widget to selected content types & comments."
-dependencies[] = votingapi
+dependencies[] = VotingAPI
 package = Voting
 core = 6.x
