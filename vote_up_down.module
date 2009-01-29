@@ -163,6 +163,7 @@ function vote_up_down_menu() {
     'type' => MENU_LOCAL_TASK,
   );
 
+  // vote_up_down/$type/$cid/$value/$tag/$ajax/$alt
   $items['vote_up_down'] = array(
     'title' => 'Vote',
     'page callback' => 'vote_up_down_vote',
@@ -264,10 +265,10 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
           );
         }
         if ($teaser && variable_get('vote_up_down_link_node', 0) && variable_get('vote_up_down_link_node', 0) != 2 && $style != "_alt") {
-          $links['vote_up_down_points'] = theme('vote_up_down_points', $node->nid, $type, TRUE);
+          $links['vote_up_down_points'] = theme('vote_up_down_points', $node->nid, $type, NULL, TRUE);
         }
         else if (!$teaser && variable_get('vote_up_down_link_node', 0) > 1 && $style != "_alt") {
-          $links['vote_up_down_points'] = theme('vote_up_down_points', $node->nid, $type, TRUE);
+          $links['vote_up_down_points'] = theme('vote_up_down_points', $node->nid, $type, NULL, TRUE);
         }
       }
       break;
@@ -281,7 +282,7 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
         );
       }
       if (variable_get('vote_up_down_link_comment', 0) && user_access('view up/down votes')) {
-        $links['vote_up_down_points_c'] = theme('vote_up_down_points', $node->cid, $type, TRUE);
+        $links['vote_up_down_points_c'] = theme('vote_up_down_points', $node->cid, $type, NULL, TRUE);
       }
       break;
   }
@@ -476,7 +477,7 @@ function vote_up_down_user_votes() {
 /**
  * Function for the main voting handler with Ajax support.
  */
-function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
+function vote_up_down_vote($type, $cid, $value, $tag = NULL, $ajax = FALSE, $alt = FALSE) {
   if (is_numeric($cid) && is_numeric($value)) {
     $vote = array();
     // Sanity-check the incoming values.
@@ -492,7 +493,7 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
 
     $vote['value_type'] = 'points';
 
-    $tag = variable_get('vote_up_down_tag', 'vote');
+    $tag = $tag ? $tag : variable_get('vote_up_down_tag', 'vote');
     $vote['tag'] = $tag;
 
     // Userpoints integration.
@@ -556,15 +557,15 @@ function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
 /**
  * Theme function for the widget in the normal +1/-1 style.
  */
-function theme_vote_up_down_widget($cid, $type) {
+function theme_vote_up_down_widget($cid, $type, $tag = NULL) {
   global $user;
   drupal_add_css(drupal_get_path('module', 'vote_up_down') .'/vote_up_down.css');
   drupal_add_js(drupal_get_path('module', 'vote_up_down') .'/ajax_vote_up_down.js');
+  $tag = $tag ? $tag : variable_get('vote_up_down_tag', 'vote');
 
   if (user_access('view up/down votes')) {
     $output = '<div class="vote-up-down-widget">';
     if (user_access('use vote up/down') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
-      $tag = variable_get('vote_up_down_tag', 'vote');
       $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => _vote_up_down_get_uid(), 'tag' => $tag);
       $user_vote = votingapi_select_single_vote_value($criteria);
 
@@ -581,15 +582,15 @@ function theme_vote_up_down_widget($cid, $type) {
         $class2 = 'vote-down-inact';
       }
 
-      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1") .'">'.
-        l('', "vote_up_down/$type/$cid/1", array('attributes' => array('class' => $class, 'title' => t('Vote up')),
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/$tag/1") .'">'.
+        l('', "vote_up_down/$type/$cid/1/$tag", array('attributes' => array('class' => $class, 'title' => t('Vote up')),
                                                  'query' => drupal_get_destination(),
                                                  'fragment' => NULL,
                                                  'absolute' => FALSE,
                                                  'html' => TRUE))
         .'</span>';
-      $output .= '<span id="vote_down_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/1") .'">'.
-        l('', "vote_up_down/$type/$cid/-1", array('attributes' => array('class' => $class2, 'title' => t('Vote down')),
+      $output .= '<span id="vote_down_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/$tag/1") .'">'.
+        l('', "vote_up_down/$type/$cid/-1/$tag", array('attributes' => array('class' => $class2, 'title' => t('Vote down')),
                                                   'query' => drupal_get_destination(),
                                                   'fragment' => NULL,
                                                   'absolute' => FALSE,
@@ -610,16 +611,16 @@ function theme_vote_up_down_widget($cid, $type) {
 /**
  * Theme function for the widget in the alternate +1 style.
  */
-function theme_vote_up_down_widget_alt($cid, $type) {
+function theme_vote_up_down_widget_alt($cid, $type, $tag = NULL) {
   global $user;
+  $tag = $tag ? $tag : variable_get('vote_up_down_tag', 'vote');
 
   if (user_access('view up/down votes')) {
 
     $output = '<div class="vote-up-down-widget-alt">';
-    $output .= theme('vote_up_down_points_alt', $cid, $type);
+    $output .= theme('vote_up_down_points_alt', $cid, $type, $tag);
 
     if (user_access('use vote up/down') && ($user->uid || variable_get('vote_up_down_anonymous_vote', 0))) {
-      $tag = variable_get('vote_up_down_tag', 'vote');
       $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => _vote_up_down_get_uid(), 'tag' => $tag);
       $user_vote = votingapi_select_single_vote_value($criteria);
 
@@ -630,8 +631,8 @@ function theme_vote_up_down_widget_alt($cid, $type) {
         $class = 'vote-up-inact';
       }
 
-      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1/1") .'">'.
-        l('', "vote_up_down/$type/$cid/1", array('attributes' => array('class' => $class, 'title' => t('Vote')),
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/$tag/1/1") .'">'.
+        l('', "vote_up_down/$type/$cid/1/$tag", array('attributes' => array('class' => $class, 'title' => t('Vote')),
                                                  'query' => drupal_get_destination(),
                                                  'fragment' => NULL,
                                                  'absolute' => FALSE,
@@ -651,8 +652,9 @@ function theme_vote_up_down_widget_alt($cid, $type) {
 /**
  * Theme function for the points in the normal display style.
  */
-function theme_vote_up_down_points($cid, $type, $nodelink = FALSE) {
-  $tag = variable_get('vote_up_down_tag', 'vote');
+function theme_vote_up_down_points($cid, $type, $tag = NULL, $nodelink = FALSE) {
+  // $tag = variable_get('vote_up_down_tag', 'vote');
+  $tag = $tag ? $tag : variable_get('vote_up_down_tag', 'vote');
   $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => $tag, 'function' => 'sum');
   $vote_result = votingapi_select_single_result_value($criteria);
 
@@ -685,8 +687,8 @@ function theme_vote_up_down_points($cid, $type, $nodelink = FALSE) {
 /**
  * Theme function for the points in the alternate display style.
  */
-function theme_vote_up_down_points_alt($cid, $type) {
-  $tag = variable_get('vote_up_down_tag', 'vote');
+function theme_vote_up_down_points_alt($cid, $type, $tag = NULL) {
+  $tag = $tag ? $tag : variable_get('vote_up_down_tag', 'vote');
   $criteria = array('content_type' => $type, 'content_id' => $cid, 'value_type' => 'points', 'tag' => $tag, 'function' => 'sum');
   $vote_result = votingapi_select_single_result_value($criteria);
 
