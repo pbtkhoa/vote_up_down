@@ -1,3 +1,6 @@
+[[ THIS FILE NEEDS TO BE UPDATED OR REMOVED ]]
+**********************************************
+
 Vote Up/Down Installation Documentation:
 ---------------------------------------------
 Author - Ron Williams ron at ronsnexus dot com
@@ -9,7 +12,7 @@ Requirements:
 ------------
 
 You will need to download the following items:
-  * Vote Up/Down Package http://drupal.org/project/vote_up_down
+  * Vote Up/Down http://drupal.org/project/vote_up_down
   * Voting API http://drupal.org/project/votingapi
 
 To be able to automatically promote story links that have a specified
@@ -32,18 +35,16 @@ Step By Step Installation for front page automatic promotion:
 
 01) Extract all files from the archives above.
 
-02) Upload the vote up/down, links, votingapi, actions, voting_actions,
-views, and userpoints directories to your modules directory.
+02) Upload the Vote Up/Down, Voting API, Actions, voting_actions,
+Views, and Userpoints directories to your modules directory.
 
 03) In a web browser goto SITE_URL/admin/build/modules (SITE_URL being the url
 for the drupal install) while logged in.
 
 04) Enable the modules below:
 * actions
-* links
 * userpoints
 * views
-* vote_storylink
 * vote_up_down
 * voting_actions
 * votingapi
