@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Test file for Vote Up/Down Package.
+ * Test file for Vote Up/Down.
  *
  * TODO: check behaviour of every setting in the admin screens:
  * - vote_up_down_node_types: make sure voting doesn't appear on other
