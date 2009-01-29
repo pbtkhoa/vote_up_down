@@ -32,7 +32,7 @@ Drupal.VDB = function (elt, uri) {
   $(elt).click(function () {
     // Ajax POST request for the voting data
     $.ajax({
-      type: "POST",
+      type: 'GET',
       url: db.uri,
       success: function (data) {
         // Extract the cid so we can change other elements for the same cid
