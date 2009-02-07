@@ -84,12 +84,12 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     );
     $this->drupalPost('admin/settings/voteupdown', $edit, 'Save configuration');
     $this->assertText('The configuration options have been saved.');
-    $this->assertText('Vote Up/Down configuration');
+    $this->assertText('Vote Up/Down');
 
 
     // Check the Advanced configuration page.
     $this->drupalGet('admin/settings/voteupdown/advanced');
-    $this->assertText('Vote Up/Down configuration');
+    $this->assertText('Vote Up/Down');
     $this->assertText('Advanced settings');
     // TODO: check for correct settings
 
