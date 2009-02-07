@@ -540,16 +540,6 @@ function vote_up_down_vote($type, $cid, $value, $tag = NULL, $ajax = FALSE, $alt
 }
 
 /**
- * Generate token for preventing spam votes.
- */
-/* function _vote_up_down_generate_token($content_type, $content_id) { */
-/*   global $user; */
-/*   $token = md5('salt'. $content_type . $content_id . $user->uid . mt_rand(0, 100000)); */
-/*   db_query(something here) */
-/*   return $token; */
-/* } */
-
-/**
  * Themeing functions for widget and points display.
  * Each of the functions below has a separate description of its own.
  */
