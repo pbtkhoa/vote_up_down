@@ -508,7 +508,7 @@ function vote_up_down_vote($type, $cid, $value, $tag = NULL, $ajax = FALSE, $alt
       $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => $user->uid, 'tag' => $tag);
       $user_vote = votingapi_select_single_vote_value($criteria);
       if ($user->uid && !$user_vote && ($node->uid != $user->uid) && ($vote['value'] != 0)) {
-        userpoints_userpointsapi('points', variable_get('userpoints_vote_up_down', 0), $user->uid, 'Vote up/down points');
+        userpoints_userpointsapi('points', variable_get('userpoints_vote_up_down', 0), $user->uid, 'Vote Up/Down points');
       }
     }
 
