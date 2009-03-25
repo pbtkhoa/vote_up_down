@@ -255,11 +255,12 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
       $node_type = in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE);
       if ($node_type && user_access('view up-down vote')) {
         if (variable_get('vote_up_down_reset_vote', 0) && user_access('use up-down vote')) {
+          $token = drupal_get_token("vote_up_down/$type/$node->nid/0");
           $links['vote_up_down_reset'] = array(
             'title' => t('Reset vote'),
             'href' => "vote_up_down/$type/$node->nid/0",
             'attributes' => array('title' => t('Reset your vote.')),
-            'query' => drupal_get_destination()
+            'query' => drupal_get_destination() .'&token='. $token,
           );
         }
         if ($teaser && variable_get('vote_up_down_link_node', 0) && variable_get('vote_up_down_link_node', 0) != 2) {
@@ -272,11 +273,12 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
       break;
     case 'comment':
       if (variable_get('vote_up_down_reset_vote', 0) && user_access('use up-down vote') && (variable_get('vote_up_down_widget_comment', 0) || variable_get('vote_up_down_link_comment', 0))) {
+        $token = drupal_get_token("vote_up_down/$type/$node->cid/0");
         $links['vote_up_down_reset_c'] = array(
           'title' => t('Reset vote'),
           'href' => "vote_up_down/$type/$node->cid/0",
           'attributes' => array('title' => t('Reset your vote.')),
-          'query' => drupal_get_destination()
+          'query' => drupal_get_destination() .'&token='. $token,
         );
       }
       if (variable_get('vote_up_down_link_comment', 0) && user_access('view up-down vote')) {
@@ -436,8 +438,7 @@ function vote_up_down_user_votes() {
  * An voting get handler with AJAX support
  */
 function vote_up_down_vote($type, $cid, $value, $ajax = FALSE, $alt = FALSE) {
-  if (is_numeric($cid) && is_numeric($value)) {
-
+  if (is_numeric($cid) && is_numeric($value) && isset($_REQUEST['token']) && drupal_valid_token($_REQUEST['token'], "vote_up_down/$type/$cid/$value")) {
     // Sanity-check the incoming values.
     if ($value > 0) {
       $vote->value = 1;
@@ -511,8 +512,10 @@ function theme_vote_up_down_widget($cid, $type) {
         $class2 = 'vote-down-inact';
       }
 
-      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1") .'">'. l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote up')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
-      $output .= '<span id="vote_down_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/1") .'">'. l('', "vote_up_down/$type/$cid/-1", array('class' => $class2, 'title' => t('Vote down')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
+      $token = drupal_get_token("vote_up_down/$type/$cid/1");
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1", array('query' => 'token='. $token)) .'">'. l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote up')), drupal_get_destination() .'&token='. $token, NULL, FALSE, TRUE) .'</span>';
+      $token = drupal_get_token("vote_up_down/$type/$cid/-1");
+      $output .= '<span id="vote_down_'. $cid .'" class="'. $class2 .'" title="'. url("vote_up_down/$type/$cid/-1/1", array('query' => 'token='. $token)) .'">'. l('', "vote_up_down/$type/$cid/-1", array('class' => $class2, 'title' => t('Vote down')), drupal_get_destination() .'&token='. $token, NULL, FALSE, TRUE) .'</span>';
     }
     else {
       $output .= '<span class="up-inact" title="'. t('You must login to vote.') .'"></span>';
@@ -543,7 +546,8 @@ function theme_vote_up_down_widget_alt($cid, $type) {
         $class = 'vote-up-inact';
       }
 
-      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1/1") .'">'. l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote')), drupal_get_destination(), NULL, FALSE, TRUE) .'</span>';
+      $token = drupal_get_token("vote_up_down/$type/$cid/1");
+      $output .= '<span id="vote_up_'. $cid .'" class="'. $class .'" title="'. url("vote_up_down/$type/$cid/1/1/1", array('query' => 'token='. $token)) .'">'. l('', "vote_up_down/$type/$cid/1", array('class' => $class, 'title' => t('Vote')), drupal_get_destination() .'&token='. $token, NULL, FALSE, TRUE) .'</span>';
 
     }
     else {
