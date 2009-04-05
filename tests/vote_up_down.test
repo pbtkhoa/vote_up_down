@@ -116,6 +116,11 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
     $this->assertText('Who voted on this?', 'Vote Up/Down block is on node pages');
     $this->assertText('Voting details', 'Voting details tab is on node pages');
 
+    // Use the url to find the NID, and then check for the <span> tag that the
+    // JavaScript uses to update the points.
+    preg_match('#/node/([0-9]*)$#', $node_url, $matches);
+    $nid = $matches[1];
+    $this->assertRaw('<span id="vote_points_' . $nid . '" class="vote-points">', 'Labeled SPAN tag found');
 
     // Create a PAGE node using the node/add page.
     // Check that the Vote Up/Down information does NOT show for this node type.
