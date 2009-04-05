@@ -297,13 +297,13 @@ function vote_up_down_link($type, $object, $teaser = FALSE) {
         }
         if ($teaser && variable_get('vote_up_down_link_node', 0) && variable_get('vote_up_down_link_node', 0) != 2 && $style != "_alt") {
           $links['vote_up_down_points'] = array(
-            'title' => theme('vote_up_down_points', $node->cid, $type),
+            'title' => theme('vote_up_down_points', $node->nid, $type),
             'html' => TRUE,
           );
         }
         else if (!$teaser && variable_get('vote_up_down_link_node', 0) > 1 && $style != "_alt") {
           $links['vote_up_down_points'] = array(
-            'title' => theme('vote_up_down_points', $node->cid, $type),
+            'title' => theme('vote_up_down_points', $node->nid, $type),
             'html' => TRUE,
           );
         }
