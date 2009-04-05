@@ -278,10 +278,11 @@ function vote_up_down_preprocess_comment(&$variables) {
 /**
  * Implementation of hook_link().
  */
-function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
+function vote_up_down_link($type, $object, $teaser = FALSE) {
   $links = array();
   switch ($type) {
     case 'node':
+      $node = &$object;
       $node_type = in_array($node->type, variable_get('vote_up_down_node_types', array()), TRUE);
       $style = variable_get('vote_up_down_widget_style_node', 0) == 1 ? '_alt' : '';
       if ($node_type && user_access('view up/down votes')) {
@@ -309,18 +310,19 @@ function vote_up_down_link($type, $node = NULL, $teaser = FALSE) {
       }
       break;
     case 'comment':
+      $comment = &$object;
       if (variable_get('vote_up_down_reset_vote', 0) && user_access('use vote up/down') && (variable_get('vote_up_down_widget_comment', 0) || variable_get('vote_up_down_link_comment', 0))) {
-        $token = drupal_get_token("vote_up_down/$type/$node->cid/0");
+        $token = drupal_get_token("vote_up_down/$type/$comment->cid/0");
         $links['vote_up_down_reset_c'] = array(
           'title' => t('Reset vote'),
-          'href' => "vote_up_down/$type/$node->cid/0",
+          'href' => "vote_up_down/$type/$comment->cid/0",
           'attributes' => array('title' => t('Reset your vote.')),
           'query' => drupal_get_destination() .'&token='. $token,
         );
       }
       if (variable_get('vote_up_down_link_comment', 0) && user_access('view up/down votes')) {
         $links['vote_up_down_points_c'] = array(
-          'title' => theme('vote_up_down_points', $node->cid, $type, NULL),
+          'title' => theme('vote_up_down_points', $comment->cid, $type, NULL),
           'html' => TRUE,
         );
       }
