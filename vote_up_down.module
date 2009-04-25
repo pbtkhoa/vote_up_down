@@ -140,7 +140,7 @@ function vote_up_down_menu() {
   $items = array();
 
   $items['admin/settings/voteupdown'] = array(
-    'title' => 'Vote Up/Down configuration',
+    'title' => 'Vote Up/Down',
     'description' => 'Control the functioning of Vote Up/Down.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vote_up_down_admin_settings'),
