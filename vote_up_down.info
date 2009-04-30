@@ -1,6 +1,6 @@
 ; $Id$
 name = Vote Up/Down
-description = "Allows adding an up/down voting widget to selected content types & comments."
+description = "Provides a configurable up/down voting widget for other modules to use."
 dependencies[] = votingapi
 package = Voting
 core = 6.x
