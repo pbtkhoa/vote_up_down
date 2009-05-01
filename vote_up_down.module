@@ -61,7 +61,7 @@ function vote_up_down_menu() {
   $items['admin/settings/voteupdown/advanced'] = array(
     'title' => 'Advanced',
     'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => 10,
+    'weight' => -10,
   );
 
   // vote_up_down/$type/$cid/$value/$tag/$ajax/$alt
