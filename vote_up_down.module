@@ -72,18 +72,6 @@ function vote_up_down_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items['voteupdown'] = array(
-    'title' => 'Voting statistics',
-    'page callback' => 'vote_up_down_page',
-    'access arguments' => array('access vote up/down statistics'),
-  );
-
-  $items['voteupdown/usersvotes'] = array(
-    'title' => 'Users by votes',
-    'page callback' => 'vote_up_down_page',
-    'access arguments' => array('access vote up/down statistics'),
-  );
-
   $items['node/%node/votes'] = array(
     'title' => 'Voting details',
     'page callback' => 'vote_up_down_tracker',
@@ -234,44 +222,6 @@ function vote_up_down_link($type, $object, $teaser = FALSE) {
 }
 
 /**
- * Implementation of hook_block().
- */
-
-function vote_up_down_block($op = 'list', $delta = 0) {
-  if ($op == 'list') {
-    $blocks[0]['info'] = t('Who voted on this?');
-    return $blocks;
-  }
-
-  if ($op == 'view') {
-    if (user_access('access content')) {
-      switch ($delta) {
-        case 0:
-          if (arg(0) == 'node' & is_numeric(arg(1))) {
-            // Check that this node type is enabled for vote_up_down, and if not don't display the block.
-            $node = node_load(arg(1));
-            if (!vote_up_down_node_access($node)) {
-              return;
-            }
-            $title = t('Who voted on this?');
-            $nid = arg(1);
-            $tag = variable_get('vote_up_down_tag', 'vote');
-            $votes = array('content_id' => $nid, 'tag' => $tag);
-            // TODO: support multiple 'tag' in a nested table?
-
-            $voteresults = votingapi_select_votes($votes);
-            $output = theme('vote_up_down_whovoted_block', $nid, $voteresults);
-          }
-          break;
-      }
-      $block['subject'] = $title;
-      $block['content'] = $output;
-      return $block;
-    }
-  }
-}
-
-/**
  * Implementation of hook_userpoints().
  */
 function vote_up_down_userpoints($op, $params = array()) {
@@ -302,52 +252,6 @@ function vote_up_down_userpoints($op, $params = array()) {
       return $form;
       break;
   }
-}
-
-/**
- * Menu callback; Handles voteupdown and subpages.
- */
-function vote_up_down_page() {
-  $op = arg(1);
-
-  switch ($op) {
-    case 'usersvotes':
-      $output = vote_up_down_users_votes();
-      break;
-    default:
-      $items = array();
-      $items[] = l(t('Users by votes'), 'voteupdown/usersvotes');
-      $output = theme('item_list', $items);
-  }
-
-  return $output;
-}
-
-/**
- * Users votes page for the vote_up_down_page data.
- */
-function vote_up_down_users_votes() {
-  $sql = "SELECT COUNT(v.value) AS number_votes, SUM(v.value) AS total_votes, v.uid, v.tag, u.uid, u.name FROM {votingapi_vote} v INNER JOIN {users} u on v.uid = u.uid WHERE v.tag = '%s' GROUP BY u.name";
-  $sql_cnt = "SELECT COUNT(DISTINCT(uid)) FROM {votingapi_vote}";
-  $header = array(
-    array('data' => t('User'), 'field' => 'u.name'),
-    array('data' => t('Votes'), 'field' => 'number_votes', 'sort' => 'desc'),
-    array('data' => t('Vote sum'), 'field' => 'total_votes'),
-  );
-  $sql .= tablesort_sql($header);
-  $result = pager_query($sql, 30, 0, $sql_cnt, variable_get('vote_up_down_tag', 'vote'));
-  while ($vote = db_fetch_object($result)) {
-    $rows[] = array(
-      theme('username', $vote),
-      $vote->number_votes,
-      $vote->total_votes
-    );
-  }
-  drupal_set_title(t('Users by votes'));
-  $output = theme('table', $header, $rows);
-  $output .= theme('pager', NULL, 30, 0);
-
-  return $output;
 }
 
 /**
