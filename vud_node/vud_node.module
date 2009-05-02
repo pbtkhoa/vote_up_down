@@ -113,3 +113,43 @@ function vud_node_admin_settings() {
 
   return system_settings_form($form);
 }
+
+// Start mindless data movement...
+
+/**
+ * Implementation of hook_block().
+ */
+
+/* function vote_up_down_block($op = 'list', $delta = 0) { */
+/*   if ($op == 'list') { */
+/*     $blocks[0]['info'] = t('Who voted on this?'); */
+/*     return $blocks; */
+/*   } */
+
+/*   if ($op == 'view') { */
+/*     if (user_access('access content')) { */
+/*       switch ($delta) { */
+/*         case 0: */
+/*           if (arg(0) == 'node' & is_numeric(arg(1))) { */
+/*             // Check that this node type is enabled for vote_up_down, and if not don't display the block. */
+/*             $node = node_load(arg(1)); */
+/*             if (!vote_up_down_node_access($node)) { */
+/*               return; */
+/*             } */
+/*             $title = t('Who voted on this?'); */
+/*             $nid = arg(1); */
+/*             $tag = variable_get('vote_up_down_tag', 'vote'); */
+/*             $votes = array('content_id' => $nid, 'tag' => $tag); */
+/*             // TODO: support multiple 'tag' in a nested table? */
+
+/*             $voteresults = votingapi_select_votes($votes); */
+/*             $output = theme('vote_up_down_whovoted_block', $nid, $voteresults); */
+/*           } */
+/*           break; */
+/*       } */
+/*       $block['subject'] = $title; */
+/*       $block['content'] = $output; */
+/*       return $block; */
+/*     } */
+/*   } */
+/* } */
