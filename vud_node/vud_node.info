@@ -1,6 +1,6 @@
 ; $Id$;
 name = Vote Up/Down Node
 description = "Allows adding an up/down voting widget to selected content types."
-dependencies[] = vote_up_down
+dependencies[] = vud
 package = Voting
 core = 6.x
