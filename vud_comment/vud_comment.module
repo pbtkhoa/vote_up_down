@@ -1,0 +1,44 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_perm().
+ */
+function vud_comment_perm() {
+  return array('administer vote up/down on comments');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function vud_comment_menu() {
+  $items = array();
+  $items['admin/settings/voteupdown/comment'] = array(
+    'title'            => 'Comments',
+    'description'      => 'Vote Up/Down Comment settings',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('vud_comment_admin_settings'),
+    'access arguments' => array('administer vote up/down on comments'),
+    'type'             => MENU_LOCAL_TASK,
+  );
+  return $items;
+}
+
+/**
+ * Menu callback for administration settings.
+ */
+function vud_comment_admin_settings() {
+  $form['vud_comment_which_nodes'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Node types'),
+    '#description' => t('Select'),
+  );
+  $form['vud_comment_which_nodes']['vud_comments_node_types_list'] = array(
+    '#type'          => 'checkboxes',
+    '#title'         => t('Types'),
+    '#default_value' => variable_get('vud_comment_node_types', array()),
+    '#options'       => node_get_types('names'),
+  );
+  return system_settings_form($form);
+}
+
