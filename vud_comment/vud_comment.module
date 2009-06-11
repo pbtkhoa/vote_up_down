@@ -5,7 +5,7 @@
  * Implementation of hook_perm().
  */
 function vud_comment_perm() {
-  return array('administer vote up/down on comments');
+  return array('administer vote up/down on comments', 'use vote up/down on comments');
 }
 
 /**
@@ -48,11 +48,9 @@ function vud_comment_admin_settings() {
 function vud_comment_comment(&$comment, $op) {
   switch ($op) {
     case 'view':
-      if (variable_get('vud_widget_comment', 1)) {
-        if (user_access('view up/down votes')) {
-          $style = variable_get('vud_widget_style_comment', 0) == 1 ? '_alt' : '';
-          $comment->comment = theme("vud_widget$style", $comment->cid, 'comment') . $comment->comment;
-        }
+      if (user_access('use vote up/down on comments')) {
+        $comment->comment = theme("vud_widget", $comment->cid, 'comment') . $comment->comment;
+
       }
       break;
   }
