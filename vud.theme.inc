@@ -33,7 +33,6 @@ function template_preprocess_vud_widget(&$variables) {
   drupal_add_css(drupal_get_path('module', 'vud') .'/vud.css');
   drupal_add_js(drupal_get_path('module', 'vud') .'/ajax_vud.js');
 
-  //$variables['points'] = theme('vud_points', $cid, $type, $tag);
   if (user_access('use vote up/down on nodes') && ($user->uid)) {
     $criteria = array(
       'content_type' => $type,

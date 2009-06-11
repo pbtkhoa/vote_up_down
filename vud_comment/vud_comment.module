@@ -42,3 +42,18 @@ function vud_comment_admin_settings() {
   return system_settings_form($form);
 }
 
+/**
+ * Implementation of hook_comment().
+ */
+function vud_comment_comment(&$comment, $op) {
+  switch ($op) {
+    case 'view':
+      if (variable_get('vud_widget_comment', 1)) {
+        if (user_access('view up/down votes')) {
+          $style = variable_get('vud_widget_style_comment', 0) == 1 ? '_alt' : '';
+          $comment->comment = theme("vud_widget$style", $comment->cid, 'comment') . $comment->comment;
+        }
+      }
+      break;
+  }
+}

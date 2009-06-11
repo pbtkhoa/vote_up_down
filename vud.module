@@ -85,92 +85,6 @@ function vud_menu() {
 }
 
 /**
- * Implementation of hook_comment().
- */
-function vud_comment(&$comment, $op) {
-  switch ($op) {
-    case 'view':
-      if (variable_get('vud_widget_comment', 1)) {
-        if (user_access('view up/down votes')) {
-          $style = variable_get('vud_widget_style_comment', 0) == 1 ? '_alt' : '';
-          $comment->comment = theme("vud_widget$style", $comment->cid, 'comment') . $comment->comment;
-        }
-      }
-      break;
-  }
-}
-
-/**
- * Comment template preprocess. Adding vud widget to variable list.
- */
-function vud_preprocess_comment(&$variables) {
-  if (user_access('view up/down votes')) {
-    $comment = $variables['comment'];
-    if ($comment->cid) {
-      $style = variable_get('vud_widget_style_comment', 0) == 1 ? '_alt' : '';
-      $variables['vud'] = theme("vud_widget$style", $comment->cid, 'comment');
-    }
-  }
-}
-
-/**
- * Implementation of hook_link().
- */
-function vud_link($type, $object, $teaser = FALSE) {
-  $links = array();
-  switch ($type) {
-    case 'node':
-      $node = &$object;
-      $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
-      $style = variable_get('vud_widget_style_node', 0) == 1 ? '_alt' : '';
-      if ($node_type && user_access('view up/down votes')) {
-        if (variable_get('vud_reset_vote', 0) && user_access('use vote up/down')) {
-          $token = drupal_get_token("vud/$type/$node->nid/0");
-          $links['vud_reset'] = array(
-            'title' => t('Reset vote'),
-            'href' => "vud/$type/$node->nid/0",
-            'attributes' => array('title' => t('Reset your vote.')),
-            'query' => drupal_get_destination() .'&token='. $token,
-          );
-        }
-        if ($teaser && variable_get('vud_link_node', 0) && variable_get('vud_link_node', 0) != 2 && $style != "_alt") {
-          $links['vud_points'] = array(
-            'title' => theme('vud_points', $node->nid, $type),
-            'html' => TRUE,
-          );
-        }
-        else if (!$teaser && variable_get('vud_link_node', 0) > 1 && $style != "_alt") {
-          $links['vud_points'] = array(
-            'title' => theme('vud_points', $node->nid, $type),
-            'html' => TRUE,
-          );
-        }
-      }
-      break;
-    case 'comment':
-      $comment = &$object;
-      if (variable_get('vud_reset_vote', 0) && user_access('use vote up/down') && (variable_get('vud_widget_comment', 0) || variable_get('vud_link_comment', 0))) {
-        $token = drupal_get_token("vud/$type/$comment->cid/0");
-        $links['vud_reset_c'] = array(
-          'title' => t('Reset vote'),
-          'href' => "vud/$type/$comment->cid/0",
-          'attributes' => array('title' => t('Reset your vote.')),
-          'query' => drupal_get_destination() .'&token='. $token,
-        );
-      }
-      if (variable_get('vud_link_comment', 0) && user_access('view up/down votes')) {
-        $links['vud_points_c'] = array(
-          'title' => theme('vud_points', $comment->cid, $type, NULL),
-          'html' => TRUE,
-        );
-      }
-      break;
-  }
-
-  return $links;
-}
-
-/**
  * Menu callback; display all votes for a user.
  */
 function vud_user_votes() {
@@ -351,21 +265,4 @@ function _vud_get_uid() {
     $uid = NULL;
   }
   return $uid;
-}
-
-/**
- * Check whether the current user has access to the given permission for the
- * given node. This requires both that they have access the required permission,
- * and that the node type is enabled for vote up/down.
- * @param $node
- *   A node object
- * @param $perm
- *   (Optional) the name of a permission to pass to user_access()
- * @return boolean TRUE if the user has access to the node vote up/down statistics.
- */
-function vud_node_access($node, $perm = 'access vote up/down statistics') {
-  if (user_access($perm)) {
-    return in_array($node->type, variable_get('vud_node_types', array()), TRUE);
-  }
-  return FALSE;
 }
