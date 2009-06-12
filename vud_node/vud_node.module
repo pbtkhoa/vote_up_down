@@ -42,12 +42,12 @@ function vud_node_menu() {
  * Advanced menu settings callback.
  */
 function vud_node_admin_settings() {
-  $form['vud_node_types'] = array(
+  $form['vud_node_which_nodes'] = array(
     '#type' => 'fieldset',
     '#title' => t('Node types'),
     '#description' => t('Select the node types you want to activate voting on.'),
   );
-  $form['vud_node_types']['vud_node_types_list'] = array(
+  $form['vud_node_which_nodes']['vud_node_types'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Types'),
     '#default_value' => variable_get('vud_node_types', array()),
@@ -106,17 +106,3 @@ function vud_node_tracker() {
     drupal_not_found();
   }
 }
-
-/**
- * Node template preprocess. Adding vud widget to variable list.
- */
-/* function vud_node_preprocess_node(&$variables) { */
-/*   if (user_access('view up/down votes')) { */
-/*     $node = $variables['node']; */
-/*     $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE); */
-/*     if ($node->nid && $node_type) { */
-/*       $style = variable_get('vud_widget_style_node', 0) == 1 ? '_alt' : ''; */
-/*       $variables['vud'] = theme("vud_widget$style", $node->nid, 'node'); */
-/*     } */
-/*   } */
-/* } */

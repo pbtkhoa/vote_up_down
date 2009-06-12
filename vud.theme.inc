@@ -13,7 +13,7 @@ function vud_theme() {
   return array(
     'vud_widget' => array(
       'arguments' => array(
-        'cid' => NULL,
+        'cid'  => NULL,
         'type' => NULL,
       ),
       'template' => 'theme/vud_widget',

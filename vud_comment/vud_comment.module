@@ -33,7 +33,7 @@ function vud_comment_admin_settings() {
     '#title'       => t('Node types'),
     '#description' => t('Select'),
   );
-  $form['vud_comment_which_nodes']['vud_comments_node_types_list'] = array(
+  $form['vud_comment_which_nodes']['vud_comment_node_types'] = array(
     '#type'          => 'checkboxes',
     '#title'         => t('Types'),
     '#default_value' => variable_get('vud_comment_node_types', array()),

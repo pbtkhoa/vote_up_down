@@ -25,14 +25,6 @@ function vud_schema() {
  */
 function vud_uninstall() {
   drupal_uninstall_schema('vud');
-  variable_del('vud_node_types');
-  variable_del('vud_widget_style_node');
-  variable_del('vud_widget_node');
-  variable_del('vud_link_node');
-  variable_del('vud_widget_style_comment');
-  variable_del('vud_widget_comment');
-  variable_del('vud_link_comment');
   variable_del('vud_tag');
   variable_del('vud_reset_vote');
-
 }
