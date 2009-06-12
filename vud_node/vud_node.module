@@ -20,19 +20,19 @@ function vud_node_menu() {
   $items = array();
 
   $items['admin/settings/voteupdown/node'] = array(
-    'title' => 'Nodes',
-    'description' => 'Vote Up/Down Node settings',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('vud_node_admin_settings'),
+    'title'            => 'Nodes',
+    'description'      => 'Vote Up/Down Node settings',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('vud_node_admin_settings'),
     'access arguments' => array('administer vote up/down on nodes'),
-    'type' => MENU_LOCAL_TASK,
+    'type'             => MENU_LOCAL_TASK,
   );
 
   $items['node/%node/votes'] = array(
-    'title' => 'Voting details',
-    'page callback' => 'vud_node_tracker',
+    'title'            => 'Voting details',
+    'page callback'    => 'vud_node_tracker',
     'access arguments' => array('see vote up/down node stats'),
-    'type' => MENU_LOCAL_TASK,
+    'type'             => MENU_LOCAL_TASK,
   );
 
   return $items;
@@ -43,15 +43,15 @@ function vud_node_menu() {
  */
 function vud_node_admin_settings() {
   $form['vud_node_which_nodes'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Node types'),
+    '#type'        => 'fieldset',
+    '#title'       => t('Node types'),
     '#description' => t('Select the node types you want to activate voting on.'),
   );
   $form['vud_node_which_nodes']['vud_node_types'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Types'),
+    '#type'          => 'checkboxes',
+    '#title'         => t('Types'),
     '#default_value' => variable_get('vud_node_types', array()),
-    '#options' => node_get_types('names'),
+    '#options'       => node_get_types('names'),
   );
 
   return system_settings_form($form);

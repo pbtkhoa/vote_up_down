@@ -25,21 +25,21 @@ function vud_help($path, $arg) {
  */
 function vud_admin_advanced_settings() {
   $form['vote_widget_settings_advanced'] = array(
-    '#type' => 'fieldset',
+    '#type'  => 'fieldset',
     '#title' => t('Advanced settings'),
   );
   $form['vote_widget_settings_advanced']['vud_reset_vote'] = array(
-    '#type' => 'radios',
-    '#title' => t('Allow users to reset their votes'),
+    '#type'          => 'radios',
+    '#title'         => t('Allow users to reset their votes'),
     '#default_value' => variable_get('vud_reset_vote', 0),
-    '#options' => array(0 => t('No'), 1 => t('Yes')),
-    '#description' => t('If yes, a link will be displayed on nodes and comments that will allow users to reset their vote.'),
+    '#options'       => array(0 => t('No'), 1 => t('Yes')),
+    '#description'   => t('If yes, a link will be displayed on nodes and comments that will allow users to reset their vote.'),
   );
   $form['vote_widget_settings_advanced']['vud_tag'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Voting API tag'),
+    '#type'          => 'textfield',
+    '#title'         => t('Voting API tag'),
     '#default_value' => variable_get('vud_tag', 'vud'),
-    '#description' => t('Since Vote Up/Down uses Voting API, all votes will be tagged with this term. (default: vote)<br />This tag is useful is you have deployed various modules that use Voting API. It should always be a unique value. Usually, there is NO need to change this.'),
+    '#description'   => t('Since Vote Up/Down uses Voting API, all votes will be tagged with this term. (default: vote)<br />This tag is useful is you have deployed various modules that use Voting API. It should always be a unique value. Usually, there is NO need to change this.'),
   );
 
   return system_settings_form($form);
@@ -61,24 +61,24 @@ function vud_menu() {
   );
 
   $items['admin/settings/voteupdown/advanced'] = array(
-    'title' => 'Advanced',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'title'  => 'Advanced',
+    'type'   => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );
 
   $items['vud'] = array(
-    'title' => 'Vote',
-    'page callback' => 'vud_vote',
+    'title'            => 'Vote',
+    'page callback'    => 'vud_vote',
     'access arguments' => array('use vote up/down'),
-    'type' => MENU_CALLBACK,
+    'type'             => MENU_CALLBACK,
   );
 
   $items['user/%user/votes'] = array(
-    'title' => 'Your votes',
-    'page callback' => 'vud_user_votes',
-    'page arguments' => array(1),
+    'title'            => 'Your votes',
+    'page callback'    => 'vud_user_votes',
+    'page arguments'   => array(1),
     'access arguments' => array('access vote up/down statistics'),
-    'type' => MENU_LOCAL_TASK,
+    'type'             => MENU_LOCAL_TASK,
   );
 
   return $items;
@@ -205,13 +205,13 @@ function template_preprocess_vud_widget_alt(&$variables) {
     $token = drupal_get_token("vud/$type/$cid/1");
     $variables['title'] = url("vud/$type/$cid/1/$tag/1", array('query' => 'token='. $token));
     $variables['link'] = l('', "vud/$type/$cid/1/$tag", array(
-                                               'attributes' => array(
-                                                 'class' => $variables['class'],
-                                                 'title' => t('Vote up')
-                                               ),
-                                               'query' => drupal_get_destination() .'&token='. $token,
-                                              )
-                                            );
+                                                          'attributes' => array(
+                                                 		    'class' => $variables['class'],
+                                                 		    'title' => t('Vote up')
+                                               			  ),
+                                                          'query' => drupal_get_destination() .'&token='. $token,
+                                                        )
+                         );
   }
   else {
     $variables['class'] = 'up-inact';
