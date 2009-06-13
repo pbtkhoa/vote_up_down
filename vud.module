@@ -266,3 +266,20 @@ function _vud_get_uid() {
   }
   return $uid;
 }
+
+/**
+ * Read the widgets folder and populate the array.
+ */
+function vud_read_widgets() {
+  $vud_path = drupal_get_path('module', 'vud');
+  $widgets_dir = $vud_path .'/widgets';
+  $files = file_scan_directory($widgets_dir, 'widget\.tpl\.php$');
+  $themes = array();
+  foreach ($files as $file) {
+    $widgetword = strlen($file->filename) - strlen($widgets_dir) - strlen($file->basename);
+    $themename = substr($file->filename, strlen($widgets_dir) + 1, $widgetword - 2);
+    $themes["$themename"] = $themename;
+  }
+
+  return $themes;
+}

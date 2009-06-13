@@ -21,6 +21,7 @@ function vud_comment_menu() {
     'access arguments' => array('administer vote up/down on comments'),
     'type'             => MENU_LOCAL_TASK,
   );
+
   return $items;
 }
 
@@ -31,13 +32,24 @@ function vud_comment_admin_settings() {
   $form['vud_comment_which_nodes'] = array(
     '#type'        => 'fieldset',
     '#title'       => t('Node types'),
-    '#description' => t('Select'),
+    '#description' => t('Select the node types for which voting on comments will be activated.'),
   );
   $form['vud_comment_which_nodes']['vud_comment_node_types'] = array(
     '#type'          => 'checkboxes',
     '#title'         => t('Types'),
     '#default_value' => variable_get('vud_comment_node_types', array()),
     '#options'       => node_get_types('names'),
+  );
+  $form['vud_comment_widget_select'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Widget Selection'),
+    '#description' => t('Select the voting widget that will be displayed.'),
+  );
+  $form['vud_comment_widget_select']['vud_comment_widget'] = array(
+    '#type'          => 'radios',
+    '#title'         => 'Widget selection',
+    '#default_value' => variable_get('vud_comment_widget', 0),
+    '#options'       => vud_read_widgets(),
   );
   return system_settings_form($form);
 }
@@ -50,7 +62,7 @@ function vud_comment_comment(&$comment, $op) {
     case 'view':
       if (user_access('use vote up/down on comments')) {
         $comment->comment = theme("vud_widget", $comment->cid, 'comment') . $comment->comment;
-
+        var_dump(variable_get('vud_comment_widget', 0));
       }
       break;
   }
