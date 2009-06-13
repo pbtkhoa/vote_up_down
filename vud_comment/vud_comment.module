@@ -62,7 +62,6 @@ function vud_comment_comment(&$comment, $op) {
     case 'view':
       if (user_access('use vote up/down on comments')) {
         $comment->comment = theme("vud_widget", $comment->cid, 'comment') . $comment->comment;
-        var_dump(variable_get('vud_comment_widget', 0));
       }
       break;
   }
