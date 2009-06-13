@@ -7,31 +7,17 @@
  */
 
 /**
- * Implementation of hook_theme().
- */
-function vud_theme() {
-  return array(
-    'vud_widget' => array(
-      'arguments' => array(
-        'cid'  => NULL,
-        'type' => NULL,
-      ),
-      'template' => 'theme/vud_widget',
-    ),
-  );
-}
-
-/**
  * Preprocessing of vud_widget template.
  */
 function template_preprocess_vud_widget(&$variables) {
   global $user;
   $cid = $variables['cid'];
   $type = $variables['type'];
+  $widget = $variables['widget_theme'];
   $tag = isset($variables['tag']) ? $variables['tag'] : variable_get('vud_tag', 'vote');
 
-  drupal_add_css(drupal_get_path('module', 'vud') .'/vud.css');
-  drupal_add_js(drupal_get_path('module', 'vud') .'/ajax_vud.js');
+  drupal_add_css(drupal_get_path('module', 'vud') .'/widgets'."/$widget".'/widget.css');
+  drupal_add_js(drupal_get_path('module', 'vud') .'/widgets'."/$widget".'/ajax.js');
 
   if ($user->uid) {
     $criteria = array(

@@ -61,8 +61,26 @@ function vud_comment_comment(&$comment, $op) {
   switch ($op) {
     case 'view':
       if (user_access('use vote up/down on comments')) {
-        $comment->comment = theme("vud_widget", $comment->cid, 'comment') . $comment->comment;
+        $comment->comment = theme("vud_widget", $comment->cid, 'comment', variable_get('vud_comment_widget', 0)) . $comment->comment;
       }
       break;
   }
 }
+
+/**
+ * Implementation of hook_theme().
+ */
+function vud_comment_theme() {
+  $widget_theme = variable_get('vud_comment_widget', 0);
+  return array(
+    'vud_widget' => array(
+      'arguments' => array(
+        'cid'  => NULL,
+        'type' => NULL,
+        'widget_theme' => NULL,
+      ),
+      'template' => "../widgets/$widget_theme/widget",
+    ),
+  );
+}
+
