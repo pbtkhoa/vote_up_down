@@ -1,7 +1,7 @@
 <?php
 // $Id$
 /**
- * @file vote_up_down_widget.tpl.php
+ * @file widget.tpl.php
  *
  * This template handles default voting widget output. Available variables:
  * - $points: voting points of a same style as widget;

@@ -53,6 +53,17 @@ function vud_node_admin_settings() {
     '#default_value' => variable_get('vud_node_types', array()),
     '#options'       => node_get_types('names'),
   );
+  $form['vud_node_widget_select'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Widget Selection'),
+    '#description' => t('Select the voting widget that will be displayed.'),
+  );
+  $form['vud_node_widget_select']['vud_node_widget'] = array(
+    '#type'          => 'radios',
+    '#title'         => 'Widget selection',
+    '#default_value' => variable_get('vud_node_widget', 0),
+    '#options'       => vud_read_widgets(),
+  );
 
   return system_settings_form($form);
 }
@@ -67,12 +78,29 @@ function vud_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
         $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
         if ($node_type) {
             $node->content['vud'] = array(
-              '#value' => theme("vud_widget", $node->nid, 'node'),
+              '#value' => theme("vud_widget", $node->nid, 'node', variable_get('vud_node_widget', 0)),
               '#weight' => -10,
             );
         }
       }
   }
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function vud_node_theme() {
+  $widget_theme = variable_get('vud_node_widget', 0);
+  return array(
+    'vud_widget' => array(
+      'arguments' => array(
+        'cid'  => NULL,
+        'type' => NULL,
+        'widget_theme' => NULL,
+      ),
+      'template' => "../widgets/$widget_theme/widget",
+    ),
+  );
 }
 
 /**
