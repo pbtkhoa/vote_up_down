@@ -77,10 +77,11 @@ function vud_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       if (user_access('use vote up/down on nodes')) {
         $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
         if ($node_type) {
-            $node->content['vud'] = array(
-              '#value' => theme("vud_widget", $node->nid, 'node', variable_get('vud_node_widget', 0)),
-              '#weight' => -10,
-            );
+          $widget = variable_get('vud_node_widget', 0);
+          $node->content['vud'] = array(
+            '#value' => theme("vud_widget", $node->nid, 'node', $widget),
+            '#weight' => -10,
+          );
         }
       }
   }
