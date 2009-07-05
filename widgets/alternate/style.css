@@ -1,52 +1,11 @@
 /* $Id$  */
 
-.vote-up-down-widget {
-  float: left;
-  clear: left;
-  padding: 2px;
-  margin: 2px 5px 2px 0;
-  border: 1px solid #ccc;
-}
-
-.vote-up-down-via {
-  float: right;
-  color: #999;
-  padding-left: 3px;
-}
-
-.vote-up-act, .vote-up-inact, .vote-down-act, .vote-down-inact, .up-inact, .down-inact {
-  display: block;
-  text-decoration: none;
-  width: 15px;
-  height: 16px;
-}
-
 a.vote-up-inact, a.vote-down-inact, span.vote-up-inact, span.vote-down-inact {
   cursor: pointer;
 }
 
 a.vote-up-act, a.vote-down-act, span.vote-up-act, span.vote-down-act {
   cursor: default;
-}
-
-.vote-up-act, .vote-up-inact:hover {
-  background: url(images/a_up_act.png) no-repeat 0px 0px;
-}
-
-.vote-up-inact, .up-inact {
-  background: url(images/a_up_inact.png) no-repeat 0px 0px;
-}
-
-.vote-down-act, .vote-down-inact:hover {
-  background: url(images/a_down_act.png) no-repeat 0px 0px;
-}
-
-.vote-down-inact, .down-inact {
-  background: url(images/a_down_inact.png) no-repeat 0px 0px;
-}
-
-.vote-points {
-  font-weight: bold;
 }
 
 .vote-up-down-widget-alt {
@@ -108,8 +67,4 @@ a.vote-up-act, a.vote-down-act, span.vote-up-act, span.vote-down-act {
 * html .vote-up-down-widget-alt .vote-up-inact,
 * html .vote-up-down-widget-alt .up-inact {
   width: 55px;
-}
-
-* html .content {
-  height: 1%;
 }

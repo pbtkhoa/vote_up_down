@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Themeing functions
+ * Theme functions
  */
 
 /**
@@ -16,17 +16,17 @@ function template_preprocess_vud_widget(&$variables) {
   $widget = $variables['widget_theme'];
   $tag = isset($variables['tag']) ? $variables['tag'] : variable_get('vud_tag', 'vote');
 
-  drupal_add_css(drupal_get_path('module', 'vud') .'/widgets'."/$widget".'/widget.css');
-  drupal_add_js(drupal_get_path('module', 'vud') .'/widgets'."/$widget".'/ajax.js');
+  vud_add_css($widget);  // Search and add the CSS files.
+  vud_add_js($widget);   // Search and add the JS files.
 
   if ($user->uid) {
     $criteria = array(
       'content_type' => $type,
       'content_id' => $cid,
-      'uid' => _vud_get_uid(),
       'tag' => $tag,
     );
     $user_vote = votingapi_select_single_vote_value($criteria);
+    var_dump($user_vote);
 
     if ($user_vote > 0) {
       $variables['class1'] = 'vote-up-act';
@@ -70,3 +70,43 @@ function template_preprocess_vud_widget(&$variables) {
   }
 }
 
+/**
+ * Read and parse the widgets/ directory recursively.
+ */
+function vud_read_widgets() {
+  $vud_path = drupal_get_path('module', 'vud');
+  $widgets_dir = $vud_path .'/widgets';
+  $files = file_scan_directory($widgets_dir, 'widget\.tpl\.php$');
+  $themes = array();
+  foreach ($files as $file) {
+    $widgetword = strlen($file->filename) - strlen($widgets_dir) - strlen($file->basename);
+    $themename = substr($file->filename, strlen($widgets_dir) + 1, $widgetword - 2);
+    $themes["$themename"] = $themename;
+  }
+
+  return $themes;
+}
+
+/**
+ * Read and load all CSS files in the selected widget directory.
+ */
+function vud_add_css($widget) {
+  $vud_path = drupal_get_path('module', 'vud');
+  $widgets_dir = $vud_path .'/widgets/'. $widget;
+  $files = file_scan_directory($widgets_dir, '\.css$');
+  foreach ($files as $file) {
+    drupal_add_css($file->filename);
+  }
+}
+
+/**
+ * Read and load all JavaScript files in the selected widget directory.
+ */
+function vud_add_js($widget) {
+  $vud_path = drupal_get_path('module', 'vud');
+  $widgets_dir = $vud_path .'/widgets/'. $widget;
+  $files = file_scan_directory($widgets_dir, '\.js$');
+  foreach ($files as $file) {
+    drupal_add_js($file->filename);
+  }
+}

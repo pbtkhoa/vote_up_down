@@ -43,9 +43,9 @@ function vud_node_menu() {
  */
 function vud_node_admin_settings() {
   $form['vud_node_which_nodes'] = array(
-    '#type'        => 'fieldset',
-    '#title'       => t('Node types'),
-    '#description' => t('Select the node types you want to activate voting on.'),
+    '#type'          => 'fieldset',
+    '#title'         => t('Node types'),
+    '#description'   => t('Select the node types you want to activate voting on:'),
   );
   $form['vud_node_which_nodes']['vud_node_types'] = array(
     '#type'          => 'checkboxes',
@@ -54,18 +54,27 @@ function vud_node_admin_settings() {
     '#options'       => node_get_types('names'),
   );
   $form['vud_node_widget_select'] = array(
-    '#type'        => 'fieldset',
-    '#title'       => t('Widget Selection'),
-    '#description' => t('Select the voting widget that will be displayed.'),
+    '#type'          => 'fieldset',
+    '#title'         => t('Widget Selection'),
+    '#description'   => t('Select the voting widget that will be displayed:'),
   );
   $form['vud_node_widget_select']['vud_node_widget'] = array(
     '#type'          => 'radios',
-    '#title'         => 'Widget selection',
     '#default_value' => variable_get('vud_node_widget', 0),
     '#options'       => vud_read_widgets(),
   );
+  $form['vud_node_points_display'] = array(
+    '#type'          => 'fieldset',
+    '#title'         => t('Points display'),
+    '#description'   => t('Choose if the total number of votes will be displayed in the links part:'),
+  );
+  $form['vud_node_points_display']['vud_node_points'] = array(
+    '#type'          => 'radios',
+    '#default_value' => variable_get('vud_node_points', 0),
+    '#options'       => array(0 => 'No', 1 => 'Yes'),
+  );
 
-  return system_settings_form($form);
+return system_settings_form($form);
 }
 
 /**
@@ -133,5 +142,23 @@ function vud_node_tracker() {
   }
   else {
     drupal_not_found();
+  }
+}
+
+/**
+ * Implementation of hook_link().
+ */
+function vud_node_link() {
+  $links = array();
+  switch ($type) {
+    case 'node':
+      $node = &$object;
+      $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
+      if ($node_type && user_access('use vote up/down on nodes') && variable_get('vud_node_points', 0)) {
+        $links['vote_up_down_points'] = array(
+          'title' => theme('vud_points', $node->nid, $type),
+          'html' => TRUE,
+        );
+      }
   }
 }

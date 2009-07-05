@@ -1,7 +1,7 @@
 <?php
 // $Id$
 /**
- * @file vote_up_down_widget_alt.tpl.php
+ * @file widget_alt.tpl.php
  *
  * This template handles alternative voting widget output. Available variables:
  * - $points: voting points of a same style as widget;
@@ -12,7 +12,6 @@
  */
 ?>
 <div class="vote-up-down-widget-alt">
-  <?php print $points; ?>
   <?php if ($class) : ?>
     <span id="vote_up_<?php print $cid; ?>" class="<?php print $class; ?>" title="<?php print $title; ?>"><?php print $link; ?></span>
   <?php endif; ?>
