@@ -7,7 +7,7 @@
  */
 
 /**
- * Preprocessing of vud_widget template.
+ * Preprocess function for the widget display.
  */
 function template_preprocess_vud_widget(&$variables) {
   global $user;
@@ -26,7 +26,6 @@ function template_preprocess_vud_widget(&$variables) {
       'tag' => $tag,
     );
     $user_vote = votingapi_select_single_vote_value($criteria);
-    var_dump($user_vote);
 
     if ($user_vote > 0) {
       $variables['class1'] = 'vote-up-act';
@@ -68,6 +67,41 @@ function template_preprocess_vud_widget(&$variables) {
     $variables['title1'] = t('You must login to vote!');
     $variables['title2'] = t('You must login to vote!');
   }
+}
+
+/**
+ * Preprocess function for the points display.
+ */
+function template_preprocess_vud_votes(&$variables) {
+  $tag = isset($variables['tag']) ? $variables['tag'] : variable_get('vud_tag', 'vote');
+
+  $criteria = array(
+    'content_type' => $variables['type'],
+    'content_id' => $variables['cid'],
+    'value_type' => 'points',
+    'tag' => $tag,
+    'function' => 'sum'
+  );
+  $vote_result = (int) votingapi_select_single_result_value($criteria);
+  var_dump($vote_result);
+
+  if ($vote_result > 0) {
+    $variables['class'] = 'positive';
+    $variables['points'] = '+'. $vote_result;
+  }
+  else {
+    $variables['points'] = $vote_result;
+    if ($vote_result < 0) {
+      $variables['class'] = 'negative';
+    }
+    else {
+      $variables['class'] = 'neutral';
+    }
+  }
+  $variables['label'] = format_plural($vote_result, 'vote', 'votes');
+  $variables['points_labelled'] = format_plural($vote_result, '1 vote', '@count votes');
+  $variables['template_files'][] = 'vud_points';
+
 }
 
 /**

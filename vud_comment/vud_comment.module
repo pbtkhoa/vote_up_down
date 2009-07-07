@@ -73,14 +73,17 @@ function vud_comment_comment(&$comment, $op) {
  */
 function vud_comment_theme() {
   $widget_theme = variable_get('vud_comment_widget', 0);
+  $widgetpath   = drupal_get_path('module', 'vud');
   return array(
     'vud_widget' => array(
-      'arguments' => array(
-        'cid'  => NULL,
-        'type' => NULL,
-        'widget_theme' => NULL,
-      ),
-      'template' => "../widgets/$widget_theme/widget",
+      'arguments' => array('cid'  => NULL, 'type' => NULL, 'widget_theme' => NULL, 'tag' => NULL),
+      'template'  => "widgets/$widget_theme/widget",
+      'path'      => "$widgetpath",
+    ),
+    'vud_votes' => array(
+      'arguments' => array('cid'  => NULL, 'type' => NULL, 'tag'  => NULL),
+      'template'  => "widgets/$widget_theme/votes",
+      'path'      => "$widgetpath",
     ),
   );
 }

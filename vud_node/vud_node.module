@@ -63,14 +63,14 @@ function vud_node_admin_settings() {
     '#default_value' => variable_get('vud_node_widget', 0),
     '#options'       => vud_read_widgets(),
   );
-  $form['vud_node_points_display'] = array(
+  $form['vud_node_votes_display'] = array(
     '#type'          => 'fieldset',
-    '#title'         => t('Points display'),
+    '#title'         => t('Votes display'),
     '#description'   => t('Choose if the total number of votes will be displayed in the links part:'),
   );
-  $form['vud_node_points_display']['vud_node_points'] = array(
+  $form['vud_node_votes_display']['vud_node_votes'] = array(
     '#type'          => 'radios',
-    '#default_value' => variable_get('vud_node_points', 0),
+    '#default_value' => variable_get('vud_node_votes', 0),
     '#options'       => array(0 => 'No', 1 => 'Yes'),
   );
 
@@ -101,14 +101,16 @@ function vud_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
  */
 function vud_node_theme() {
   $widget_theme = variable_get('vud_node_widget', 0);
+  $widgetpath   = drupal_get_path('module', 'vud');
   return array(
     'vud_widget' => array(
-      'arguments' => array(
-        'cid'  => NULL,
-        'type' => NULL,
-        'widget_theme' => NULL,
-      ),
-      'template' => "../widgets/$widget_theme/widget",
+      'arguments' => array('cid'  => NULL, 'type' => NULL, 'widget_theme' => NULL, 'tag' => NULL),
+      'template'  => "widgets/alternate/widget",
+      'path'      => "$widgetpath",
+    ),
+    'vud_votes' => array(
+      'arguments' => array('cid'  => NULL, 'type' => NULL, 'tag'  => NULL),
+      'template'  => "$widget_theme/votes",
     ),
   );
 }
@@ -154,11 +156,12 @@ function vud_node_link() {
     case 'node':
       $node = &$object;
       $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
-      if ($node_type && user_access('use vote up/down on nodes') && variable_get('vud_node_points', 0)) {
+      if ($node_type && user_access('use vote up/down on nodes') && variable_get('vud_node_votes', 0)) {
         $links['vote_up_down_points'] = array(
-          'title' => theme('vud_points', $node->nid, $type),
+          'title' => theme('vud_votes', $node->nid, $type, variable_get('vud_tag', 'vud')),
           'html' => TRUE,
         );
       }
+      break;
   }
 }
