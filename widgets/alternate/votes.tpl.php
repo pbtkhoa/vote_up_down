@@ -1,10 +1,9 @@
 <?php
 // $Id$
 /**
- * @file vote_up_down_points.tpl.php
- * This template can be overriden by vote_up_down_points_$style.tpl.php
+ * @file votes.tpl.php
  *
- * This template handles voting points output. Available variables:
+ * This template handles voting points output for alternative voting widget. Available variables:
  * - $points: points in +1 or -1 format;
  * - $label: translated points label without numbers ("point" or "points");
  * - $points_labelled: translated points label with numbers ("1 point" or "N points");
@@ -12,4 +11,5 @@
  * - $cid: $node->nid or $comment->cid;
  */
 ?>
-<span id="vote_points_<?php print $cid; ?>" class="vote-points"><span class="<?php print $class; ?>"><?php print $points_labelled; ?></span></span>
+<div id="vud_votes_<?php print $cid; ?>" class="total-votes"><div class="<?php print $class; ?>"><?php print $points; ?><div class="votes-label"><?php print $label; ?></div></div></div>
+
