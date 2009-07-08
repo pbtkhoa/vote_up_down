@@ -100,17 +100,14 @@ function vud_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
  * Implementation of hook_theme().
  */
 function vud_node_theme() {
-  $widget_theme = variable_get('vud_node_widget', 0);
-  $widgetpath   = drupal_get_path('module', 'vud');
   return array(
     'vud_widget' => array(
-      'arguments' => array('cid'  => NULL, 'type' => NULL, 'widget_theme' => NULL, 'tag' => NULL),
-      'template'  => "widgets/alternate/widget",
-      'path'      => "$widgetpath",
+      'arguments' => array('cid' => NULL, 'type' => NULL, 'widget_theme' => NULL),
+      'function'  => 'vud_widget_proxy',
     ),
     'vud_votes' => array(
-      'arguments' => array('cid'  => NULL, 'type' => NULL, 'tag'  => NULL),
-      'template'  => "$widget_theme/votes",
+      'arguments' => array('cid' => NULL, 'type' => NULL, 'widget_theme' => NULL),
+      'function'  => 'vud_votes_proxy',
     ),
   );
 }
@@ -125,7 +122,7 @@ function vud_node_tracker() {
       array('data' => t('Vote')),
       array('data' => t('Date'))
     );
-    $tag = variable_get('vud_tag', 'vote');
+    $tag = variable_get('vud_tag', 'vud');
     $criteria = array('content_type' => 'node', 'content_id' => $node->nid, 'tag' => $tag);
     $votes = votingapi_select_votes($criteria);
     foreach ($votes as $vote) {
@@ -150,18 +147,20 @@ function vud_node_tracker() {
 /**
  * Implementation of hook_link().
  */
-function vud_node_link() {
+function vud_node_link($type, $object, $teaser = FALSE) {
   $links = array();
   switch ($type) {
     case 'node':
       $node = &$object;
       $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
       if ($node_type && user_access('use vote up/down on nodes') && variable_get('vud_node_votes', 0)) {
-        $links['vote_up_down_points'] = array(
-          'title' => theme('vud_votes', $node->nid, $type, variable_get('vud_tag', 'vud')),
+        $widget_theme = variable_get('vud_node_widget', 0);
+        $links['vud_votes_count'] = array(
+          'title' => theme('vud_votes', $node->nid, $type, $widget_theme),
           'html' => TRUE,
         );
       }
       break;
   }
+  return $links;
 }

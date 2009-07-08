@@ -96,7 +96,7 @@ function vud_user_votes() {
         array('data' => t('Date'))
       );
       $sql = db_rewrite_sql("SELECT n.nid, n.title, v.value, v.timestamp FROM {node} n LEFT JOIN {votingapi_vote} v ON n.nid = v.content_id WHERE v.uid = %d AND v.tag = '%s' AND v.content_type = 'node' AND n.status = 1 ORDER BY v.timestamp DESC");
-      $result = pager_query($sql, 25, 0, NULL, $account->uid, variable_get('vud_tag', 'vote'));
+      $result = pager_query($sql, 25, 0, NULL, $account->uid, variable_get('vud_tag', 'vud'));
       while ($node = db_fetch_object($result)) {
         $rows[] = array(
           l($node->title, 'node/'. $node->nid),
@@ -138,11 +138,11 @@ function vud_vote($type, $cid, $value, $tag = NULL, $ajax = FALSE, $alt = FALSE)
 
     $vote['value_type'] = 'points';
 
-    $tag = $tag ? $tag : variable_get('vud_tag', 'vote');
+    $tag = $tag ? $tag : variable_get('vud_tag', 'vud');
     $vote['tag'] = $tag;
 
     // Do the voting via Voting API.
-    if ($uid = _vud_get_uid()) {
+    if ($user->uid) {
       if ($vote['value'] == 0) {
         $criteria = array('content_type' => $type, 'content_id' => $cid, 'uid' => $uid, 'tag' => $tag);
         votingapi_delete_votes(votingapi_select_votes($criteria));
@@ -155,15 +155,6 @@ function vud_vote($type, $cid, $value, $tag = NULL, $ajax = FALSE, $alt = FALSE)
         $votes = array(0 => $vote);
         votingapi_set_votes($votes);
       }
-    }
-
-    if ($ajax) {
-      $style = ($alt == TRUE ? 'alt' : '');
-      print theme('vud_points', $cid, $type, NULL, $style);
-      exit();
-    }
-    else {
-      drupal_goto(drupal_get_destination());
     }
   }
 }

@@ -7,23 +7,29 @@
  */
 
 /**
- * Preprocess function for the widget display.
+ * Proxy widget function that hook_theme() calls.
  */
-function template_preprocess_vud_widget(&$variables) {
-  global $user;
-  $cid = $variables['cid'];
-  $type = $variables['type'];
-  $widget = $variables['widget_theme'];
-  $tag = isset($variables['tag']) ? $variables['tag'] : variable_get('vud_tag', 'vote');
+function vud_widget_proxy($cid, $type, $widget_theme) {
+  $render_function = 'theme_render_template';
+  $extension = '.tpl.php';
 
-  vud_add_css($widget);  // Search and add the CSS files.
-  vud_add_js($widget);   // Search and add the JS files.
+  $template_file = drupal_get_path('module', 'vud') ."/widgets/$widget_theme/widget". $extension;
+  $variables = array('cid' => $cid, 'type' => $type, 'widget_theme' => $widget_theme);
+
+  global $user;
+  $variables['cid'] = $cid;
+  $variables['type'] = $type;
+  $variables['widget_theme'] = $widget_theme;
+  $variables['tag'] = variable_get('vud_tag', 'vud');
+
+  vud_add_css($widget_theme);  // Search and add the CSS files.
+  vud_add_js($widget_theme);   // Search and add the JS files.
 
   if ($user->uid) {
     $criteria = array(
       'content_type' => $type,
       'content_id' => $cid,
-      'tag' => $tag,
+      'tag' => $variables['tag'],
     );
     $user_vote = votingapi_select_single_vote_value($criteria);
 
@@ -67,23 +73,31 @@ function template_preprocess_vud_widget(&$variables) {
     $variables['title1'] = t('You must login to vote!');
     $variables['title2'] = t('You must login to vote!');
   }
+
+  $output = $render_function($template_file, $variables);
+  return $output;
 }
 
 /**
- * Preprocess function for the points display.
+ * Proxy votes display function, that hook_theme() calls.
  */
-function template_preprocess_vud_votes(&$variables) {
-  $tag = isset($variables['tag']) ? $variables['tag'] : variable_get('vud_tag', 'vote');
+function vud_votes_proxy($cid, $type, $widget_theme) {
+  $render_function = 'theme_render_template';
+  $extension = '.tpl.php';
+
+  $template_file = drupal_get_path('module', 'vud') ."/widgets/$widget_theme/votes". $extension;
+  $variables = array('cid' => $cid, 'type' => $type, 'widget_theme' => $widget_theme);
+
+  $variables['tag'] = variable_get('vud_tag', 'vud');
 
   $criteria = array(
     'content_type' => $variables['type'],
     'content_id' => $variables['cid'],
     'value_type' => 'points',
-    'tag' => $tag,
+    'tag' => $variables['tag'],
     'function' => 'sum'
   );
   $vote_result = (int) votingapi_select_single_result_value($criteria);
-  var_dump($vote_result);
 
   if ($vote_result > 0) {
     $variables['class'] = 'positive';
@@ -100,8 +114,13 @@ function template_preprocess_vud_votes(&$variables) {
   }
   $variables['label'] = format_plural($vote_result, 'vote', 'votes');
   $variables['points_labelled'] = format_plural($vote_result, '1 vote', '@count votes');
-  $variables['template_files'][] = 'vud_points';
+  /* $variables['template_files'][] = 'vud_points'; */
 
+  vud_add_css($widget_theme);  // Search and add the CSS files.
+  vud_add_js($widget_theme);   // Search and add the JS files.
+
+  $output = $render_function($template_file, $variables);
+  return $output;
 }
 
 /**
@@ -126,8 +145,8 @@ function vud_read_widgets() {
  */
 function vud_add_css($widget) {
   $vud_path = drupal_get_path('module', 'vud');
-  $widgets_dir = $vud_path .'/widgets/'. $widget;
-  $files = file_scan_directory($widgets_dir, '\.css$');
+  $widget_dir = $vud_path .'/widgets/'. $widget;
+  $files = file_scan_directory($widget_dir, '\.css$');
   foreach ($files as $file) {
     drupal_add_css($file->filename);
   }
@@ -138,8 +157,8 @@ function vud_add_css($widget) {
  */
 function vud_add_js($widget) {
   $vud_path = drupal_get_path('module', 'vud');
-  $widgets_dir = $vud_path .'/widgets/'. $widget;
-  $files = file_scan_directory($widgets_dir, '\.js$');
+  $widget_dir = $vud_path .'/widgets/'. $widget;
+  $files = file_scan_directory($widget_dir, '\.js$');
   foreach ($files as $file) {
     drupal_add_js($file->filename);
   }
