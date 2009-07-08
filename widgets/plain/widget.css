@@ -45,8 +45,9 @@ a.vote-up-act, a.vote-down-act, span.vote-up-act, span.vote-down-act {
   background: url('a_down_inact.png') no-repeat 0px 0px;
 }
 
-.vote-points {
+.total-votes {
   font-weight: bold;
+  color: #494949;
 }
 
 .vote-up-down-widget-alt {
@@ -57,7 +58,7 @@ a.vote-up-act, a.vote-down-act, span.vote-up-act, span.vote-down-act {
   border: 0;
 }
 
-.vote-up-down-widget-alt .vote-points {
+.vote-up-down-widget-alt .total-votes {
   background: #ff0;
   font-weight: normal;
   font-size: 1.5em;
@@ -66,7 +67,7 @@ a.vote-up-act, a.vote-down-act, span.vote-up-act, span.vote-down-act {
   margin-bottom: 3px;
 }
 
-.vote-up-down-widget-alt .vote-points .vote-points {
+.vote-up-down-widget-alt .total-votes .total-votes {
   background: transparent;
   font-weight: normal;
   font-size: 1em;
@@ -74,7 +75,7 @@ a.vote-up-act, a.vote-down-act, span.vote-up-act, span.vote-down-act {
   margin-bottom: 0;
 }
 
-.vote-up-down-widget-alt .vote-points-label {
+.vote-up-down-widget-alt .total-votes-label {
   font-size: 0.5em;
   background: transparent;
 }
