@@ -3,7 +3,7 @@
 
 /**
  * @file
- * The .install file, that contains the schema for the vote_up_down.module
+ * Install, update and uninstall functions for the Vote Up/Down core module.
  */
 
 /**
