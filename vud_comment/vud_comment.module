@@ -32,25 +32,34 @@ function vud_comment_admin_settings() {
   $form['vud_comment_which_nodes'] = array(
     '#type'        => 'fieldset',
     '#title'       => t('Node types'),
-    '#description' => t('Select the node types for which voting on comments will be activated.'),
+    '#description' => t('Select the node types for which voting on comments will be activated:'),
   );
   $form['vud_comment_which_nodes']['vud_comment_node_types'] = array(
     '#type'          => 'checkboxes',
-    '#title'         => t('Types'),
     '#default_value' => variable_get('vud_comment_node_types', array()),
     '#options'       => node_get_types('names'),
   );
   $form['vud_comment_widget_select'] = array(
     '#type'        => 'fieldset',
-    '#title'       => t('Widget Selection'),
-    '#description' => t('Select the voting widget that will be displayed.'),
+    '#title'       => t('Widget selection'),
+    '#description' => t('Select the voting widget that will be displayed:'),
   );
   $form['vud_comment_widget_select']['vud_comment_widget'] = array(
     '#type'          => 'radios',
-    '#title'         => 'Widget selection',
     '#default_value' => variable_get('vud_comment_widget', 0),
     '#options'       => vud_read_widgets(),
   );
+  $form['vud_comment_votes_display'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Votes display'),
+    '#description' => t('Choose if the total number of votes will be displayed in the links part:'),
+  );
+  $form['vud_comment_votes_display']['vud_comment_votes'] = array(
+    '#type'          => 'radios',
+    '#default_value' => variable_get('vud_comment_votes', 0),
+    '#options'       => array(0 => 'No', 1 => 'Yes'),
+  );
+
   return system_settings_form($form);
 }
 
@@ -62,7 +71,7 @@ function vud_comment_comment(&$comment, $op) {
     case 'view':
       if (user_access('use vote up/down on comments')) {
         $widget = variable_get('vud_comment_widget', 0);
-        $comment->comment = theme("vud_widget", $comment->cid, 'comment', $widget) . $comment->comment;
+        $comment->comment = theme('vud_widget', $comment->cid, 'comment', $widget) . $comment->comment;
       }
       break;
   }
@@ -72,19 +81,35 @@ function vud_comment_comment(&$comment, $op) {
  * Implementation of hook_theme().
  */
 function vud_comment_theme() {
-  $widget_theme = variable_get('vud_comment_widget', 0);
-  $widgetpath   = drupal_get_path('module', 'vud');
   return array(
     'vud_widget' => array(
-      'arguments' => array('cid'  => NULL, 'type' => NULL, 'widget_theme' => NULL, 'tag' => NULL),
-      'template'  => "widgets/$widget_theme/widget",
-      'path'      => "$widgetpath",
+      'arguments' => array('cid'  => NULL, 'type' => NULL, 'widget_theme' => NULL),
+      'function'  => 'vud_widget_proxy',
     ),
     'vud_votes' => array(
-      'arguments' => array('cid'  => NULL, 'type' => NULL, 'tag'  => NULL),
-      'template'  => "widgets/$widget_theme/votes",
-      'path'      => "$widgetpath",
+      'arguments' => array('cid'  => NULL, 'type' => NULL, 'widget_theme'  => NULL),
+      'function'  => 'vud_votes_proxy',
     ),
   );
 }
 
+/**
+ * Implementation of hook_link().
+ */
+function vud_comment_link($type, $object, $teaser = FALSE) {
+  $links = array();
+  switch($type) {
+    case 'comment':
+      $comment = &$object;
+      $votes_display_mode = variable_get('vud_comment_votes', 0);
+      $widget_theme = variable_get('vud_comment_widget', 0);
+      if ($votes_display_mode) {
+        $links['vud_comment_votes_count'] = array(
+          'title' => theme('vud_votes', $comment->cid, $type, $widget_theme),
+          'html' => TRUE,
+        );
+      }
+      break;
+  }
+  return $links;
+}

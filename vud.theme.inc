@@ -114,7 +114,6 @@ function vud_votes_proxy($cid, $type, $widget_theme) {
   }
   $variables['label'] = format_plural($vote_result, 'vote', 'votes');
   $variables['points_labelled'] = format_plural($vote_result, '1 vote', '@count votes');
-  /* $variables['template_files'][] = 'vud_points'; */
 
   vud_add_css($widget_theme);  // Search and add the CSS files.
   vud_add_js($widget_theme);   // Search and add the JS files.

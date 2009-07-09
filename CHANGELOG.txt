@@ -7,4 +7,6 @@ May 23th, 2009 - 6.x-2.x-dev
 - Removed lots of cruft.
 - Cleaned up the admininstration interface.
 - Now includes a new widget API that allows easy, switchable widgets.
+- Added hook_link support, with a proxy function for easy extendability by
+  other modules.
 
