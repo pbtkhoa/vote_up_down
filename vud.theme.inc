@@ -20,7 +20,7 @@ function vud_widget_proxy($cid, $type, $widget_theme) {
   $variables['cid'] = $cid;
   $variables['type'] = $type;
   $variables['widget_theme'] = $widget_theme;
-  $variables['tag'] = variable_get('vud_tag', 'vud');
+  $variables['tag'] = variable_get('vud_tag', 'vote');
 
   vud_add_css($widget_theme);  // Search and add the CSS files.
   vud_add_js($widget_theme);   // Search and add the JS files.
@@ -88,13 +88,13 @@ function vud_votes_proxy($cid, $type, $widget_theme) {
   $template_file = drupal_get_path('module', 'vud') ."/widgets/$widget_theme/votes". $extension;
   $variables = array('cid' => $cid, 'type' => $type, 'widget_theme' => $widget_theme);
 
-  $variables['tag'] = variable_get('vud_tag', 'vud');
+  $variables['tag'] = $tag = variable_get('vud_tag', 'vote');
 
   $criteria = array(
-    'content_type' => $variables['type'],
-    'content_id' => $variables['cid'],
+    'content_type' => $type,
+    'content_id' => $cid,
     'value_type' => 'points',
-    'tag' => $variables['tag'],
+    'tag' => $tag,
     'function' => 'sum'
   );
   $vote_result = (int) votingapi_select_single_result_value($criteria);

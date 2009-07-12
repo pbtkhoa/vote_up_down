@@ -7,7 +7,6 @@
  */
 
 module_load_include('inc', 'vud', 'vud.theme');  // Include the theme.inc file.
-define('VTAG', 'vud');                           // Define the Voting API $tag value.
 
 /**
  * Implementation of hook_help().
@@ -38,7 +37,7 @@ function vud_admin_advanced_settings() {
   $form['vote_widget_settings_advanced']['vud_tag'] = array(
     '#type'          => 'textfield',
     '#title'         => t('Voting API tag'),
-    '#default_value' => variable_get('vud_tag', 'vud'),
+    '#default_value' => variable_get('vud_tag', 'vote'),
     '#description'   => t('Since Vote Up/Down uses Voting API, all votes will be tagged with this term. (default: vote)<br />This tag is useful is you have deployed various modules that use Voting API. It should always be a unique value. Usually, there is NO need to change this.'),
   );
 
@@ -96,7 +95,7 @@ function vud_user_votes() {
         array('data' => t('Date'))
       );
       $sql = db_rewrite_sql("SELECT n.nid, n.title, v.value, v.timestamp FROM {node} n LEFT JOIN {votingapi_vote} v ON n.nid = v.content_id WHERE v.uid = %d AND v.tag = '%s' AND v.content_type = 'node' AND n.status = 1 ORDER BY v.timestamp DESC");
-      $result = pager_query($sql, 25, 0, NULL, $account->uid, variable_get('vud_tag', 'vud'));
+      $result = pager_query($sql, 25, 0, NULL, $account->uid, variable_get('vud_tag', 'vote'));
       while ($node = db_fetch_object($result)) {
         $rows[] = array(
           l($node->title, 'node/'. $node->nid),
@@ -138,7 +137,7 @@ function vud_vote($type, $cid, $value, $tag = NULL, $ajax = FALSE, $alt = FALSE)
 
     $vote['value_type'] = 'points';
 
-    $tag = $tag ? $tag : variable_get('vud_tag', 'vud');
+    $tag = $tag ? $tag : variable_get('vud_tag', 'vote');
     $vote['tag'] = $tag;
 
     // Do the voting via Voting API.
