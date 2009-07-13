@@ -20,59 +20,44 @@ function vud_widget_proxy($cid, $type, $widget_theme) {
   $variables['cid'] = $cid;
   $variables['type'] = $type;
   $variables['widget_theme'] = $widget_theme;
-  $variables['tag'] = variable_get('vud_tag', 'vote');
+  $variables['tag'] = $tag = variable_get('vud_tag', 'vote');
 
   vud_add_css($widget_theme);  // Search and add the CSS files.
   vud_add_js($widget_theme);   // Search and add the JS files.
 
-  if ($user->uid) {
-    $criteria = array(
-      'content_type' => $type,
-      'content_id' => $cid,
-      'tag' => $variables['tag'],
-    );
-    $user_vote = votingapi_select_single_vote_value($criteria);
+  $criteria = array(
+    'content_type' => $type,
+    'content_id' => $cid,
+    'tag' => $variables['tag'],
+  );
+  $user_vote = votingapi_select_single_vote_value($criteria);
 
-    if ($user_vote > 0) {
-      $variables['class1'] = 'vote-up-act';
-      $variables['class2'] = 'vote-down-inact';
-    }
-    else if ($user_vote < 0) {
-      $variables['class1'] = 'vote-up-inact';
-      $variables['class2'] = 'vote-down-act';
-    }
-    else {
-      $variables['class1'] = 'vote-up-inact';
-      $variables['class2'] = 'vote-down-inact';
-    }
-
-    $token = drupal_get_token("vud/$type/$cid/1");
-    $variables['title1'] = url("vud/$type/$cid/1/$tag/1", array('query' => 'token='. $token));
-    $variables['link1'] = l('', "vud/$type/$cid/1/$tag", array(
-			    'attributes' => array(
-			      'class' => $variables['class1'],
-			      'title' => t('Vote up')
-			    ),
-			    'query' => drupal_get_destination() .'&token='. $token,)
-                          );
-
-    $token = drupal_get_token("vud/$type/$cid/-1");
-    $variables['title2'] = url("vud/$type/$cid/-1/$tag/1", array('query' => 'token='. $token));
-    $variables['link2'] =  l('', "vud/$type/$cid/-1/$tag", array(
-                                                'attributes' => array(
-                                                  'class' => $variables['class2'],
-                                                  'title' => t('Vote down')
-                                                ),
-                                                'query' => drupal_get_destination() .'&token='. $token,
-                                               )
-                                             );
+  if ($user_vote > 0) {
+    $variables['class1'] = 'vote-up-act';
+    $variables['class2'] = 'vote-down-inact';
+  }
+  else if ($user_vote < 0) {
+    $variables['class1'] = 'vote-up-inact';
+    $variables['class2'] = 'vote-down-act';
   }
   else {
-    $variables['class1'] = 'up-inact';
-    $variables['class2'] = 'down-inact';
-    $variables['title1'] = t('You must login to vote!');
-    $variables['title2'] = t('You must login to vote!');
+    $variables['class1'] = 'vote-up-inact';
+    $variables['class2'] = 'vote-down-inact';
   }
+
+  $token_up = drupal_get_token("vote/$type/$cid/1/$tag");
+  $variables['title1'] = url("vote/$type/$cid/1/$tag/$token_up");
+  $variables['link1'] = l('', "vote/$type/$cid/1/$tag/$token_up", array(
+			  'attributes' => array('class' => $variables['class1'], 'title' => t('Vote up')),
+			  'query' => drupal_get_destination())
+  );
+
+  $token_down = drupal_get_token("vote/$type/$cid/-1/$tag");
+  $variables['title2'] = url("vote/$type/$cid/-1/$tag/$token_down");
+  $variables['link2'] =  l('', "vote/$type/$cid/-1/$tag/$token_down", array(
+			   'attributes' => array('class' => $variables['class2'], 'title' => t('Vote down')),
+			   'query' => drupal_get_destination())
+  );
 
   $output = $render_function($template_file, $variables);
   return $output;
