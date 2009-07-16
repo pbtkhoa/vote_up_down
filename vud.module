@@ -95,7 +95,10 @@ function vud_user_votes() {
         array('data' => t('Vote')),
         array('data' => t('Date'))
       );
-      $sql = db_rewrite_sql("SELECT n.nid, n.title, v.value, v.timestamp FROM {node} n LEFT JOIN {votingapi_vote} v ON n.nid = v.content_id WHERE v.uid = %d AND v.tag = '%s' AND v.content_type = 'node' AND n.status = 1 ORDER BY v.timestamp DESC");
+      $sql = db_rewrite_sql("SELECT n.nid, n.title, v.value, v.timestamp FROM {node} n LEFT JOIN {votingapi_vote} v
+                             ON n.nid = v.content_id
+                             WHERE v.uid = %d AND v.tag = '%s' AND v.content_type = 'node' AND n.status = 1
+                             ORDER BY v.timestamp DESC");
       $result = pager_query($sql, 25, 0, NULL, $account->uid, variable_get('vud_tag', 'vote'));
       while ($node = db_fetch_object($result)) {
         $rows[] = array(
