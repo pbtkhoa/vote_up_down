@@ -5,7 +5,7 @@
  */
 Drupal.behaviors.voteUpDownAutoAttach = function () {
   var vdb = [];
-  $('span.vote-up-inact, span.vote-down-inact, span.vote-up-act, span.vote-down-act').each(function () {
+  $('span.up-active, span.down-inactive, span.up-active, span.down-active').each(function () {
     // Read in the path to the PHP handler.
     var uri = $(this).attr('title');
     // Remove the title, so no tooltip will displayed.

@@ -3,18 +3,20 @@
 /**
  * @file widget.tpl.php
  *
+ * Plain widget theme for Vote Up/Down
  * This template handles default voting widget output. Available variables:
- * - $points: voting points of a same style as widget;
- * - $class1: "vote-up-act", "vote-up-inact";
- * - $class2: "vote-down-act", "vote-down-inact";
- * - $title1, $title1: Contains a voting URL, should not be removed;
- * - $link1, $link2: Voting links for users with disabled JS;
- * - $cid: $node->nid or $comment->cid;
+ * - $widget_theme: The widget theme that is being rendered;
+ * - $points: The total number of vote points for this object;
+ * - $class_up: "up-active" or "up-inactive";
+ * - $class-down: "down-active" or "down-inactive";
+ * - $title_up, $title-up: Contains a voting URL, should not be removed;
+ * - $link-up, $link-down: Voting URI for users with disabled JavaScript;
+ * - $cid: $node->nid or $comment->cid or other unique object ID;
  */
 ?>
-<div class="vote-up-down-widget">
-  <?php if ($class1) : ?>
-    <span id="vote_up_<?php print $cid; ?>" class="<?php print $class1; ?>" title="<?php print $title1; ?>"><?php print $link1; ?></span>
-    <span id="vote_down_<?php print $cid; ?>" class="<?php print $class2; ?>" title="<?php print $title2; ?>"><?php print $link2; ?></span>
-  <?php endif; ?>
+<div class="vud-widget-<?php print $widget_theme; ?>">
+<?php if ($class_up) { ?>
+  <span id="vote-up-<?php print $cid; ?>" class="<?php print $class_up; ?>" title="<?php print $title_up; ?>"><?php print $link_up; ?></span>
+  <span id="vote-down-<?php print $cid; ?>" class="<?php print $class_down; ?>" title="<?php print $title_down; ?>"><?php print $link_down; ?></span>
+<?php } ?>
 </div>

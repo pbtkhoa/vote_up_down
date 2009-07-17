@@ -1,6 +1,6 @@
 /* $Id$  */
 
-.vote-up-down-widget {
+.vud-widget-plain {
   float: left;
   clear: left;
   padding: 2px;
@@ -8,109 +8,38 @@
   border: 1px solid #ccc;
 }
 
-.vote-up-down-via {
-  float: right;
-  color: #999;
-  padding-left: 3px;
-}
-
-.vote-up-act, .vote-up-inact, .vote-down-act, .vote-down-inact, .up-inact, .down-inact {
+.up-active, .up-inactive, .down-active, .down-inactive {
   display: block;
   text-decoration: none;
   width: 15px;
   height: 16px;
 }
 
-a.vote-up-inact, a.vote-down-inact, span.vote-up-inact, span.vote-down-inact {
+a.up-inactive, a.down-inactive, span.up-inactive, span.down-inactive {
   cursor: pointer;
 }
 
-a.vote-up-act, a.vote-down-act, span.vote-up-act, span.vote-down-act {
+a.up-active, a.down-active, span.up-active, span.down-active {
   cursor: default;
 }
 
-.vote-up-act, .vote-up-inact:hover {
+.up-active, .up-inactive:hover {
   background: url('a_up_act.png') no-repeat 0px 0px;
 }
 
-.vote-up-inact, .up-inact {
+.up-inactive {
   background: url('a_up_inact.png') no-repeat 0px 0px;
 }
 
-.vote-down-act, .vote-down-inact:hover {
+.down-active, .down-inactive:hover {
   background: url('a_down_act.png') no-repeat 0px 0px;
 }
 
-.vote-down-inact, .down-inact {
+.down-inactive {
   background: url('a_down_inact.png') no-repeat 0px 0px;
 }
 
 .total-votes {
   font-weight: bold;
   color: #494949;
-}
-
-.vote-up-down-widget-alt {
-  float: left;
-  clear: left;
-  padding: 0;
-  margin: 2px 5px 2px 0;
-  border: 0;
-}
-
-.vote-up-down-widget-alt .total-votes {
-  background: #ff0;
-  font-weight: normal;
-  font-size: 1.5em;
-  text-align: center;
-  padding: 3px;
-  margin-bottom: 3px;
-}
-
-.vote-up-down-widget-alt .total-votes .total-votes {
-  background: transparent;
-  font-weight: normal;
-  font-size: 1em;
-  padding: 0;
-  margin-bottom: 0;
-}
-
-.vote-up-down-widget-alt .total-votes-label {
-  font-size: 0.5em;
-  background: transparent;
-}
-
-.vote-up-down-widget-alt .vote-up-act,
-.vote-up-down-widget-alt .vote-up-inact,
-.vote-up-down-widget-alt .up-inact {
-  display: block;
-  min-width: 16px;
-  max-width: auto;
-  height: 22px;
-}
-
-.vote-up-down-widget-alt span.vote-up-act,
-.vote-up-down-widget-alt span.vote-up-inact,
-.vote-up-down-widget-alt span.up-inact {
-  border: 1px solid #ccc;
-}
-
-.vote-up-down-widget-alt .vote-up-act,
-.vote-up-down-widget-alt .vote-up-inact:hover {
-  background: url(images/plus_act.png) no-repeat center 3px;
-}
-
-.vote-up-down-widget-alt .vote-up-inact,
-.vote-up-down-widget-alt .up-inact {
-  background: url(images/plus_inact.png) no-repeat center 3px;
-}
-
-* html .vote-up-down-widget-alt .vote-up-act,
-* html .vote-up-down-widget-alt .vote-up-inact,
-* html .vote-up-down-widget-alt .up-inact {
-  width: 55px;
-}
-
-* html .content {
-  height: 1%;
 }

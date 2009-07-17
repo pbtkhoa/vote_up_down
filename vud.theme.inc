@@ -33,29 +33,29 @@ function vud_widget_proxy($cid, $type, $widget_theme) {
   $user_vote = votingapi_select_single_vote_value($criteria);
 
   if ($user_vote > 0) {
-    $variables['class1'] = 'vote-up-act';
-    $variables['class2'] = 'vote-down-inact';
+    $variables['class_up'] = 'up-active';
+    $variables['class_down'] = 'down-inactive';
   }
   else if ($user_vote < 0) {
-    $variables['class1'] = 'vote-up-inact';
-    $variables['class2'] = 'vote-down-act';
+    $variables['class_up'] = 'up-inactive';
+    $variables['class_down'] = 'down-active';
   }
   else {
-    $variables['class1'] = 'vote-up-inact';
-    $variables['class2'] = 'vote-down-inact';
+    $variables['class_up'] = 'up-inactive';
+    $variables['class_down'] = 'down-inactive';
   }
 
   $token_up = drupal_get_token("vote/$type/$cid/1/$tag");
-  $variables['title1'] = url("vote/$type/$cid/1/$tag/$token_up");
-  $variables['link1'] = l('', "vote/$type/$cid/1/$tag/$token_up", array(
-			  'attributes' => array('class' => $variables['class1'], 'title' => t('Vote up')),
+  $variables['title_up'] = url("vote/$type/$cid/1/$tag/$token_up");
+  $variables['link_up'] = l('', "vote/$type/$cid/1/$tag/$token_up", array(
+			  'attributes' => array('class' => $variables['class_up'], 'title' => t('Vote up')),
 			  'query' => drupal_get_destination())
   );
 
   $token_down = drupal_get_token("vote/$type/$cid/-1/$tag");
-  $variables['title2'] = url("vote/$type/$cid/-1/$tag/$token_down");
-  $variables['link2'] =  l('', "vote/$type/$cid/-1/$tag/$token_down", array(
-			   'attributes' => array('class' => $variables['class2'], 'title' => t('Vote down')),
+  $variables['title_down'] = url("vote/$type/$cid/-1/$tag/$token_down");
+  $variables['link_down'] =  l('', "vote/$type/$cid/-1/$tag/$token_down", array(
+			   'attributes' => array('class' => $variables['class_down'], 'title' => t('Vote down')),
 			   'query' => drupal_get_destination())
   );
 
