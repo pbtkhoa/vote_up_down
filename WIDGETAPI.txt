@@ -1,0 +1,42 @@
+-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Widget API - Vote Up/Down
+-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Vote Up/Down has its own widget API that allows site implementors and designers
+to easily use their own widget themes. Its easy as 1-2-3! Following are some
+rules you must follow:
+
+- All widgets are put in their respective sub-folders inside the widgets/
+  subdirectory. So your widget theme is called "awesome", make a folder by the
+  name of "awesome" such that its path is ./widgets/awesome
+
+- The widget itself is themed by the API using the "widget.tpl.php" file. As
+  soon as this file is created in your widget folder, it will displayed in the
+  list of available widget themes. The theme system of Vote Up/Down outputs
+  variables that you can freely use to display all sorts of widgets. The list of
+  variables is given later.
+
+- Apart from displaying the number of votes in the widget itself, you can also
+  display the widgets in the "links" part of the node, comment etc. This is
+  implemented in the theme using a separate theme file called "votes.tpl.php"
+
+
+-=-=-=-=-=-
+Variables
+-=-=-=-=-=-
+$cid          : Unique content ID
+$type         : Type of element being voted on
+$widget_theme : The name of the widget theme being rendered
+$tag          : The unique tag associated with each vote
+$class_up     : Either 'up-active', or 'up-inactive'
+$class_down   : Either 'down-active' or 'down-inactive'
+$title_up     : URL used by Ajax voting for the 'up' voting
+$title_down   : URL used by Ajax voting for the 'down' voting
+$link_up      : URL used for 'up' voting when JS is disabled
+$link_down    : URL used for 'down' voting when JS is disabled
+$class	      : 'negative', 'positive' or 'neutral' depending on number of votes
+$points	      : Number of total vote points for the vote object
+$label	      : Just the vote label
+$points_labelled : Total number of votes with the label
+
+; $Id$

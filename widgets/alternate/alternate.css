@@ -1,0 +1,44 @@
+/* $Id$  */
+/* Alternate widget CSS files */
+
+.vud-widget-alternate {
+    float: left;
+    clear: left;
+    padding: 0;
+    margin: 5px 6px 2px 0;
+    width: 50px;
+    height: 54px;
+}
+
+.vud-widget-alternate .up-active,
+.vud-widget-alternate .up-inactive {
+	height: 22px;
+	width: 50px;
+	margin-top: 1px;
+}
+
+.vud-widget-alternate .up-active,
+.vud-widget-alternate .up-inactive:hover {
+    background: url(plus_act.png) no-repeat center 3px;
+}
+
+.vud-widget-alternate .up-inactive {
+    background: url(plus_inact.png) no-repeat center 3px;
+}
+
+.vud-widget-alternate .up-active {
+	cursor: default;
+}
+.vud-widget-alternate .up-inactive:hover {
+	cursor: pointer;
+}
+
+.vud-widget-alternate .alternate-votes-display {
+	border: 1px solid #CCCCCC;
+	text-align: center;
+	height: 28px;
+	font-size: 16px;
+	padding-top: 4px;
+}
+
+
