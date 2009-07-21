@@ -1,0 +1,6 @@
+; $Id$
+name = Vote Up/Down Term
+description = "Allows adding an up/down voting widget to taxonomy terms on a node."
+dependencies[] = vud
+package = Voting
+core = 6.x

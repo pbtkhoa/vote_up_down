@@ -12,9 +12,9 @@
 
 .vud-widget-alternate .up-active,
 .vud-widget-alternate .up-inactive {
-	height: 22px;
-	width: 50px;
-	margin-top: 1px;
+    height: 22px;
+    width: 50px;
+    margin-top: 1px;
 }
 
 .vud-widget-alternate .up-active,
@@ -27,18 +27,16 @@
 }
 
 .vud-widget-alternate .up-active {
-	cursor: default;
+    cursor: default;
 }
 .vud-widget-alternate .up-inactive:hover {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .vud-widget-alternate .alternate-votes-display {
-	border: 1px solid #CCCCCC;
-	text-align: center;
-	height: 28px;
-	font-size: 16px;
-	padding-top: 4px;
+    border: 1px solid #CCCCCC;
+    text-align: center;
+    height: 28px;
+    font-size: 16px;
+    padding-top: 4px;
 }
-
-

@@ -4,24 +4,6 @@
 /**
  * @file
  * Test file for Vote Up/Down.
- *
- * TODO: check behaviour of every setting in the admin screens:
- * - vote_up_down_node_types: make sure voting doesn't appear on other
- *   and does appear on selected types
- * - vote_up_down_widget_style_node: check each display
- * - vote_up_down_widget_node
- * - vote_up_down_link_node
- * - vote_up_down_widget_style_comment
- * - vote_up_down_widget_comment
- * - vote_up_down_link_comment
- * - vote_up_down_anonymous_vote
- * - vote_up_down_reset_vote
- * - vote_up_down_tag
- *
- * TODO:
- * - test dodgy user behaviour
- * - test XSS injection
- * - ...
  */
 
 // Why is this required?  Sometimes?
@@ -40,7 +22,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
   }
 
   function setUp() {
-    parent::setUp('votingapi', 'vote_up_down');
+    parent::setUp('votingapi', 'vud');
 
     // Module permissions: array('view up/down votes', 'use vote up/down', 'access vote up/down statistics', 'administer vote up/down');
 
