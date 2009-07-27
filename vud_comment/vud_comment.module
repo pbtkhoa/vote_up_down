@@ -46,7 +46,7 @@ function vud_comment_admin_settings() {
   );
   $form['vud_comment_widget_select']['vud_comment_widget'] = array(
     '#type'          => 'radios',
-    '#default_value' => variable_get('vud_comment_widget', 0),
+    '#default_value' => variable_get('vud_comment_widget', 'plain'),
     '#options'       => vud_read_widgets(),
   );
   $form['vud_comment_votes_display'] = array(
@@ -70,8 +70,9 @@ function vud_comment_comment(&$comment, $op) {
   switch ($op) {
     case 'view':
       if (user_access('use vote up/down on comments')) {
-        $widget = variable_get('vud_comment_widget', 0);
-        $comment->comment = theme('vud_widget', $comment->cid, 'comment', $widget) . $comment->comment;
+        $tag = variable_get('vud_tag', 'vud');
+        $widget = variable_get('vud_comment_widget', 'plain');
+        $comment->comment = theme('vud_widget', $comment->cid, 'comment', $tag, $widget) . $comment->comment;
       }
       break;
   }
@@ -102,7 +103,7 @@ function vud_comment_link($type, $object, $teaser = FALSE) {
     case 'comment':
       $comment = &$object;
       $votes_display_mode = variable_get('vud_comment_votes', 0);
-      $widget_theme = variable_get('vud_comment_widget', 0);
+      $widget_theme = variable_get('vud_comment_widget', 'plain');
       if ($votes_display_mode) {
         $links['vud_comment_votes_count'] = array(
           'title' => theme('vud_votes', $comment->cid, $type, $widget_theme),

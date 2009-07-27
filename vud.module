@@ -85,6 +85,13 @@ function vud_menu() {
 }
 
 /**
+ * Implementation of hook_perm().
+ */
+function vud_perm() {
+  return array('use vote up/down', 'administer vote up/down', 'access vote up/down statistics');
+}
+
+/**
  * Menu callback; display all votes for a user.
  */
 function vud_user_votes() {

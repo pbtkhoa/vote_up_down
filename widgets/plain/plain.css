@@ -43,3 +43,10 @@ a.up-active, a.down-active, span.up-active, span.down-active {
   font-weight: bold;
   color: #494949;
 }
+
+.vud-term-table {
+  border: 1px solid #D3E7F4;
+  float: right;
+  width: 40em;
+  margin: 0.5em 0 0.5em 1em;
+}

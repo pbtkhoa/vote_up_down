@@ -9,7 +9,7 @@
 /**
  * Proxy widget function that hook_theme() calls.
  */
-function vud_widget_proxy($cid, $type, $widget_theme) {
+function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
   $render_function = 'theme_render_template';
   $extension = '.tpl.php';
 
@@ -20,7 +20,7 @@ function vud_widget_proxy($cid, $type, $widget_theme) {
   $variables['cid'] = $cid;
   $variables['type'] = $type;
   $variables['widget_theme'] = $widget_theme;
-  $variables['tag'] = $tag = variable_get('vud_tag', 'vote');
+  $variables['tag'] = $tag ? $tag : variable_get('vud_tag', 'vote');
 
   vud_add_css($widget_theme);  // Search and add the CSS files.
   vud_add_js($widget_theme);   // Search and add the JS files.

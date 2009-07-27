@@ -51,7 +51,7 @@ function vud_term_admin_settings() {
   );
   $form['vud_term_widget_select']['vud_term_widget'] = array(
     '#type'          => 'radios',
-    '#default_value' => variable_get('vud_term_widget', 0),
+    '#default_value' => variable_get('vud_term_widget', 'plain'),
     '#options'       => vud_read_widgets(),
   );
 
@@ -67,19 +67,55 @@ function vud_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       if (user_access('use vote up/down on terms')) {
         $node_type = in_array($node->type, variable_get('vud_term_types', array()), TRUE);
         if ($node_type) {
-          $widget = variable_get('vud_term_widget', 0);
+          $widget = variable_get('vud_term_widget', 'plain');
           $header = array(
             array('data' => t('Term')),
             array('data' => t('Description')),
             array('data' => t('Vote')),
             array('data' => t('Score')),
           );
-          $rows[] = array("hello", "world", "this is", "pratul");
+          $rows = array();
+          foreach ($node->taxonomy as $term => $tdetails) {
+            $tag =  $node->nid .":". $tdetails->tid;
+            $rows[] = array(
+              $tdetails->name,
+              $tdetails->description,
+              theme('vud_widget', $tdetails->tid, "term", $tag, $widget),
+              _vud_term_get_row_votes($tdetails->tid, "term", $tag),
+            );
+          }
           $node->content['vud_term_show_table'] = array(
-            '#value' => theme('table', $header, $rows),
+            '#value' => theme('table', $header, $rows, $attributes = array('class' => 'vud-term-table', 'id' => "term-table-$node->nid")),
             '#weight' => 0,
           );
         }
       }
   }
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function vud_term_theme() {
+  return array(
+    'vud_widget' => array(
+      'arguments' => array('cid'  => NULL, 'type' => NULL, 'tag'  => NULL, 'widget_theme' => NULL),
+      'function'  => 'vud_widget_proxy',
+    ),
+  );
+}
+
+/**
+ * Function to get votes for a particular term row on a node.
+ */
+function _vud_term_get_row_votes($id, $type, $tag) {
+  $criteria = array(
+    'content_type' => $type,
+    'content_id' => $cid,
+    'value_type' => 'points',
+    'tag' => $tag,
+    'function' => 'sum'
+  );
+  $vote_result = (int) votingapi_select_single_result_value($criteria);
+  return $vote_result;
 }
