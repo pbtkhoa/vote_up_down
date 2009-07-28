@@ -70,7 +70,7 @@ function vud_comment_comment(&$comment, $op) {
   switch ($op) {
     case 'view':
       if (user_access('use vote up/down on comments')) {
-        $tag = variable_get('vud_tag', 'vud');
+        $tag = variable_get('vud_tag', 'vote');
         $widget = variable_get('vud_comment_widget', 'plain');
         $comment->comment = theme('vud_widget', $comment->cid, 'comment', $tag, $widget) . $comment->comment;
       }
@@ -84,11 +84,11 @@ function vud_comment_comment(&$comment, $op) {
 function vud_comment_theme() {
   return array(
     'vud_widget' => array(
-      'arguments' => array('cid'  => NULL, 'type' => NULL, 'widget_theme' => NULL),
+      'arguments' => array('cid'  => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
       'function'  => 'vud_widget_proxy',
     ),
     'vud_votes' => array(
-      'arguments' => array('cid'  => NULL, 'type' => NULL, 'widget_theme'  => NULL),
+      'arguments' => array('cid'  => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme'  => NULL),
       'function'  => 'vud_votes_proxy',
     ),
   );
@@ -104,9 +104,10 @@ function vud_comment_link($type, $object, $teaser = FALSE) {
       $comment = &$object;
       $votes_display_mode = variable_get('vud_comment_votes', 0);
       $widget_theme = variable_get('vud_comment_widget', 'plain');
+      $tag = variable_get('vud_tag', 'vote');
       if ($votes_display_mode) {
         $links['vud_comment_votes_count'] = array(
-          'title' => theme('vud_votes', $comment->cid, $type, $widget_theme),
+          'title' => theme('vud_votes', $comment->cid, $type, $tag, $widget_theme),
           'html' => TRUE,
         );
       }

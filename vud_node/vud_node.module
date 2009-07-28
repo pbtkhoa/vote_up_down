@@ -106,7 +106,7 @@ function vud_node_theme() {
       'function'  => 'vud_widget_proxy',
     ),
     'vud_votes' => array(
-      'arguments' => array('cid' => NULL, 'type' => NULL, 'widget_theme' => NULL),
+      'arguments' => array('cid' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
       'function'  => 'vud_votes_proxy',
     ),
   );
@@ -155,13 +155,14 @@ function vud_node_link($type, $object, $teaser = FALSE) {
       $votes_display_mode = variable_get('vud_node_votes', 0);
       $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
       $widget_theme = variable_get('vud_node_widget', 'plain');
+      $tag = variable_get('vud_tag', 'vote');
       switch ($votes_display_mode) {
         case 0:
           break;
         case 1:
           if (($teaser == 1) && $node_type && user_access('use vote up/down on nodes')) {
             $links['vud_node_votes_count'] = array(
-              'title' => theme('vud_votes', $node->nid, $type, $widget_theme),
+              'title' => theme('vud_votes', $node->nid, $type, $tag, $widget_theme),
               'html' => TRUE,
             );
           }
@@ -169,7 +170,7 @@ function vud_node_link($type, $object, $teaser = FALSE) {
         case 2:
           if (($teaser == 0) && $node_type && user_access('use vote up/down on nodes')) {
             $links['vud_node_votes_count'] = array(
-              'title' => theme('vud_votes', $node->nid, $type, $widget_theme),
+              'title' => theme('vud_votes', $node->nid, $type, $tag, $widget_theme),
               'html' => TRUE,
             );
           }
@@ -177,7 +178,7 @@ function vud_node_link($type, $object, $teaser = FALSE) {
         case 3:
           if ($node_type && user_access('use vote up/down on nodes')) {
             $links['vud_node_votes_count'] = array(
-              'title' => theme('vud_votes', $node->nid, $type, $widget_theme),
+              'title' => theme('vud_votes', $node->nid, $type, $tag, $widget_theme),
               'html' => TRUE,
             );
           }

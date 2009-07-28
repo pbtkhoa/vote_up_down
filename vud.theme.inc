@@ -21,15 +21,17 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
   $variables['type'] = $type;
   $variables['widget_theme'] = $widget_theme;
   $variables['tag'] = $tag ? $tag : variable_get('vud_tag', 'vote');
+  $uid = votingapi_current_user_identifier();
 
   vud_add_css($widget_theme);  // Search and add the CSS files.
   vud_add_js($widget_theme);   // Search and add the JS files.
 
-  $criteria = array(
+  $base_criteria = array(
     'content_type' => $type,
     'content_id' => $cid,
     'tag' => $variables['tag'],
   );
+  $criteria = $base_criteria + $uid;
   $user_vote = votingapi_select_single_vote_value($criteria);
 
   if ($user_vote > 0) {
@@ -59,14 +61,14 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
 			   'query' => drupal_get_destination())
   );
 
-  $criteria2 = array(
+  $result_criteria = array(
     'content_type' => $type,
     'content_id' => $cid,
     'value_type' => 'points',
     'tag' => $tag,
     'function' => 'sum'
   );
-  $vote_result = (int) votingapi_select_single_result_value($criteria2);
+  $vote_result = (int) votingapi_select_single_result_value($result_criteria);
 
   if ($vote_result > 0) {
     $variables['class'] = 'positive';
@@ -91,14 +93,14 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
 /**
  * Proxy votes display function, that hook_theme() calls.
  */
-function vud_votes_proxy($cid, $type, $widget_theme) {
+function vud_votes_proxy($cid, $type, $tag, $widget_theme) {
   $render_function = 'theme_render_template';
   $extension = '.tpl.php';
 
   $template_file = drupal_get_path('module', 'vud') ."/widgets/$widget_theme/votes". $extension;
   $variables = array('cid' => $cid, 'type' => $type, 'widget_theme' => $widget_theme);
 
-  $variables['tag'] = $tag = variable_get('vud_tag', 'vote');
+  $variables['tag'] = $tag;
 
   $criteria = array(
     'content_type' => $type,
