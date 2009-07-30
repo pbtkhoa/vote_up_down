@@ -4,38 +4,40 @@
   float: left;
   clear: left;
   padding: 2px;
-  margin: 2px 5px 2px 0;
+  margin: 2px 5px 0 0;
   border: 1px solid #ccc;
 }
 
-.up-active, .up-inactive, .down-active, .down-inactive {
+.vud-widget-plain .up-active, .up-inactive, .down-active, .down-inactive {
   display: block;
   text-decoration: none;
   width: 15px;
   height: 16px;
 }
 
-a.up-inactive, a.down-inactive, span.up-inactive, span.down-inactive {
+.vud-widget-plain a.up-inactive, a.down-inactive, span.up-inactive, span.down-inactive {
   cursor: pointer;
 }
 
-a.up-active, a.down-active, span.up-active, span.down-active {
+.vud-widget-plain a.up-active, a.down-active, span.up-active, span.down-active {
   cursor: default;
 }
 
-.up-active, .up-inactive:hover {
+.vud-widget-plain .up-active,
+.vud-widget-plain .up-inactive:hover {
   background: url('a_up_act.png') no-repeat 0px 0px;
 }
 
-.up-inactive {
+.vud-widget-plain .up-inactive {
   background: url('a_up_inact.png') no-repeat 0px 0px;
 }
 
-.down-active, .down-inactive:hover {
+.vud-widget-plain .down-active,
+.vud-widget-plain .down-inactive:hover {
   background: url('a_down_act.png') no-repeat 0px 0px;
 }
 
-.down-inactive {
+.vud-widget-plain .down-inactive {
   background: url('a_down_inact.png') no-repeat 0px 0px;
 }
 

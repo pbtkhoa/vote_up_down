@@ -1,0 +1,76 @@
+/* $Id$ */
+
+.vud-widget-updown {
+  width: 50px;
+  float: left;
+  padding: 0 0.7em 0 0;
+}
+
+.vud-widget-updown .updown-score {
+  border: 1px solid #ccc;
+  color: #000;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 5px;
+  margin-bottom: 6px;
+
+}
+
+.vud-widget-updown .updown-score .updown-current-score {
+  display: block;
+  font-size: 20px;
+}
+
+.vud-widget-updown .updown-vote {
+  padding-top: 5px;
+  font-size: 15px;
+  height: 22px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.updown-widget-voted .updown-vote {
+  display: none;
+}
+
+.vud-widget-updown .updown-voteup,
+.vud-widget-updown .updown-votedown {
+  display: block;
+  color: #000;
+  border: 1px solid #ccc;
+  width: 20px;
+  font-size: 15px;
+  height: 22px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.vud-widget-updown .updown-voteup a:hover,
+.vud-widget-updown .updown-votedown a:hover {
+  text-decoration: none;
+}
+
+.vud-widget-updown .updown-voteup {
+  float: left;
+}
+
+.vud-widget-updown .updown-votedown {
+  float: right;
+}
+
+.vud-widget-updown .updown-voteundo a {
+  display: block;
+  border: 1px solid #ccc;
+  color: #000;
+  line-height: 20px;
+  width: 48px;
+}
+
+.vud-widget-updown .updown-nodown .updown-voteup {
+  float: none;
+}
+
+.vud-widget-updown .updown-nodown .updown-voteup a {
+  width: 48px;
+}
