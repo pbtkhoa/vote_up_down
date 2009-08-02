@@ -118,7 +118,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
 
     // Use the url to find the NID, and then check for the <span> tag that the
     // JavaScript uses to update the points.
-    preg_match('#/node/([0-9]*)$#', $node_url, $matches);
+    preg_match('#node/([0-9]*)$#', $node_url, $matches);
     $nid = $matches[1];
     $this->assertRaw('<span id="vote_points_' . $nid . '" class="vote-points">', 'Labeled SPAN tag found');
 
