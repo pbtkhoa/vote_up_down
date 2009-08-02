@@ -41,7 +41,7 @@
   background: url('a_down_inact.png') no-repeat 0px 0px;
 }
 
-.total-votes {
+.total-votes-plain {
   font-weight: bold;
   color: #494949;
 }

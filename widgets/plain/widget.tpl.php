@@ -14,9 +14,9 @@
  * - $cid: $node->nid or $comment->cid or other unique object ID;
  */
 ?>
-<div class="vud-widget-<?php print $widget_theme; ?>">
+<div class="vud-widget-plain">
 <?php if ($class_up) { ?>
-  <span id="vote-up-<?php print $cid; ?>" class="<?php print $class_up; ?>" title="<?php print $title_up; ?>"><?php print $link_up; ?></span>
-  <span id="vote-down-<?php print $cid; ?>" class="<?php print $class_down; ?>" title="<?php print $title_down; ?>"><?php print $link_down; ?></span>
+  <span id="vote-up-<?php print $cid; ?>" class="<?php print $class_up; ?>"><?php print $link_up; ?></span>
+  <span id="vote-down-<?php print $cid; ?>" class="<?php print $class_down; ?>"><?php print $link_down; ?></span>
 <?php } ?>
 </div>

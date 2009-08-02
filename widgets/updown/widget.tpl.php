@@ -6,7 +6,6 @@
  *
  * UpDown widget theme for Vote Up/Down
  */
-$unsigned_points = (int) $points;
 ?>
 <div class="vud-widget-updown">
   <div class="updown-score"><span class="updown-current-score"><?php print $points; ?></span> votes</div>

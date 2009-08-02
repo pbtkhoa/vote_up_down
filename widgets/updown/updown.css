@@ -49,6 +49,13 @@
 .vud-widget-updown .updown-voteup a:hover,
 .vud-widget-updown .updown-votedown a:hover {
   text-decoration: none;
+  color: #000000;
+}
+
+.vud-widget-updown .updown-voteup a,
+.vud-widget-updown .updown-votedown a {
+  text-decoration: none;
+  color: #000000;
 }
 
 .vud-widget-updown .updown-voteup {

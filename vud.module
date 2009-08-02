@@ -167,10 +167,25 @@ function vud_vote($type, $cid, $value, $tag, $token) {
       $votes = array(0 => $vote);
       votingapi_set_votes($votes);
     }
-    drupal_goto(drupal_get_destination());
+  }
+
+  if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+    $result_criteria = array(
+      'content_type' => $type,
+      'content_id' => $cid,
+      'value_type' => 'points',
+      'tag' => $tag,
+      'function' => 'sum'
+    );
+    $vote_result = (int) votingapi_select_single_result_value($result_criteria);
+    $js = array(
+      'votes'     => $vote_result,
+      'vote_url'  => url('vote/'. $type .'/'. $cid .'/'. $value .'/'. $tag .'/'. $token),
+    );
+    drupal_json($js);
+    exit;
   }
   else {
-    watchdog("vud", "Could not vote on $type $cid, value $value, tag $tag and token $token");
-    drupal_goto(drupal_get_destination());
+    drupal_goto($_SERVER['HTTP_REFERER']);
   }
 }

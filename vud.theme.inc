@@ -51,15 +51,13 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
   $variables['title_up'] = url("vote/$type/$cid/1/$tag/$token_up");
   $variables['link_up'] = l('', "vote/$type/$cid/1/$tag/$token_up", array(
 			  'attributes' => array('class' => $variables['class_up'], 'title' => t('Vote up')),
-			  'query' => drupal_get_destination())
-  );
+  ));
 
   $token_down = drupal_get_token("vote/$type/$cid/-1/$tag");
   $variables['title_down'] = url("vote/$type/$cid/-1/$tag/$token_down");
   $variables['link_down'] =  l('', "vote/$type/$cid/-1/$tag/$token_down", array(
 			   'attributes' => array('class' => $variables['class_down'], 'title' => t('Vote down')),
-			   'query' => drupal_get_destination())
-  );
+  ));
 
   $result_criteria = array(
     'content_type' => $type,

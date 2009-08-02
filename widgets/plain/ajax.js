@@ -1,52 +1,15 @@
 // $Id$
 
-/**
- * Pre-processing for the vote database object creation.
- */
-Drupal.behaviors.voteUpDownAutoAttach = function () {
-  var vdb = [];
-  $('span.up-active, span.down-inactive, span.up-active, span.down-active').each(function () {
-    // Read in the path to the PHP handler.
-    var uri = $(this).attr('title');
-    // Remove the title, so no tooltip will displayed.
-    $(this).removeAttr('title');
-    // Remove the href link.
-    $(this).html('');
-    // Create an object with this uri, so that we can attach events to it.
-    if (!vdb[uri]) {
-      vdb[uri] = new Drupal.VDB(this, uri);
-    }
-  });
-}
-
-/**
- * The Vote database object
- */
-Drupal.VDB = function (elt, uri) {
-  var db = this;
-  this.elt = elt;
-  this.uri = uri;
-  this.id = $(elt).attr('id');
-  this.dir1 = this.id.indexOf('vote_up') > -1 ? 'up' : 'down';
-  this.dir2 = this.dir1 == 'up' ? 'down' : 'up';
-  $(elt).click(function () {
-    // Ajax POST request for the voting data
-    $.ajax({
-      type: 'GET',
-      url: db.uri,
-      success: function (data) {
-        // Extract the cid so we can change other elements for the same cid
-        var cid = db.id.match(/[0-9]+$/);
-        var pid = 'vote_points_' + cid;
-        // Update the voting arrows
-        $('#' + db.id + '.vote-' + db.dir1 + '-inact').removeClass('vote-' + db.dir1 + '-inact').addClass('vote-' + db.dir1 + '-act');
-        $('#' + 'vote_' + db.dir2 + '_' + cid).removeClass('vote-' + db.dir2 + '-act').addClass('vote-' + db.dir2 + '-inact');
-        // Update the points
-        $('#' + pid).html(data);
-      },
-      error: function (xmlhttp) {
-        alert('An HTTP '+ xmlhttp.status +' error occured. Your vote was not submitted!\n');
-      }
+Drupal.behaviors.vudPlainWidget = function () {
+    $('.vud-widget-plain span.up-inactive, span.down-inactive, span.up-active, span.up-inactive').each(function () {
+	voteurl = $(this).find('a').attr('href');
+	$(this).html('');
     });
-  });
-}
+    $('.vud-widget-plain span.up-inactive, .vud-widget-plain span.down-inactive').click(function () {
+	$.get(voteurl, function (data) {
+	    data = Drupal.parseJson(data);
+	    newVotes = data.votes.toString();
+	    console.log(newVotes);
+	});
+    });
+};
