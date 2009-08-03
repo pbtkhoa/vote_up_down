@@ -12,4 +12,4 @@
  * - $cid: $node->nid or $comment->cid or other unique object ID;
  */
 ?>
-<span id="total-votes-<?php print $cid; ?>" class="total-votes-plain"><span class="<?php print $class; ?> total"><?php print $points_labelled; ?></span></span>
+<span id="total-votes-<?php print $type; ?>-<?php print $cid; ?>" class="total-votes-plain"><span class="<?php print $class; ?> total"><?php print $points_labelled; ?></span></span>

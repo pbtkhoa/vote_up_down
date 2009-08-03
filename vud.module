@@ -178,8 +178,11 @@ function vud_vote($type, $cid, $value, $tag, $token) {
       'function' => 'sum'
     );
     $vote_result = (int) votingapi_select_single_result_value($result_criteria);
+    $f_vote_result = format_plural($vote_result, '1 vote', '@count votes');
     $js = array(
-      'votes'     => $vote_result,
+      'votes'     => $f_vote_result,
+      'type'      => $type,
+      'id'        => $cid,
       'vote_url'  => url('vote/'. $type .'/'. $cid .'/'. $value .'/'. $tag .'/'. $token),
     );
     drupal_json($js);
