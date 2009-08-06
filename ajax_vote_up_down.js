@@ -40,13 +40,15 @@ Drupal.VDB = function (elt, uri) {
         var pid = 'vote_points_' + cid;
         // Update the voting arrows
         $('#' + db.id + '.vote-' + db.dir1 + '-inact').removeClass('vote-' + db.dir1 + '-inact').addClass('vote-' + db.dir1 + '-act');
-        $('#' + 'vote_' + db.dir2 + '_' + cid).removeClass('vote-' + db.dir2 + '-act').addClass('vote-' + db.dir2 + '-inact');
+        if (!$('#' + 'vote_' + db.dir2 + '_' + cid).hasClass(db.dir2.'-inact')) {
+          $('#' + 'vote_' + db.dir2 + '_' + cid).removeClass('vote-' + db.dir2 + '-act').addClass('vote-' + db.dir2 + '-inact');
+        }
         // Update the points
         $('#' + pid).html(data);
       },
       error: function (xmlhttp) {
         alert('An HTTP '+ xmlhttp.status +' error occured. Your vote was not submitted!\n');
-      }
+    }
     });
   });
 }
