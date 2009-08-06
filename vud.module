@@ -25,14 +25,7 @@ function vud_help($path, $arg) {
 function vud_admin_advanced_settings() {
   $form['vote_widget_settings_advanced'] = array(
     '#type'  => 'fieldset',
-    '#title' => t('Advanced settings'),
-  );
-  $form['vote_widget_settings_advanced']['vud_reset_vote'] = array(
-    '#type'          => 'radios',
-    '#title'         => t('Allow users to reset their votes'),
-    '#default_value' => variable_get('vud_reset_vote', 0),
-    '#options'       => array(0 => t('No'), 1 => t('Yes')),
-    '#description'   => t('If yes, a link will be displayed on nodes and comments that will allow users to reset their vote.'),
+    '#title' => t('General settings'),
   );
   $form['vote_widget_settings_advanced']['vud_tag'] = array(
     '#type'          => 'textfield',
@@ -60,7 +53,7 @@ function vud_menu() {
   );
 
   $items['admin/settings/voteupdown/advanced'] = array(
-    'title'  => 'Advanced',
+    'title'  => 'General',
     'type'   => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );

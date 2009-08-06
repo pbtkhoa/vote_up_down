@@ -25,6 +25,7 @@ function vud_node_menu() {
     'page callback'    => 'drupal_get_form',
     'page arguments'   => array('vud_node_admin_settings'),
     'access arguments' => array('administer vote up/down on nodes'),
+    'weight'           => -10,
     'type'             => MENU_LOCAL_TASK,
   );
 
@@ -71,6 +72,16 @@ function vud_node_admin_settings() {
     '#type'          => 'radios',
     '#default_value' => variable_get('vud_node_votes', 0),
     '#options'       => array(0 => 'No', 1 => 'Teaser only', 2 => 'Full display only', 3 => 'Both teaser and full'),
+  );
+  $form['vud_node_reset_votes'] = array(
+    '#type'          => 'fieldset',
+    '#title'         => t('Allow votes reset'),
+    '#description'   => t('Choose if users are allowed to reset their vote on a node:'),
+  );
+  $form['vud_node_reset_votes']['vud_node_reset'] = array(
+    '#type'          => 'radios',
+    '#default_value' => variable_get('vud_node_reset', 0),
+    '#options'       => array(0 => 'No', 1 => 'Yes'),
   );
 
 return system_settings_form($form);
