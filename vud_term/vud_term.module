@@ -81,7 +81,7 @@ function vud_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
               $tdetails->name,
               $tdetails->description,
               theme('vud_widget', $tdetails->tid, "term", $tag, $widget),
-              _vud_term_get_row_votes($tdetails->tid, "term", $tag),
+              "<span id=\"total-votes-term-$tdetails->tid\">". _vud_term_get_row_votes($tdetails->tid, "term", $tag) .'</span>',
             );
           }
           $node->content['vud_term_show_table'] = array(

@@ -66,6 +66,14 @@ function vud_menu() {
     'type'             => MENU_CALLBACK,
   );
 
+  $items['votereset/%/%/%/%'] = array(
+    'title'            => 'Reset vote',
+    'page callback'    => 'vud_reset',
+    'page arguments'   => array(1, 2, 3, 4),
+    'access arguments' => array('reset vote up/down votes'),
+    'type'             => MENU_CALLBACK,
+  );
+
   $items['user/%user/votes'] = array(
     'title'            => 'Your votes',
     'page callback'    => 'vud_user_votes',
@@ -81,7 +89,7 @@ function vud_menu() {
  * Implementation of hook_perm().
  */
 function vud_perm() {
-  return array('use vote up/down', 'administer vote up/down', 'access vote up/down statistics');
+  return array('use vote up/down', 'administer vote up/down', 'access vote up/down statistics', 'reset vote up/down votes');
 }
 
 /**
@@ -161,6 +169,9 @@ function vud_vote($type, $cid, $value, $tag, $token) {
       votingapi_set_votes($votes);
     }
   }
+  else {
+    watchdog("vud", "Could not vote on $type $cid, with value $value, tag $tag and token $token");
+  }
 
   if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
     $result_criteria = array(
@@ -173,15 +184,26 @@ function vud_vote($type, $cid, $value, $tag, $token) {
     $vote_result = (int) votingapi_select_single_result_value($result_criteria);
     $f_vote_result = format_plural($vote_result, '1 vote', '@count votes');
     $js = array(
-      'votes'     => $f_vote_result,
+      'fullvotes' => $f_vote_result,
+      'votes'     => $vote_result,
       'type'      => $type,
       'id'        => $cid,
-      'vote_url'  => url('vote/'. $type .'/'. $cid .'/'. $value .'/'. $tag .'/'. $token),
+      'value'     => $value,
+      'tag'       => $tag,
     );
     drupal_json($js);
     exit;
   }
   else {
     drupal_goto($_SERVER['HTTP_REFERER']);
+  }
+}
+
+/**
+ * Callback to reset votes on an object.
+ */
+function vud_reset($type, $cid, $tag, $token) {
+  if (is_numeric($cid) && drupal_valid_token($token, "vote/$type/$cid/$value/$tag")) {
+    return "Hello World";
   }
 }
