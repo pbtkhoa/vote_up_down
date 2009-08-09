@@ -174,7 +174,7 @@ function vud_node_link($type, $object, $teaser = FALSE) {
           if (($teaser == 1) && $node_type && user_access('use vote up/down on nodes')) {
             $links['vud_node_votes_count'] = array(
               'title' => theme('vud_votes', $node->nid, $type, $tag, $widget_theme),
-              'html' => TRUE,
+              'html'  => TRUE,
             );
           }
           break;
@@ -182,7 +182,7 @@ function vud_node_link($type, $object, $teaser = FALSE) {
           if (($teaser == 0) && $node_type && user_access('use vote up/down on nodes')) {
             $links['vud_node_votes_count'] = array(
               'title' => theme('vud_votes', $node->nid, $type, $tag, $widget_theme),
-              'html' => TRUE,
+              'html'  => TRUE,
             );
           }
           break;
@@ -190,10 +190,18 @@ function vud_node_link($type, $object, $teaser = FALSE) {
           if ($node_type && user_access('use vote up/down on nodes')) {
             $links['vud_node_votes_count'] = array(
               'title' => theme('vud_votes', $node->nid, $type, $tag, $widget_theme),
-              'html' => TRUE,
+              'html'  => TRUE,
             );
           }
           break;
+      }
+      if (variable_get('vud_node_reset', 0)) {
+        $reset_token = drupal_get_token("votereset/node/$node->nid/$tag");
+        $links['vud_node_votes_reset_link'] = array(
+          'title' => t('Reset your vote'),
+          'href'  => "votereset/node/$node->nid/$tag/$reset_token",
+          'html'  => TRUE,
+        );
       }
       break;
   }

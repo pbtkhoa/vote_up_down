@@ -191,17 +191,20 @@ function vud_vote($type, $cid, $value, $tag, $token) {
  * Callback to reset votes on an object.
  */
 function vud_reset($type, $cid, $tag, $token) {
-  if (is_numeric($cid) && drupal_valid_token($token, "vote/$type/$cid/$value/$tag")) {
+  if (is_numeric($cid) && drupal_valid_token($token, "votereset/$type/$cid/$tag")) {
     $uid = votingapi_current_user_identifier();
     $criteria = array(
       'content_type' => $type,
       'content_id' => $cid,
-      'uid' => $uid,
       'tag' => $tag,
     );
-    votingapi_delete_votes(votingapi_select_votes($criteria));
+    $fullc = $criteria + $uid;
+    votingapi_delete_votes(votingapi_select_votes($fullc));
     votingapi_recalculate_results($type, $cid);
 
-    drupal_goto(drupal_get_destination());
+    drupal_goto($_SERVER['HTTP_REFERER']);
+  }
+  else {
+    watchdog("vud", "Could not reset votes on $type $cid, with tag $tag and token $token");
   }
 }
