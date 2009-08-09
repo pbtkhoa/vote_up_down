@@ -151,23 +151,11 @@ function vud_vote($type, $cid, $value, $tag, $token) {
     $tag = $tag ? $tag : variable_get('vud_tag', 'vote');
     $vote['tag'] = $tag;
 
-    // Do the voting via Voting API.
-    if ($vote['value'] == 0) {
-      $criteria = array(
-        'content_type' => $type,
-        'content_id' => $cid,
-        'tag' => $tag
-      );
-      votingapi_delete_votes(votingapi_select_votes($criteria));
-      votingapi_recalculate_results($type, $cid);
-    }
-    else {
-      $vote['content_id'] = $cid;
-      $vote['content_type'] = $type;
-      $vote['tag'] = $tag;
-      $votes = array(0 => $vote);
-      votingapi_set_votes($votes);
-    }
+    $vote['content_id'] = $cid;
+    $vote['content_type'] = $type;
+    $vote['tag'] = $tag;
+    $votes = array(0 => $vote);
+    votingapi_set_votes($votes);
   }
   else {
     watchdog("vud", "Could not vote on $type $cid, with value $value, tag $tag and token $token");
@@ -204,6 +192,16 @@ function vud_vote($type, $cid, $value, $tag, $token) {
  */
 function vud_reset($type, $cid, $tag, $token) {
   if (is_numeric($cid) && drupal_valid_token($token, "vote/$type/$cid/$value/$tag")) {
-    return "Hello World";
+    $uid = votingapi_current_user_identifier();
+    $criteria = array(
+      'content_type' => $type,
+      'content_id' => $cid,
+      'uid' => $uid,
+      'tag' => $tag,
+    );
+    votingapi_delete_votes(votingapi_select_votes($criteria));
+    votingapi_recalculate_results($type, $cid);
+
+    drupal_goto(drupal_get_destination());
   }
 }

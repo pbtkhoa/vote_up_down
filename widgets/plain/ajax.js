@@ -22,8 +22,11 @@ Drupal.behaviors.vudPlainWidget = function () {
 		    $('#vote-down-' + type + '-' + id).removeClass('down-inactive').addClass('down-active');
 		    $('#vote-up-' + type + '-' + id).removeClass('up-active').addClass('up-inactive');
 		}
-		$("#total-votes-" + type + "-" + id + " .total").html(longvotes);
-		$("#total-votes-" + type + "-" + id).html(shrtvotes);
+		if (type == 'term') {
+		    $("#total-votes-" + type + "-" + id).html(shrtvotes);
+		} else {
+		    $("#total-votes-" + type + "-" + id + " .total").html(longvotes);
+		}
 	    },
 	    error: function (xmlhttp) {
 		alert('An HTTP '+ xmlhttp.status +' error occured. Your vote was not submitted!');
