@@ -134,7 +134,7 @@ function vud_user_votes() {
  * Function for the main voting handler with Ajax support.
  */
 function vud_vote($type, $cid, $value, $tag, $token) {
-  if (is_numeric($cid) && is_numeric($value) && drupal_valid_token($token, "vote/$type/$cid/$value/$tag")) {
+  if (is_numeric($value) && drupal_valid_token($token, "vote/$type/$cid/$value/$tag")) {
     $vote = array();
     // Sanity-check the incoming values.
     if ($value > 0) {
@@ -159,6 +159,7 @@ function vud_vote($type, $cid, $value, $tag, $token) {
   }
   else {
     watchdog("vud", "Could not vote on $type $cid, with value $value, tag $tag and token $token");
+    drupal_set_message("Oops! There was an error in submitting your vote!", 'warning');
   }
 
   if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
@@ -191,7 +192,7 @@ function vud_vote($type, $cid, $value, $tag, $token) {
  * Callback to reset votes on an object.
  */
 function vud_reset($type, $cid, $tag, $token) {
-  if (is_numeric($cid) && drupal_valid_token($token, "votereset/$type/$cid/$tag")) {
+  if (drupal_valid_token($token, "votereset/$type/$cid/$tag")) {
     $uid = votingapi_current_user_identifier();
     $criteria = array(
       'content_type' => $type,
@@ -206,5 +207,6 @@ function vud_reset($type, $cid, $tag, $token) {
   }
   else {
     watchdog("vud", "Could not reset votes on $type $cid, with tag $tag and token $token");
+    drupal_set_message("Oops! There was an error in resetting your vote!", 'warning');
   }
 }
