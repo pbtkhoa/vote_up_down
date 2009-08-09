@@ -16,7 +16,7 @@
 ?>
 <div class="vud-widget-plain">
 <?php if ($class_up) { ?>
-  <span id="vote-up-<?php print $type; ?>-<?php print $cid; ?>" class="<?php print $class_up; ?>"><?php print $link_up; ?></span>
-  <span id="vote-down-<?php print $type; ?>-<?php print $cid; ?>" class="<?php print $class_down; ?>"><?php print $link_down; ?></span>
+  <a href="<?php print $title_up; ?>" class="<?php print $class_up; ?>"><span id="vote-up-<?php print $type; ?>-<?php print $cid; ?>" class="<?php print $class_up; ?>" title="Vote up!"></span></a>
+  <a href="<?php print $title_down; ?>" class="<?php print $class_down; ?>"><span id="vote-down-<?php print $type; ?>-<?php print $cid; ?>" class="<?php print $class_down; ?>" title="Vote down!"></span></a>
 <?php } ?>
 </div>

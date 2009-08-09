@@ -1,9 +1,8 @@
 // $Id$
 
 Drupal.behaviors.vudPlainWidget = function () {
-    $('.vud-widget-plain span.up-inactive, span.down-inactive, span.up-active, span.down-active').click(function () {
-	widget  = $(this);
-	voteurl = widget.find('a').attr('href');
+    $('.vud-widget-plain a.up-inactive, a.down-inactive, a.up-active, a.down-active').click(function () {
+	voteurl = $(this).attr('href');
 	$.ajax({
 	    type: 'GET',
 	    url: voteurl,
