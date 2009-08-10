@@ -34,9 +34,10 @@
 }
 
 .vud-widget-alternate .alternate-votes-display {
+    font-family: Georgia, serif;
     border: 1px solid #CCCCCC;
     text-align: center;
-    height: 28px;
-    font-size: 16px;
-    padding-top: 4px;
+    height: 26px;
+    font-size: 18px;
+    padding: 2px;
 }

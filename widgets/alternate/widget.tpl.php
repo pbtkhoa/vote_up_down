@@ -7,9 +7,9 @@
  */
 $unsigned_points = (int) $points;
 ?>
-<div class="vud-widget-<?php print $widget_theme; ?>">
+<div class="vud-widget-alternate">
 <?php if ($class_up) : ?>
   <div id="total-votes-<?php print $type; ?>-<?php print $cid; ?>" class="<?php print $widget_theme; ?>-votes-display"><?php print $unsigned_points; ?></div>
-  <div id="vote-up-<?php print $cid; ?>" class="<?php print $class_up; ?>" title="<?php print $title_up; ?>"><?php print $link_up; ?></div>
+  <a href="<?php print $title_up; ?>"><div id="vote-up-<?php print $type; ?>-<?php print $cid; ?>" class="<?php print $class_up; ?>" title="Vote up!"></div></a>
 <?php endif; ?>
 </div>

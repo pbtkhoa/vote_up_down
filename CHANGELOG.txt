@@ -9,4 +9,6 @@ May 23th, 2009 - 6.x-2.x-dev
 - Now includes a new widget API that allows easy, switchable widgets.
 - Added hook_link support, with a proxy function for easy extendability by
   other modules.
+- Added support for voting on taxonomy terms on a node.
+- Added support for resetting votes by a user on an object.
 

@@ -1,14 +1,13 @@
 // $Id$
 
-Drupal.behaviors.vudPlainWidget = function () {
-    $('.vud-widget-plain span.up-inactive, span.down-inactive, span.up-active, span.down-active').click(function () {
+Drupal.behaviors.vudAlternateWidget = function () {
+    $('.vud-widget-alternate .up-inactive, .down-inactive, .up-active, .down-active').click(function () {
 	voteurl = $(this).parent().attr('href');
 	$.ajax({
 	    type: 'GET',
 	    url: voteurl,
 	    success: function (data) {
 		data = Drupal.parseJson(data);
-		var longvotes = data.fullvotes;
 		var shrtvotes = data.votes;
 		var type = data.type;
 		var id = data.id;
@@ -16,10 +15,6 @@ Drupal.behaviors.vudPlainWidget = function () {
 		if (value == 1) {
 		    $('#vote-up-' + type + '-' + id).removeClass('up-inactive').addClass('up-active');
 		    $('#vote-down-' + type + '-' + id).removeClass('down-active').addClass('down-inactive');
-		}
-		if (value == -1) {
-		    $('#vote-down-' + type + '-' + id).removeClass('down-inactive').addClass('down-active');
-		    $('#vote-up-' + type + '-' + id).removeClass('up-active').addClass('up-inactive');
 		}
 		if (type == 'term') {
 		    $("#total-votes-" + type + "-" + id).html(shrtvotes);
