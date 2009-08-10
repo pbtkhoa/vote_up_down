@@ -22,22 +22,10 @@
   font-size: 20px;
 }
 
-.vud-widget-updown .updown-vote {
-  padding-top: 5px;
-  font-size: 15px;
-  height: 22px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.updown-widget-voted .updown-vote {
-  display: none;
-}
-
-.vud-widget-updown .updown-voteup,
-.vud-widget-updown .updown-votedown {
+.vud-widget-updown .up-inactive,
+.vud-widget-updown .down-inactive {
   display: block;
-  color: #000;
+  color: #666;
   border: 1px solid #ccc;
   width: 20px;
   font-size: 15px;
@@ -46,38 +34,28 @@
   text-align: center;
 }
 
-.vud-widget-updown .updown-voteup a:hover,
-.vud-widget-updown .updown-votedown a:hover {
-  text-decoration: none;
-  color: #000000;
+.vud-widget-updown .up-inactive:hover,
+.vud-widget-updown .down-inactive:hover {
+  font-size: 20px;
 }
 
-.vud-widget-updown .updown-voteup a,
-.vud-widget-updown .updown-votedown a {
-  text-decoration: none;
-  color: #000000;
-}
-
-.vud-widget-updown .updown-voteup {
+.vud-widget-updown .up-inactive, .up-active {
   float: left;
 }
 
-.vud-widget-updown .updown-votedown {
+.vud-widget-updown .down-inactive, .down-active {
   float: right;
 }
 
-.vud-widget-updown .updown-voteundo a {
+.vud-widget-updown .up-active, .down-active {
   display: block;
+  color: #000000;
   border: 1px solid #ccc;
-  color: #000;
-  line-height: 20px;
-  width: 48px;
+  width: 20px;
+  font-size: 20px;
+  height: 22px;
+  font-weight: bold;
+  text-align: center;
+  cursor: default;
 }
 
-.vud-widget-updown .updown-nodown .updown-voteup {
-  float: none;
-}
-
-.vud-widget-updown .updown-nodown .updown-voteup a {
-  width: 48px;
-}
