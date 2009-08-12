@@ -79,9 +79,9 @@ function vud_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         if ($node_type) {
           $widget = variable_get('vud_term_widget', 'plain');
           foreach ($node->taxonomy as $term => $tdetails) {
-            $cid =  $node->nid . $tdetails->tid;
+            $cid =  $tdetails->tid;
+            $tag = "n$node->nid";
             $reset_token = drupal_get_token("votereset/term/$cid/$tag");
-            $tag = variable_get('vud_tag', 'vote');
             if (variable_get('vud_term_reset', 0)) {
               $header = array(
                 array('data' => t('Term')),
@@ -94,7 +94,7 @@ function vud_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
                 $tdetails->name,
                 $tdetails->description,
                 theme('vud_widget', $cid, "term", $tag, $widget),
-                "<span id=\"total-votes-term-$cid\">". _vud_term_get_row_votes($cid) .'</span>',
+                "<span id=\"total-votes-term-$cid\">". _vud_term_get_row_votes($cid, $tag) .'</span>',
                 l('Reset your vote', "votereset/term/$cid/$tag/$reset_token"),
               );
             }
@@ -109,7 +109,7 @@ function vud_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
                 $tdetails->name,
                 $tdetails->description,
                 theme('vud_widget', $cid, "term", $tag, $widget),
-                "<span id=\"total-votes-term-$cid\">". _vud_term_get_row_votes($cid) .'</span>',
+                "<span id=\"total-votes-term-$cid\">". _vud_term_get_row_votes($cid, $tag) .'</span>',
               );
             }
           }
@@ -137,8 +137,7 @@ function vud_term_theme() {
 /**
  * Function to get votes for a particular term row on a node.
  */
-function _vud_term_get_row_votes($cid) {
-  $tag = variable_get('vud_tag', 'vote');
+function _vud_term_get_row_votes($cid, $tag) {
   $criteria = array(
     'content_type' => 'term',
     'content_id' => $cid,

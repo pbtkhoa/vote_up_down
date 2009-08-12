@@ -6,6 +6,10 @@
   padding: 0 0.7em 0 0;
 }
 
+.vud-widget-updown a:hover {
+  text-decoration: none;
+}
+
 .vud-widget-updown .updown-score {
   border: 1px solid #ccc;
   color: #000;

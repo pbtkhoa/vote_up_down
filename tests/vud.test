@@ -16,7 +16,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
   function getInfo() {
     return array(
       'name'        => t('Vote Up/Down'),
-      'description' => t('For the relevant issue in the Vote Up/Down queue, see http://drupal.org/node/360121'),
+      'description' => t('Unit testing for Vote Up/Down'),
       'group'       => t('Voting API Tests')
     );
   }
@@ -32,7 +32,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
         'access vote up/down statistics',
         'administer vote up/down',
         'use vote up/down',
-        'view up/down votes',
+        'reset vote up/down votes',
         'administer permissions',
         'administer blocks',
       )
@@ -42,7 +42,7 @@ class VoteUpDownTestCase extends DrupalWebTestCase {
       array(
         'access vote up/down statistics',
         'use vote up/down',
-        'view up/down votes',
+        'reset vote up/down votes',
         'create story content',
         'create page content',
       )
