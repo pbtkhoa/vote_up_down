@@ -48,16 +48,10 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
   }
 
   $token_up = drupal_get_token("vote/$type/$cid/1/$tag");
-  $variables['title_up'] = url("vote/$type/$cid/1/$tag/$token_up");
-  $variables['link_up'] = l('', "vote/$type/$cid/1/$tag/$token_up", array(
-			  'attributes' => array('title' => t('Vote up')),
-  ));
+  $variables['link_up'] = url("vote/$type/$cid/1/$tag/$token_up");
 
   $token_down = drupal_get_token("vote/$type/$cid/-1/$tag");
-  $variables['title_down'] = url("vote/$type/$cid/-1/$tag/$token_down");
-  $variables['link_down'] =  l('', "vote/$type/$cid/-1/$tag/$token_down", array(
-			   'attributes' => array('title' => t('Vote down')),
-  ));
+  $variables['link_down'] = url("vote/$type/$cid/-1/$tag/$token_down");
 
   $result_criteria = array(
     'content_type' => $type,
@@ -82,7 +76,7 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
     }
   }
   $variables['label'] = format_plural($vote_result, 'vote', 'votes');
-  $variables['points_labelled'] = format_plural($vote_result, '1 vote', '@count votes');
+  $variables['label_points'] = format_plural($vote_result, '1 vote', '@count votes');
 
   $output = $render_function($template_file, $variables);
   return $output;
@@ -123,7 +117,7 @@ function vud_votes_proxy($cid, $type, $tag, $widget_theme) {
     }
   }
   $variables['label'] = format_plural($vote_result, 'vote', 'votes');
-  $variables['points_labelled'] = format_plural($vote_result, '1 vote', '@count votes');
+  $variables['label_points'] = format_plural($vote_result, '1 vote', '@count votes');
 
   vud_add_css($widget_theme);  // Search and add the CSS files.
   vud_add_js($widget_theme);   // Search and add the JS files.

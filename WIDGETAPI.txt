@@ -30,13 +30,13 @@ $widget_theme : The name of the widget theme being rendered
 $tag          : The unique tag associated with each vote
 $class_up     : Either 'up-active', or 'up-inactive'
 $class_down   : Either 'down-active' or 'down-inactive'
-$title_up     : URL used by Ajax voting for the 'up' voting
-$title_down   : URL used by Ajax voting for the 'down' voting
 $link_up      : URL used for 'up' voting when JS is disabled
 $link_down    : URL used for 'down' voting when JS is disabled
 $class	      : 'negative', 'positive' or 'neutral' depending on number of votes
 $points	      : Number of total vote points for the vote object
 $label	      : Just the vote label
-$points_labelled : Total number of votes with the label
+$label_points  : Total number of votes with the label
 
+-=-=-=-=-=-
+Last updated:
 ; $Id$
