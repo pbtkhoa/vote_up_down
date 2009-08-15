@@ -46,7 +46,7 @@ function vud_term_admin_settings() {
   );
   $form['vud_term_widget_select'] = array(
     '#type'          => 'fieldset',
-    '#title'         => t('Widget Selection'),
+    '#title'         => t('Widget selection'),
     '#description'   => t('Select the voting widget that will be displayed:'),
   );
   $form['vud_term_widget_select']['vud_term_widget'] = array(
