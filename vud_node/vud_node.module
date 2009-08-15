@@ -55,7 +55,7 @@ function vud_node_admin_settings() {
   );
   $form['vud_node_widget_select'] = array(
     '#type'          => 'fieldset',
-    '#title'         => t('Widget Selection'),
+    '#title'         => t('Widget selection'),
     '#description'   => t('Select the voting widget that will be displayed:'),
   );
   $form['vud_node_widget_select']['vud_node_widget'] = array(
@@ -63,13 +63,20 @@ function vud_node_admin_settings() {
     '#default_value' => variable_get('vud_node_widget', 'plain'),
     '#options'       => vud_read_widgets(),
   );
-  $form['vud_node_votes_display'] = array(
+  $form['vud_node_display_settings'] = array(
     '#type'          => 'fieldset',
-    '#title'         => t('Votes display'),
-    '#description'   => t('Choose if the total number of votes will be displayed in the links part:'),
+    '#title'         => t('Widget and votes display'),
+    '#description'   => t('Choose when the widget and vote count will be displayed:'),
   );
-  $form['vud_node_votes_display']['vud_node_votes'] = array(
-    '#type'          => 'radios',
+  $form['vud_node_display_settings']['vud_node_widget_show'] = array(
+    '#type'          => 'select',
+    '#description'   => 'When will the vote widget be displayed?',
+    '#default_value' => variable_get('vud_node_widget_show', 0),
+    '#options'       => array(0 => 'No', 1 => 'Teaser only', 2 => 'Full display only', 3 => 'Both teaser and full'),
+  );
+  $form['vud_node_display_settings']['vud_node_votes'] = array(
+    '#type'          => 'select',
+    '#description'   => 'When will the total vote count be displayed?',
     '#default_value' => variable_get('vud_node_votes', 0),
     '#options'       => array(0 => 'No', 1 => 'Teaser only', 2 => 'Full display only', 3 => 'Both teaser and full'),
   );
@@ -95,13 +102,36 @@ function vud_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
     case 'view':
       if (user_access('use vote up/down on nodes')) {
         $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
+        $widget_showmode = variable_get('vud_node_widget_show', 0);
         $tag = variable_get('vud_tag', 'vote');
+        $widget = variable_get('vud_node_widget', 'plain');
         if ($node_type) {
-          $widget = variable_get('vud_node_widget', 'plain');
-          $node->content['vud_node_widget_display'] = array(
-            '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget),
-            '#weight' => -10,
-          );
+          switch ($widget_showmode) {
+            case 0:
+              break;
+            case 1:
+              if ($teaser == 1) {
+                $node->content['vud_node_widget_display'] = array(
+                  '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget),
+                  '#weight' => -10,
+                );
+              }
+              break;
+            case 2:
+              if ($teaser == 0) {
+                $node->content['vud_node_widget_display'] = array(
+                  '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget),
+                  '#weight' => -10,
+                );
+              }
+              break;
+            case 3:
+              $node->content['vud_node_widget_display'] = array(
+                '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget),
+                '#weight' => -10,
+              );
+              break;
+          }
         }
       }
   }
