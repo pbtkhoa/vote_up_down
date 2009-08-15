@@ -43,50 +43,37 @@ function vud_node_menu() {
  * Advanced menu settings callback.
  */
 function vud_node_admin_settings() {
-  $form['vud_node_which_nodes'] = array(
-    '#type'          => 'fieldset',
-    '#title'         => t('Node types'),
-    '#description'   => t('Select the node types you want to activate voting on:'),
-  );
-  $form['vud_node_which_nodes']['vud_node_types'] = array(
+  $form['vud_node_types'] = array(
     '#type'          => 'checkboxes',
+    '#title'         => t('Node types'),
+    '#description'   => t('Select the node types for which you want to activate voting.'),
     '#default_value' => variable_get('vud_node_types', array()),
     '#options'       => node_get_types('names'),
   );
-  $form['vud_node_widget_select'] = array(
-    '#type'          => 'fieldset',
+  $form['vud_node_widget'] = array(
     '#title'         => t('Widget selection'),
-    '#description'   => t('Select the voting widget that will be displayed:'),
-  );
-  $form['vud_node_widget_select']['vud_node_widget'] = array(
+    '#description'   => t('Select the voting widget theme that will be displayed.'),
     '#type'          => 'radios',
     '#default_value' => variable_get('vud_node_widget', 'plain'),
     '#options'       => vud_read_widgets(),
   );
-  $form['vud_node_display_settings'] = array(
-    '#type'          => 'fieldset',
+  $form['vud_node_widget_show'] = array(
+    '#type'          => 'select',
     '#title'         => t('Widget and votes display'),
-    '#description'   => t('Choose when the widget and vote count will be displayed:'),
+    '#description'   => t('When will the vote widget be displayed?'),
+    '#default_value' => variable_get('vud_node_widget_show', 2),
+    '#options'       => array(0 => 'Teaser only', 1 => 'Full display only', 2 => 'Both teaser and full'),
   );
-  $form['vud_node_display_settings']['vud_node_widget_show'] = array(
+  $form['vud_node_votes'] = array(
     '#type'          => 'select',
-    '#description'   => 'When will the vote widget be displayed?',
-    '#default_value' => variable_get('vud_node_widget_show', 0),
-    '#options'       => array(0 => 'No', 1 => 'Teaser only', 2 => 'Full display only', 3 => 'Both teaser and full'),
+    '#description'   => t('When will the total vote count be displayed?'),
+    '#default_value' => variable_get('vud_node_votes', 3),
+    '#options'       => array(0 => 'Don\'t display', 1 => 'Teaser only', 2 => 'Full display only', 3 => 'Both teaser and full'),
   );
-  $form['vud_node_display_settings']['vud_node_votes'] = array(
-    '#type'          => 'select',
-    '#description'   => 'When will the total vote count be displayed?',
-    '#default_value' => variable_get('vud_node_votes', 0),
-    '#options'       => array(0 => 'No', 1 => 'Teaser only', 2 => 'Full display only', 3 => 'Both teaser and full'),
-  );
-  $form['vud_node_reset_votes'] = array(
-    '#type'          => 'fieldset',
-    '#title'         => t('Allow votes reset'),
-    '#description'   => t('Choose if users are allowed to reset their vote on a node:'),
-  );
-  $form['vud_node_reset_votes']['vud_node_reset'] = array(
+  $form['vud_node_reset'] = array(
     '#type'          => 'radios',
+    '#title'         => t('Votes reset'),
+    '#description'   => t('Choose if users are allowed to reset their votes on a node.'),
     '#default_value' => variable_get('vud_node_reset', 0),
     '#options'       => array(0 => 'No', 1 => 'Yes'),
   );
@@ -97,19 +84,17 @@ return system_settings_form($form);
 /**
  * Implementation of hook_nodeapi().
  */
-function vud_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
+function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'view':
       if (user_access('use vote up/down on nodes')) {
         $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
-        $widget_showmode = variable_get('vud_node_widget_show', 0);
+        $widget_showmode = variable_get('vud_node_widget_show', 2);
         $tag = variable_get('vud_tag', 'vote');
         $widget = variable_get('vud_node_widget', 'plain');
         if ($node_type) {
           switch ($widget_showmode) {
             case 0:
-              break;
-            case 1:
               if ($teaser == 1) {
                 $node->content['vud_node_widget_display'] = array(
                   '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget),
@@ -117,7 +102,7 @@ function vud_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
                 );
               }
               break;
-            case 2:
+            case 1:
               if ($teaser == 0) {
                 $node->content['vud_node_widget_display'] = array(
                   '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget),
@@ -125,7 +110,7 @@ function vud_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
                 );
               }
               break;
-            case 3:
+            case 2:
               $node->content['vud_node_widget_display'] = array(
                 '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget),
                 '#weight' => -10,
@@ -193,7 +178,7 @@ function vud_node_link($type, $object, $teaser = FALSE) {
   switch ($type) {
     case 'node':
       $node = &$object;
-      $votes_display_mode = variable_get('vud_node_votes', 0);
+      $votes_display_mode = variable_get('vud_node_votes', 3);
       $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
       $widget_theme = variable_get('vud_node_widget', 'plain');
       $tag = variable_get('vud_tag', 'vote');

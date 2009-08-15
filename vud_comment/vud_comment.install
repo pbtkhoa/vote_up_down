@@ -28,4 +28,5 @@ function vud_comment_uninstall() {
   variable_del('vud_comment_node_types');
   variable_del('vud_comment_widget');
   variable_del('vud_comment_votes');
+  variable_del('vud_comment_reset');
 }

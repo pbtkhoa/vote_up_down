@@ -122,7 +122,12 @@ function vud_votes_proxy($cid, $type, $tag, $widget_theme) {
   vud_add_css($widget_theme);  // Search and add the CSS files.
   vud_add_js($widget_theme);   // Search and add the JS files.
 
-  $output = $render_function($template_file, $variables);
+  if (file_exists($template_file)) {
+      $output = $render_function($template_file, $variables);
+  }
+  else {
+      drupal_set_message("The $template_file is missing. Please create the file, or disable display of vote points.", 'error');
+  }
   return $output;
 }
 

@@ -43,15 +43,18 @@
   font-size: 20px;
 }
 
-.vud-widget-updown .up-inactive, .up-active {
+.vud-widget-updown .up-inactive,
+.vud-widget-updown .up-active {
   float: left;
 }
 
-.vud-widget-updown .down-inactive, .down-active {
+.vud-widget-updown .down-inactive,
+.vud-widget-updown .down-active {
   float: right;
 }
 
-.vud-widget-updown .up-active, .down-active {
+.vud-widget-updown .up-active,
+.vud-widget-updown .down-active {
   display: block;
   color: #000000;
   border: 1px solid #ccc;

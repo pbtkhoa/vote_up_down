@@ -29,43 +29,31 @@ function vud_comment_menu() {
  * Menu callback for administration settings.
  */
 function vud_comment_admin_settings() {
-  $form['vud_comment_which_nodes'] = array(
-    '#type'        => 'fieldset',
-    '#title'       => t('Node types'),
-    '#description' => t('Select the node types for which voting on comments will be activated:'),
-  );
-  $form['vud_comment_which_nodes']['vud_comment_node_types'] = array(
+  $form['vud_comment_node_types'] = array(
     '#type'          => 'checkboxes',
+    '#title'       => t('Node types'),
+    '#description' => t('Select the node types for which voting on comments will be activated.'),
     '#default_value' => variable_get('vud_comment_node_types', array()),
     '#options'       => node_get_types('names'),
   );
-  $form['vud_comment_widget_select'] = array(
-    '#type'        => 'fieldset',
-    '#title'       => t('Widget selection'),
-    '#description' => t('Select the voting widget that will be displayed:'),
-  );
-  $form['vud_comment_widget_select']['vud_comment_widget'] = array(
+  $form['vud_comment_widget'] = array(
     '#type'          => 'radios',
+    '#title'       => t('Widget selection'),
+    '#description' => t('Select the voting widget theme that will be displayed.'),
     '#default_value' => variable_get('vud_comment_widget', 'plain'),
     '#options'       => vud_read_widgets(),
   );
-  $form['vud_comment_votes_display'] = array(
-    '#type'        => 'fieldset',
-    '#title'       => t('Votes display'),
-    '#description' => t('Choose if the total number of votes will be displayed in the links part:'),
-  );
-  $form['vud_comment_votes_display']['vud_comment_votes'] = array(
+  $form['vud_comment_votes'] = array(
     '#type'          => 'radios',
-    '#default_value' => variable_get('vud_comment_votes', 0),
+    '#title'       => t('Votes display'),
+    '#description' => t('Choose if the total number of votes will be displayed in the links part.'),
+    '#default_value' => variable_get('vud_comment_votes', 1),
     '#options'       => array(0 => 'No', 1 => 'Yes'),
   );
-  $form['vud_comment_reset_votes'] = array(
-    '#type'        => 'fieldset',
-    '#title'       => t('Allow reset votes'),
-    '#description' => t('Choose if users are allowed to reset their vote on a comment:'),
-  );
-  $form['vud_comment_reset_votes']['vud_comment_reset'] = array(
+  $form['vud_comment_reset'] = array(
     '#type'          => 'radios',
+    '#title'       => t('Votes reset'),
+    '#description' => t('Choose if users are allowed to reset their vote on a comment.'),
     '#default_value' => variable_get('vud_comment_reset', 0),
     '#options'       => array(0 => 'No', 1 => 'Yes'),
   );
@@ -112,7 +100,7 @@ function vud_comment_link($type, $object, $teaser = FALSE) {
   switch($type) {
     case 'comment':
       $comment = &$object;
-      $votes_display_mode = variable_get('vud_comment_votes', 0);
+      $votes_display_mode = variable_get('vud_comment_votes', 1);
       $widget_theme = variable_get('vud_comment_widget', 'plain');
       $tag = variable_get('vud_tag', 'vote');
       if ($votes_display_mode) {

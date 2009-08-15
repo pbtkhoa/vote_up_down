@@ -23,11 +23,7 @@ function vud_help($path, $arg) {
  * Advanced menu settings callback.
  */
 function vud_admin_advanced_settings() {
-  $form['vote_widget_settings_advanced'] = array(
-    '#type'  => 'fieldset',
-    '#title' => t('General settings'),
-  );
-  $form['vote_widget_settings_advanced']['vud_tag'] = array(
+  $form['vud_tag'] = array(
     '#type'          => 'textfield',
     '#title'         => t('Voting API tag'),
     '#default_value' => variable_get('vud_tag', 'vote'),

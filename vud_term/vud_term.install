@@ -27,4 +27,6 @@ function vud_term_uninstall() {
   drupal_uninstall_schema('vud_term');
   variable_del('vud_term_types');
   variable_del('vud_term_widget');
+  variable_del('vud_term_votetable_show');
+  variable_del('vud_term_reset');
 }
