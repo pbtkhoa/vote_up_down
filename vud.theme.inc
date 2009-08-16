@@ -126,7 +126,7 @@ function vud_votes_proxy($cid, $type, $tag, $widget_theme) {
       $output = $render_function($template_file, $variables);
   }
   else {
-      drupal_set_message("The $template_file is missing. Please create the file, or disable display of vote points.", 'error');
+      drupal_set_message("The $template_file file is missing. Please create the file, or set vote points to \"Don't display\".", 'error');
   }
   return $output;
 }

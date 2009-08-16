@@ -29,7 +29,7 @@
 .vud-widget-updown .up-inactive,
 .vud-widget-updown .down-inactive {
   display: block;
-  color: #666;
+  color: #999999;
   border: 1px solid #ccc;
   width: 20px;
   font-size: 15px;
