@@ -1,7 +1,8 @@
 <?php
 // $Id$
 /**
- * @file widget.tpl.php
+ * @file
+ * widget.tpl.php
  *
  * Plain widget theme for Vote Up/Down
  */

@@ -1,7 +1,8 @@
 <?php
 // $Id$
 /**
- * @file votes.tpl.php
+ * @file
+ * votes.tpl.php
  *
  * Plain widget votes display for Vote Up/Down
  */

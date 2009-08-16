@@ -2,6 +2,11 @@
 // $Id$
 
 /**
+ * @file
+ * Adds a voting widget to comments.
+ */
+
+/**
  * Implementation of hook_perm().
  */
 function vud_comment_perm() {
@@ -97,7 +102,7 @@ function vud_comment_theme() {
  */
 function vud_comment_link($type, $object, $teaser = FALSE) {
   $links = array();
-  switch($type) {
+  switch ($type) {
     case 'comment':
       $comment = &$object;
       $votes_display_mode = variable_get('vud_comment_votes', 1);
