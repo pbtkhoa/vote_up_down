@@ -144,7 +144,7 @@ function vud_read_widgets() {
     $themename = substr($file->filename, strlen($widgets_dir) + 1, $widgetword - 2);
     $themes["$themename"] = $themename;
   }
-
+  asort($themes);
   return $themes;
 }
 
