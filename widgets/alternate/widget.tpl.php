@@ -6,7 +6,6 @@
  *
  * Alternate widget theme for Vote Up/Down
  */
-$unsigned_points = (int) $points;
 ?>
 <div class="vud-widget-alternate">
 <?php if ($class_up) : ?>

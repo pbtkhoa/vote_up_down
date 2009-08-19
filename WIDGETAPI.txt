@@ -33,9 +33,9 @@ $class_down   : Either 'down-active' or 'down-inactive'
 $link_up      : URL used for 'up' voting when JS is disabled
 $link_down    : URL used for 'down' voting when JS is disabled
 $class	      : 'negative', 'positive' or 'neutral' depending on number of votes
-$points	      : Number of total vote points for the vote object
-$label	      : Just the vote label
-$label_points  : Total number of votes with the label
+$vote_label   : The pluralized vote label
+$points	      : Number of total vote points for the vote object (signed)
+$unsigned_points : Number of total vote points for the object (unsigned)
 
 -=-=-=-=-=-
 Last updated:

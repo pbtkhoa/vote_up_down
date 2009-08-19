@@ -61,6 +61,7 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
     'function' => 'sum'
   );
   $vote_result = (int) votingapi_select_single_result_value($result_criteria);
+  $variables['unsigned_points'] = $vote_result;
 
   if ($vote_result > 0) {
     $variables['class'] = 'positive';
@@ -75,8 +76,7 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
       $variables['class'] = 'neutral';
     }
   }
-  $variables['label'] = format_plural($vote_result, 'vote', 'votes');
-  $variables['label_points'] = format_plural($vote_result, '1 vote', '@count votes');
+  $variables['vote_label'] = format_plural($vote_result, 'vote', 'votes');
 
   $output = $render_function($template_file, $variables);
   return $output;
@@ -102,6 +102,7 @@ function vud_votes_proxy($cid, $type, $tag, $widget_theme) {
     'function' => 'sum'
   );
   $vote_result = (int) votingapi_select_single_result_value($criteria);
+  $variables['unsigned_points'] = $vote_result;
 
   if ($vote_result > 0) {
     $variables['class'] = 'positive';
@@ -116,8 +117,7 @@ function vud_votes_proxy($cid, $type, $tag, $widget_theme) {
       $variables['class'] = 'neutral';
     }
   }
-  $variables['label'] = format_plural($vote_result, 'vote', 'votes');
-  $variables['label_points'] = format_plural($vote_result, '1 vote', '@count votes');
+  $variables['vote_label'] = format_plural($vote_result, 'vote', 'votes');
 
   vud_add_css($widget_theme);  // Search and add the CSS files.
   vud_add_js($widget_theme);   // Search and add the JS files.
