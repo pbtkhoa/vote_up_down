@@ -72,13 +72,22 @@ function vud_comment_admin_settings() {
 function vud_comment_comment(&$comment, $op) {
   switch ($op) {
     case 'view':
-      if (user_access('use vote up/down on comments')) {
+      $type = _vud_comment_get_node_type($comment->nid);
+      $comment_allow = in_array($type, variable_get('vud_comment_node_types', array()), TRUE);
+      if ($comment_allow && user_access('use vote up/down on comments')) {
         $tag = variable_get('vud_tag', 'vote');
         $widget = variable_get('vud_comment_widget', 'plain');
         $comment->comment = theme('vud_widget', $comment->cid, 'comment', $tag, $widget) . $comment->comment;
       }
       break;
   }
+}
+
+/**
+ * Function to return the node type of a particular node ID.
+ */
+function _vud_comment_get_node_type($nid) {
+  return db_result(db_query("SELECT type from {node} where nid = %d", $nid));
 }
 
 /**
