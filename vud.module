@@ -155,7 +155,7 @@ function vud_vote($type, $cid, $value, $tag, $token) {
   }
   else {
     watchdog("vud", "Could not vote on $type $cid, with value $value, tag $tag and token $token");
-    drupal_set_message("Oops! There was an error in submitting your vote!", 'warning');
+    drupal_set_message(t("Oops! There was an error in submitting your vote!", 'warning'));
   }
 
   if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
@@ -203,6 +203,6 @@ function vud_reset($type, $cid, $tag, $token) {
   }
   else {
     watchdog("vud", "Could not reset votes on $type $cid, with tag $tag and token $token");
-    drupal_set_message("Oops! There was an error in resetting your vote!", 'warning');
+    drupal_set_message(t("Oops! There was an error in resetting your vote!", 'warning'));
   }
 }
