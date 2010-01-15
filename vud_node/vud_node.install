@@ -30,4 +30,5 @@ function vud_node_uninstall() {
   variable_del('vud_node_widget_show');
   variable_del('vud_node_votes');
   variable_del('vud_node_reset');
+  variable_del('vud_node_widget_vote_on_teaser');
 }

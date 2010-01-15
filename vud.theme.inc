@@ -9,7 +9,7 @@
 /**
  * Proxy widget function that hook_theme() calls.
  */
-function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
+function vud_widget_proxy($cid, $type, $tag, $widget_theme, $readonly=NULL) {
   $render_function = 'theme_render_template';
   $extension = '.tpl.php';
 
@@ -77,6 +77,11 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme) {
     }
   }
   $variables['vote_label'] = format_plural($vote_result, 'vote', 'votes');
+  $variables['readonly'] = $readonly;
+  if ($readonly) {
+    $variables['class_up'] .= ' denied';
+    $variables['class_down'] .= ' denied';
+  }
 
   $output = $render_function($template_file, $variables);
   return $output;
