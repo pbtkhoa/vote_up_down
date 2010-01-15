@@ -92,6 +92,7 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $widget_showmode = variable_get('vud_node_widget_show', 2);
         $tag = variable_get('vud_tag', 'vote');
         $widget = variable_get('vud_node_widget', 'plain');
+        $teaser = $a3;
         if ($node_type) {
           switch ($widget_showmode) {
             case 0:
