@@ -37,11 +37,26 @@ function vud_node_menu() {
   $items['node/%node/votes'] = array(
     'title'            => 'Voting details',
     'page callback'    => 'vud_node_tracker',
-    'access arguments' => array('see vote up/down node stats'),
+    'access callback'  => 'vud_node_tab_view_stats',
+    'access arguments' => array(1),
     'type'             => MENU_LOCAL_TASK,
   );
 
   return $items;
+}
+
+/**
+ * Access Callback from hook_menu (vud_node_menu).
+ */
+function vud_node_tab_view_stats($node) {
+  // Immediately check if the user has any view rights
+  if (!user_access('see vote up/down node stats')) {
+    return FALSE;
+  }
+
+  if (in_array($node->type, variable_get('vud_node_types', array()), TRUE)) {
+    return TRUE;
+  }
 }
 
 /**
