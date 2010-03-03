@@ -79,16 +79,16 @@ function vud_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           switch ($showmode) {
             case 0:
               if ($teaser == 1) {
-                _vud_term_generate_table(&$node);
+                _vud_term_generate_table($node);
               }
               break;
             case 1:
               if ($teaser == 0) {
-                _vud_term_generate_table(&$node);
+                _vud_term_generate_table($node);
               }
               break;
             case 2:
-              _vud_term_generate_table(&$node);
+              _vud_term_generate_table($node);
               break;
           }
         }
