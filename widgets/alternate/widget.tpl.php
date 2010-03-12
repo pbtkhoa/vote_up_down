@@ -7,13 +7,15 @@
  * Alternate widget theme for Vote Up/Down
  */
 ?>
-<div class="vud-widget-alternate">
+<div class="vud-widget-alternate" id="<?php print $id; ?>">
 <?php if ($class_up) : ?>
-  <div id="total-votes-<?php print $type; ?>-<?php print $cid; ?>" class="<?php print $widget_theme; ?>-votes-display"><?php print $unsigned_points; ?></div>
+  <div class="alternate-votes-display"><?php print $unsigned_points; ?></div>
   <?php if ($readonly): ?>
-    <div id="vote-up-<?php print $type; ?>-<?php print $cid; ?>" class="<?php print $class_up; ?>" title="Vote up!"></div>
+    <div class="<?php print $class_up; ?>" title="<?php print t('Vote up!'); ?>">  </div>
   <?php else: ?>
-    <a href="<?php print $link_up; ?>"><div id="vote-up-<?php print $type; ?>-<?php print $cid; ?>" class="<?php print $class_up; ?>" title="Vote up!"></div></a>
+    <a href="<?php print $link_up; ?>" class="<?php print $link_class_up; ?>">
+      <div class="<?php print $class_up; ?>" title="<?php print t('Vote up!'); ?>">  </div>
+    </a>
   <?php endif ?>
-<?php endif ?>
+<?php endif; ?>
 </div>

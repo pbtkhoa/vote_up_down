@@ -67,3 +67,24 @@
   width: 40em;
   margin: 0.5em 0 0.5em 1em;
 }
+
+.vud-widget-plain .ctools-ajaxing {
+  padding-right: 0 !important;
+  display: block;
+  width: 15px;
+  height: 16px;
+  background-position: center;
+  float: left;
+}
+
+.vud-widget-plain .ctools-ajaxing.plain-click-up {
+  margin-right: 3px;
+}
+
+.vud-widget-plain .ctools-ajaxing.plain-click-down {
+  margin-left: 3px;
+}
+
+.vud-widget-plain .ctools-ajaxing span {
+  display: none;
+}

@@ -54,12 +54,13 @@ function vud_menu() {
     'weight' => -10,
   );
 
-  $items['vote/%/%/%/%/%'] = array(
+  $items['vote/%/%/%/%/%/%'] = array(
     'title'            => 'Vote',
     'page callback'    => 'vud_vote',
-    'page arguments'   => array(1, 2, 3, 4, 5),
+    'page arguments'   => array(1, 2, 3, 4, 5, 6),
     'access arguments' => array('use vote up/down'),
     'type'             => MENU_CALLBACK,
+    'file'             => 'vud.theme.inc',
   );
 
   $items['votereset/%/%/%/%'] = array(
@@ -127,64 +128,6 @@ function vud_user_votes() {
 }
 
 /**
- * Function for the main voting handler with Ajax support.
- */
-function vud_vote($type, $cid, $value, $tag, $token) {
-  if (is_numeric($value) && drupal_valid_token($token, "vote/$type/$cid/$value/$tag")) {
-    $vote = array();
-    // Sanity-check the incoming values.
-    if ($value > 0) {
-      $vote['value'] = 1;
-    }
-    else if ($value < 0) {
-      $vote['value'] = -1;
-    }
-    else {
-      $vote['value'] = 0;
-    }
-
-    $vote['value_type'] = 'points';
-    $tag = $tag ? $tag : variable_get('vud_tag', 'vote');
-    $vote['tag'] = $tag;
-
-    $vote['content_id'] = $cid;
-    $vote['content_type'] = $type;
-    $vote['tag'] = $tag;
-    $votes = array(0 => $vote);
-    votingapi_set_votes($votes);
-  }
-  else {
-    watchdog("vud", "Could not vote on $type $cid, with value $value, tag $tag and token $token");
-    drupal_set_message(t("Oops! There was an error in submitting your vote!", 'warning'));
-  }
-
-  if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
-    $result_criteria = array(
-      'content_type' => $type,
-      'content_id' => $cid,
-      'value_type' => 'points',
-      'tag' => $tag,
-      'function' => 'sum'
-    );
-    $vote_result = (int) votingapi_select_single_result_value($result_criteria);
-    $f_vote_result = format_plural($vote_result, '1 vote', '@count votes');
-    $js = array(
-      'fullvotes' => $f_vote_result,
-      'votes'     => $vote_result,
-      'type'      => $type,
-      'id'        => $cid,
-      'value'     => $value,
-      'tag'       => $tag,
-    );
-    drupal_json($js);
-    exit;
-  }
-  else {
-    drupal_goto($_SERVER['HTTP_REFERER']);
-  }
-}
-
-/**
  * Callback to reset votes on an object.
  */
 function vud_reset($type, $cid, $tag, $token) {
@@ -204,5 +147,15 @@ function vud_reset($type, $cid, $tag, $token) {
   else {
     watchdog("vud", "Could not reset votes on $type $cid, with tag $tag and token $token");
     drupal_set_message(t("Oops! There was an error in resetting your vote!", 'warning'));
+  }
+}
+
+/**
+ * Implementation of hook_ctools_plugin_dierctory() to let the system know
+ * we implement widget plugins.
+ */
+function vud_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'vud') {
+    return $plugin;
   }
 }
