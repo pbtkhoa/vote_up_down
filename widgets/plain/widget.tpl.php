@@ -7,7 +7,7 @@
  * Plain widget theme for Vote Up/Down
  */
 ?>
-<div class="vud-widget-plain" id="<?php print $id; ?>">
+<div class="vud-widget vud-widget-plain" id="<?php print $id; ?>">
 <?php if ($class_up): ?>
   <?php if ($readonly): ?>
     <span class="<?php print $class_up; ?>" title="<?php print t('Vote up!'); ?>"></span>

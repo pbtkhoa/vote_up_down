@@ -8,7 +8,7 @@
  * UpDown widget theme for Vote Up/Down
  */
 ?>
-<div class="vud-widget-updown" id="<?php print $id; ?>">
+<div class="vud-widget vud-widget-updown" id="<?php print $id; ?>">
   <div class="updown-score">
     <span class="updown-current-score"><?php print $unsigned_points; ?></span>
     <?php print $vote_label; ?>

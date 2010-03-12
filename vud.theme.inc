@@ -89,6 +89,7 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme, $readonly=NULL) {
   $uid = votingapi_current_user_identifier();
 
   ctools_add_js('ajax-responder');
+  drupal_add_js(drupal_get_path('module', 'vud') . '/vud.js');
   vud_add_files('css', $plugin);  // Search and add the CSS files.
   vud_add_files('js', $plugin);   // Search and add the JS files.
 
