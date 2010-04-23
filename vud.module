@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Implements the core voting module.
+ * Implements the core voting module on top of Voting API.
  */
 
 module_load_include('inc', 'vud', 'vud.theme');  // Include the theme.inc file.
@@ -72,7 +72,7 @@ function vud_menu() {
   );
 
   $items['user/%user/votes'] = array(
-    'title'            => 'Your votes',
+    'title'            => t('Votes'),
     'page callback'    => 'vud_user_votes',
     'page arguments'   => array(1),
     'access arguments' => array('access vote up/down statistics'),
