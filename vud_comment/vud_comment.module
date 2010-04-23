@@ -96,11 +96,11 @@ function _vud_comment_get_node_type($nid) {
 function vud_comment_theme() {
   return array(
     'vud_widget' => array(
-      'arguments' => array('cid'  => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
+      'arguments' => array('content_id'  => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
       'function'  => 'vud_widget_proxy',
     ),
     'vud_votes' => array(
-      'arguments' => array('cid'  => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme'  => NULL),
+      'arguments' => array('content_id'  => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme'  => NULL),
       'function'  => 'vud_votes_proxy',
     ),
   );

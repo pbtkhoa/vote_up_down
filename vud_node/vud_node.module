@@ -180,11 +180,11 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 function vud_node_theme() {
   return array(
     'vud_widget' => array(
-      'arguments' => array('cid' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
+      'arguments' => array('content_id' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
       'function'  => 'vud_widget_proxy',
     ),
     'vud_votes' => array(
-      'arguments' => array('cid' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
+      'arguments' => array('content_id' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
       'function'  => 'vud_votes_proxy',
     ),
   );

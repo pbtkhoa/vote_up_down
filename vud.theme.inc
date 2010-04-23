@@ -67,7 +67,7 @@ function vud_widget_get_names() {
 /**
  * Proxy widget function that hook_theme() calls.
  */
-function vud_widget_proxy($cid, $type, $tag, $widget_theme, $readonly=NULL) {
+function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NULL) {
   $plugin = vud_widget_get($widget_theme);
   if (empty($plugin) || empty($plugin['widget template'])) {
     return;
@@ -75,12 +75,12 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme, $readonly=NULL) {
 
   $template_file = $plugin['path'] . '/' . $plugin['widget template'] . $plugin['extension'];
   $variables = array(
-    'cid' => $cid,
+    'content_id' => $content_id,
     'type' => $type,
     'widget_theme' => $widget_theme,
     'plugin' => $plugin,
     'tag' => $tag ? $tag : variable_get('vud_tag', 'vote'),
-    'id' => 'widget-' . $type . '-' . $cid,
+    'id' => 'widget-' . $type . '-' . $content_id,
     'link_class_up' => 'ctools-use-ajax vud-link-up',
     'link_class_down' => 'ctools-use-ajax vud-link-down',
   );
@@ -95,7 +95,7 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme, $readonly=NULL) {
 
   $base_criteria = array(
     'content_type' => $type,
-    'content_id' => $cid,
+    'content_id' => $content_id,
     'tag' => $variables['tag'],
   );
   $criteria = $base_criteria + $uid;
@@ -114,15 +114,15 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme, $readonly=NULL) {
     $variables['class_down'] = 'down-inactive';
   }
 
-  $token_up = drupal_get_token("vote/$type/$cid/1/$tag/$widget_theme");
-  $variables['link_up'] = url("vote/$type/$cid/1/$tag/$widget_theme/$token_up");
+  $token_up = drupal_get_token("vote/$type/$content_id/1/$tag/$widget_theme");
+  $variables['link_up'] = url("vote/$type/$content_id/1/$tag/$widget_theme/$token_up");
 
-  $token_down = drupal_get_token("vote/$type/$cid/-1/$tag/$widget_theme");
-  $variables['link_down'] = url("vote/$type/$cid/-1/$tag/$widget_theme/$token_down");
+  $token_down = drupal_get_token("vote/$type/$content_id/-1/$tag/$widget_theme");
+  $variables['link_down'] = url("vote/$type/$content_id/-1/$tag/$widget_theme/$token_down");
 
   $result_criteria = array(
     'content_type' => $type,
-    'content_id' => $cid,
+    'content_id' => $content_id,
     'value_type' => 'points',
     'tag' => $tag,
     'function' => 'sum'
@@ -157,7 +157,7 @@ function vud_widget_proxy($cid, $type, $tag, $widget_theme, $readonly=NULL) {
 /**
  * Proxy votes display function, that hook_theme() calls.
  */
-function vud_votes_proxy($cid, $type, $tag, $widget_theme) {
+function vud_votes_proxy($content_id, $type, $tag, $widget_theme) {
   $plugin = vud_widget_get($widget_theme);
   if (empty($plugin) || empty($plugin['votes template'])) {
     return;
@@ -165,18 +165,18 @@ function vud_votes_proxy($cid, $type, $tag, $widget_theme) {
 
   $template_file = $plugin['path'] . '/' . $plugin['votes template'] . $plugin['extension'];
   $variables = array(
-    'cid' => $cid,
+    'content_id' => $content_id,
     'type' => $type,
     'widget_theme' => $widget_theme,
     'plugin' => $plugin,
-    'id' => 'votes-' . $type . '-' . $cid,
+    'id' => 'votes-' . $type . '-' . $content_id,
   );
 
   $variables['tag'] = $tag;
 
   $criteria = array(
     'content_type' => $type,
-    'content_id' => $cid,
+    'content_id' => $content_id,
     'value_type' => 'points',
     'tag' => $tag,
     'function' => 'sum'
@@ -234,8 +234,8 @@ function vud_add_files($type, $plugin) {
 /**
  * Function for the main voting handler with Ajax support.
  */
-function vud_vote($type, $cid, $value, $tag, $widget, $token) {
-  if (is_numeric($value) && drupal_valid_token($token, "vote/$type/$cid/$value/$tag/$widget")) {
+function vud_vote($type, $content_id, $value, $tag, $widget, $token) {
+  if (is_numeric($value) && drupal_valid_token($token, "vote/$type/$content_id/$value/$tag/$widget")) {
     $vote = array();
     // Sanity-check the incoming values.
     if ($value > 0) {
@@ -252,7 +252,7 @@ function vud_vote($type, $cid, $value, $tag, $widget, $token) {
     $tag = $tag ? $tag : variable_get('vud_tag', 'vote');
     $vote['tag'] = $tag;
 
-    $vote['content_id'] = $cid;
+    $vote['content_id'] = $content_id;
     $vote['content_type'] = $type;
     $vote['tag'] = $tag;
     $votes = array(0 => $vote);
@@ -260,7 +260,7 @@ function vud_vote($type, $cid, $value, $tag, $widget, $token) {
     votingapi_set_votes($votes);
   }
   else {
-    watchdog("vud", "Could not vote on $type $cid, with value $value, tag $tag and token $token");
+    watchdog("vud", "Could not vote on $type $content_id, with value $value, tag $tag and token $token");
     drupal_set_message(t("Oops! There was an error in submitting your vote!"), 'warning');
   }
 
@@ -269,16 +269,16 @@ function vud_vote($type, $cid, $value, $tag, $widget, $token) {
     $plugin = vud_widget_get($widget);
 
     if ($function = ctools_plugin_get_function($plugin, 'ajax render')) {
-      $commands = $function($type, $cid, $value, $tag, $token, $widget);
+      $commands = $function($type, $content_id, $value, $tag, $token, $widget);
     }
     else {
       $commands = array();
       if (!empty($plugin['widget template'])) {
-        $commands[] = ctools_ajax_command_replace("#widget-$type-$cid", theme('vud_widget', $cid, $type, $tag, $widget));
+        $commands[] = ctools_ajax_command_replace("#widget-$type-$content_id", theme('vud_widget', $content_id, $type, $tag, $widget));
       }
 
       if (!empty($plugin['votes template'])) {
-        $commands[] = ctools_ajax_command_replace("#votes-$type-$cid", theme('vud_votes', $cid, $type, $tag, $widget));
+        $commands[] = ctools_ajax_command_replace("#votes-$type-$content_id", theme('vud_votes', $content_id, $type, $tag, $widget));
       }
     }
 

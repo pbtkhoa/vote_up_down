@@ -107,7 +107,7 @@ Variables in the template files
 ===============================
 
 $id                 : Unique CSS ID that should be used for this itme.
-$cid                : Unique content ID
+$content_id         : Unique content ID
 $type               : Type of element being voted on
 $widget_theme       : The name of the widget theme being rendered
 $tag                : The unique tag associated with each vote
