@@ -155,6 +155,17 @@ function vud_term_theme() {
       'function'  => 'vud_widget_proxy',
     ),
   );
+  $arguments = array('content_id' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL);
+  return array(
+    'vud_widget_term' => array(
+      'function'  => 'vud_widget_proxy',
+      'arguments' => $arguments,
+    ),
+    'vud_widget_term_vid' => array(
+      'pattern' => 'vud_widget_term__',
+      'arguments' => $arguments,
+    ),
+  );
 }
 
 /**

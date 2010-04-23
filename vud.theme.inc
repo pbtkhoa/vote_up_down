@@ -65,6 +65,42 @@ function vud_widget_get_names() {
 }
 
 /**
+ * Build a list of theme function names.
+ */
+function vud_theme_functions($hook, $type, $content_id) {
+  switch ($type) {
+    case 'node':
+      $node = node_load($content_id);
+      $themes[] = $hook . '_' . $type . '__' . $node->type;
+      break;
+    case 'comment':
+      $comment = _comment_load($content_id);
+      $node = node_load($comment->nid);
+      $themes[] = $hook . '_' . $type . '__' . $node->type;
+      break;
+    case 'term':
+      $term = taxonomy_get_term($content_id);
+      $themes[] = $hook . '_' . $type . '__' . $term->vid;
+      break;
+  }
+  $themes[] = $hook . '_' . $type;
+  $themes[] = $hook;
+  return $themes;
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function vud_theme() {
+  return array(
+    'vud_widget' => array(
+      'function'  => 'vud_widget_proxy',
+      'arguments' => array('content_id' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
+    ),
+  );
+}
+
+/**
  * Proxy widget function that hook_theme() calls.
  */
 function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NULL) {
@@ -274,11 +310,11 @@ function vud_vote($type, $content_id, $value, $tag, $widget, $token) {
     else {
       $commands = array();
       if (!empty($plugin['widget template'])) {
-        $commands[] = ctools_ajax_command_replace("#widget-$type-$content_id", theme('vud_widget', $content_id, $type, $tag, $widget));
+        $commands[] = ctools_ajax_command_replace("#widget-$type-$content_id", theme(vud_theme_functions('vud_widget', $type, $content_id), $content_id, $type, $tag, $widget));
       }
 
       if (!empty($plugin['votes template'])) {
-        $commands[] = ctools_ajax_command_replace("#votes-$type-$content_id", theme('vud_votes', $content_id, $type, $tag, $widget));
+        $commands[] = ctools_ajax_command_replace("#votes-$type-$content_id", theme(vud_theme_functions('vud_votes', $type, $content_id), $content_id, $type, $tag, $widget));
       }
     }
 

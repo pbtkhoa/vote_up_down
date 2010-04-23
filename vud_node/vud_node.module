@@ -127,7 +127,7 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
             case VUD_NODE_DISPLAY_TEASER_ONLY:
               if ($teaser == 1) {
                 $node->content['vud_node_widget_display'] = array(
-                  '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget, !$vote_on_teaser || !$can_edit),
+                  '#value' => theme(vud_theme_functions('vud_widget', 'node', $node->nid), $node->nid, 'node', $tag, $widget, !$vote_on_teaser || !$can_edit),
                   '#weight' => -10,
                 );
               }
@@ -135,7 +135,7 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
             case VUD_NODE_DISPLAY_FULL_ONLY:
               if ($teaser == 0) {
                 $node->content['vud_node_widget_display'] = array(
-                  '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget, !$can_edit),
+                  '#value' => theme(vud_theme_functions('vud_widget', 'node', $node->nid), $node->nid, 'node', $tag, $widget, !$can_edit),
                   '#weight' => -10,
                 );
               }
@@ -148,7 +148,7 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
                 $readonly = !$can_edit;
               }
               $node->content['vud_node_widget_display'] = array(
-                '#value' => theme('vud_widget', $node->nid, 'node', $tag, $widget, $readonly),
+                '#value' => theme(vud_theme_functions('vud_widget','node', $node->nid), $node->nid, 'node', $tag, $widget, $readonly),
                 '#weight' => -10,
               );
               break;
@@ -178,14 +178,19 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
  * Implementation of hook_theme().
  */
 function vud_node_theme() {
+  $arguments = array('content_id' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL);
   return array(
-    'vud_widget' => array(
-      'arguments' => array('content_id' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
+    'vud_widget_node' => array(
       'function'  => 'vud_widget_proxy',
+      'arguments' => $arguments,
+    ),
+    'vud_widget_node_nodetype' => array(
+      'pattern' => 'vud_widget_node__',
+      'arguments' => $arguments,
     ),
     'vud_votes' => array(
-      'arguments' => array('content_id' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
       'function'  => 'vud_votes_proxy',
+      'arguments' => $arguments,
     ),
   );
 }
@@ -241,7 +246,7 @@ function vud_node_link($type, $object, $teaser = FALSE) {
         case VUD_NODE_DISPLAY_TEASER_ONLY:
           if (($teaser == 1) && $node_type && $view_vud_node_votes_count) {
             $links['vud_node_votes_count'] = array(
-              'title' => theme('vud_votes', $node->nid, $type, $tag, $widget_theme),
+              'title' => theme(vud_theme_functions('vud_votes', 'node', $node->nid), $node->nid, $type, $tag, $widget_theme),
               'html'  => TRUE,
             );
           }
@@ -249,7 +254,7 @@ function vud_node_link($type, $object, $teaser = FALSE) {
         case VUD_NODE_DISPLAY_FULL_ONLY:
           if (($teaser == 0) && $node_type && $view_vud_node_votes_count) {
             $links['vud_node_votes_count'] = array(
-              'title' => theme('vud_votes', $node->nid, $type, $tag, $widget_theme),
+              'title' => theme(vud_theme_functions('vud_votes', 'node', $node->nid), $node->nid, $type, $tag, $widget_theme),
               'html'  => TRUE,
             );
           }
@@ -257,7 +262,7 @@ function vud_node_link($type, $object, $teaser = FALSE) {
         case VUD_NODE_DISPLAY_BOTH:
           if ($node_type && $view_vud_node_votes_count) {
             $links['vud_node_votes_count'] = array(
-              'title' => theme('vud_votes', $node->nid, $type, $tag, $widget_theme),
+              'title' => theme(vud_theme_functions('vud_votes', 'node', $node->nid), $node->nid, $type, $tag, $widget_theme),
               'html'  => TRUE,
             );
           }

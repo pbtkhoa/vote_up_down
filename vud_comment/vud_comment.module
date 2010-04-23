@@ -94,14 +94,19 @@ function _vud_comment_get_node_type($nid) {
  * Implementation of hook_theme().
  */
 function vud_comment_theme() {
+  $arguments = array('content_id' => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL);
   return array(
-    'vud_widget' => array(
-      'arguments' => array('content_id'  => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme' => NULL),
+    'vud_widget_comment' => array(
       'function'  => 'vud_widget_proxy',
+      'arguments' => $arguments,
+    ),
+    'vud_widget_comment_nodetype' => array(
+      'pattern' => 'vud_widget_comment__',
+      'arguments' => $arguments,
     ),
     'vud_votes' => array(
-      'arguments' => array('content_id'  => NULL, 'type' => NULL, 'tag' => NULL, 'widget_theme'  => NULL),
       'function'  => 'vud_votes_proxy',
+      'arguments' => $arguments,
     ),
   );
 }
