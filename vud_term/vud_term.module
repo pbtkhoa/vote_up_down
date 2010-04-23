@@ -75,6 +75,7 @@ function vud_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       if (user_access('use vote up/down on terms')) {
         $node_type = in_array($node->type, variable_get('vud_term_types', array()), TRUE);
         $showmode  = variable_get('vud_term_votetable_show', 1);
+        $teaser = $a3;
         if ($node_type) {
           switch ($showmode) {
             case 0:
@@ -101,6 +102,8 @@ function vud_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
  */
 function _vud_term_generate_table(&$node) {
   $widget = variable_get('vud_term_widget', 'plain');
+  $header = array();
+  $rows = array();
   foreach ($node->taxonomy as $term => $tdetails) {
     $cid =  $tdetails->tid;
     $tag = "n$node->nid";
