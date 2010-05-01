@@ -1,7 +1,13 @@
 <?php
+// $Id$
 
 /**
- * Specialized implementation of hook_vud_widgets().
+ * @file
+ * Plain VUD Widget.
+ */
+
+/**
+ * Implementation of hook_vud_widgets(). (Specialized)
  */
 function vud_plain_vud_widgets() {
   return array(

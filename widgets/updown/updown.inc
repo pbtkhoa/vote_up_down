@@ -1,7 +1,13 @@
 <?php
+// $Id$
 
 /**
- * Specialized implementation of hook_vud_widgets().
+ * @file
+ * Up Down Widget.
+ */
+
+/**
+ * Implementation of hook_vud_widgets(). (Specialized)
  */
 function vud_updown_vud_widgets() {
   return array(

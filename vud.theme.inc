@@ -141,7 +141,7 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
     $variables['class_up'] = 'up-active';
     $variables['class_down'] = 'down-inactive';
   }
-  else if ($user_vote < 0) {
+  elseif ($user_vote < 0) {
     $variables['class_up'] = 'up-inactive';
     $variables['class_down'] = 'down-active';
   }
@@ -217,6 +217,7 @@ function vud_votes_proxy($content_id, $type, $tag, $widget_theme) {
     'tag' => $tag,
     'function' => 'sum'
   );
+
   $vote_result = (int) votingapi_select_single_result_value($criteria);
   $variables['unsigned_points'] = $vote_result;
 
@@ -277,7 +278,7 @@ function vud_vote($type, $content_id, $value, $tag, $widget, $token) {
     if ($value > 0) {
       $vote['value'] = 1;
     }
-    else if ($value < 0) {
+    elseif ($value < 0) {
       $vote['value'] = -1;
     }
     else {
