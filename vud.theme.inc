@@ -126,6 +126,9 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
 
   ctools_add_js('ajax-responder');
   drupal_add_js(drupal_get_path('module', 'vud') . '/vud.js');
+  if ($type == 'comment') {
+    drupal_add_css(drupal_get_path('module', 'vud_comment') . '/vud_comment.css');
+  }
   vud_add_files('css', $plugin);  // Search and add the CSS files.
   vud_add_files('js', $plugin);   // Search and add the JS files.
 

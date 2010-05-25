@@ -62,8 +62,30 @@ function vud_comment_admin_settings() {
     '#default_value' => variable_get('vud_comment_reset', 0),
     '#options'       => array(0 => 'No', 1 => 'Yes'),
   );
+  ctools_include('dependent');
+  $form['vud_comment_dim_active'] = array(
+    '#type'          => 'radios',
+    '#title'       => t('Dim comments'),
+    '#description' => t('Choose if comments should be dimmed.'),
+    '#default_value' => variable_get('vud_comment_dim_active', 0),
+    '#options'       => array(0 => 'No', 1 => 'Yes'),
+  );
+  $form['vud_comment_dim_threshold'] = array(
+    '#type'          => 'textfield',
+    '#title'         => t('Dim threshold'),
+    '#default_value' => variable_get('vud_comment_dim_threshold', 0),
+    '#description'   => t('Comments with total votes less or equal to this values will be dimmed.'),
+    '#process' => array('ctools_dependent_process'),
+    '#dependency' => array('radio:vud_comment_dim_active' => array(1)),
+  );
 
   return system_settings_form($form);
+}
+
+function vud_comment_admin_settings_validate($form, &$form_state) {
+  if ($form_state['values']['vud_comment_dim_active'] == 1 && !is_numeric($form_state['values']['vud_comment_dim_threshold'])) {
+    form_set_error('vud_comment_dim_threshold', t('You must use a numeric value for the dim threshold.'));
+  }
 }
 
 /**
@@ -80,6 +102,33 @@ function vud_comment_comment(&$comment, $op) {
         $comment->comment = theme('vud_widget', $comment->cid, 'comment', $tag, $widget) . $comment->comment;
       }
       break;
+  }
+}
+
+/**
+ * Override or insert variables into the comment templates.
+ *
+ * @param $variables
+ *   An array of variables to pass to the theme template.
+ */
+function vud_comment_preprocess_comment(&$variables) {
+  if (variable_get('vud_comment_dim_active', 0) != '1') {
+    return;
+  }
+  // Get total votes for this comment.
+  $content_id = $variables['comment']->cid;
+  $tag = variable_get('vud_tag', 'vote');
+  $criteria = array(
+    'content_type' => 'comment',
+    'content_id' => $content_id,
+    'value_type' => 'points',
+    'tag' => $tag,
+    'function' => 'sum'
+  );
+  $vud_sum = (int) votingapi_select_single_result_value($criteria);
+  $vud_dim_threshold = (int)variable_get('vud_comment_dim_threshold', 0);
+  if ($vud_sum <= $vud_dim_threshold) {
+    $variables['status'] .= ' vud-comment-dimmed';
   }
 }
 
