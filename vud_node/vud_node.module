@@ -113,6 +113,16 @@ return system_settings_form($form);
 function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'view':
+      // avoid showing the widget in some node builds
+      $exclude_modes = array(
+        NODE_BUILD_PREVIEW,
+        NODE_BUILD_SEARCH_INDEX,
+        NODE_BUILD_SEARCH_RESULT,
+        NODE_BUILD_RSS,
+      );
+      if (in_array($node->build_mode, $exclude_modes)) {
+        break;
+      }
       if (($can_edit=user_access('use vote up/down on nodes')) || user_access('view vote up/down count on nodes')) {
         $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
         $widget_showmode = variable_get('vud_node_widget_show', VUD_NODE_DISPLAY_BOTH);
