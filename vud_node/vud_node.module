@@ -209,7 +209,7 @@ function vud_node_tracker() {
     $criteria = array('content_type' => 'node', 'content_id' => $node->nid, 'tag' => $tag);
     $votes = votingapi_select_votes($criteria);
     foreach ($votes as $vote) {
-      $account = user_load(array('uid' => $vote['uid'], 'status' => 1));
+      $account = user_load($vote['uid']);
       $rows[] = array(
         theme('username', $account),
         $vote['value'],
