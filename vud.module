@@ -29,6 +29,12 @@ function vud_admin_advanced_settings() {
     '#default_value' => variable_get('vud_tag', 'vote'),
     '#description'   => t('Since Vote Up/Down uses Voting API, all votes will be tagged with this term. (default: vote)<br />This tag is useful is you have deployed various modules that use Voting API. It should always be a unique value. Usually, there is NO need to change this.'),
   );
+  $form['vud_message_on_deny'] = array(
+    '#type'          => 'checkbox',
+    '#title'         => t('Message on denied permission'),
+    '#default_value' => variable_get('vud_message_on_deny', FALSE),
+    '#description'   => t('When this flag is active, a modal window will be shown to the end user instead of avoid showing the voting links'),
+  );
 
   return system_settings_form($form);
 }

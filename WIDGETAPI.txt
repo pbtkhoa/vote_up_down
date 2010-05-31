@@ -121,7 +121,8 @@ $class	            : 'negative', 'positive' or 'neutral' depending on number of 
 $vote_label         : The pluralized vote label
 $points	            : Number of total vote points for the vote object (signed)
 $unsigned_points    : Number of total vote points for the object (unsigned)
-$readonly           : Boolean that indicates if the actual user can vote on the object
+$readonly           : Boolean that indicates if the actual user can vote on the object where the widget is displayed
+$show_links         : Boolean that indicates if the links need to be show(TRUE when the user has permission to vote or message_on_deny option is set to TRUE)
 
 Advanced features
 =================

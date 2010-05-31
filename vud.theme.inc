@@ -184,20 +184,34 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
   $variables['vote_label'] = format_plural($vote_result, 'vote', 'votes');
 
   $variables['readonly'] = $readonly;
+  $link_up = url("vote/$type/$content_id/1/$tag/$widget_theme/$token_up");
+  $link_down = url("vote/$type/$content_id/-1/$tag/$widget_theme/$token_down");
+  $message_on_deny = variable_get('vud_message_on_deny', FALSE);
+  $variables['show_links'] = !$readonly || $message_on_deny;
   if ($readonly) {
-    ctools_include('modal');
-    ctools_modal_add_js();
-    $variables['link_class_up'] .= ' denied ctools-use-modal';
-    $variables['link_class_down'] .= ' denied ctools-use-modal';
-    $variables['link_up'] = url(sprintf('vud/nojs/denied/%d', $widget_message_code));
-    $variables['link_down'] = url(sprintf('vud/nojs/denied/%d', $widget_message_code));
+    $variables['link_class_up'] .= ' denied';
+    $variables['link_class_down'] .= ' denied';
+    if ($message_on_deny) {
+      ctools_include('modal');
+      ctools_modal_add_js();
+      $variables['link_class_up'] .= ' ctools-use-modal';
+      $variables['link_class_down'] .= ' ctools-use-modal';
+      $link_up = url(sprintf('vud/nojs/denied/%d', $widget_message_code));
+      $link_down = url(sprintf('vud/nojs/denied/%d', $widget_message_code));
+    }
+    else {
+      // no vote access, so avoid show the link at template
+      $link_up = '#';
+      $link_down = '#';
+    }
   }
   else {
     $variables['link_class_up'] .= ' ctools-use-ajax';
     $variables['link_class_down'] .= ' ctools-use-ajax';
-    $variables['link_up'] = url("vote/$type/$content_id/1/$tag/$widget_theme/$token_up");
-    $variables['link_down'] = url("vote/$type/$content_id/-1/$tag/$widget_theme/$token_down");
   }
+
+  $variables['link_up'] = $link_up;
+  $variables['link_down'] = $link_down;
 
   $output = $plugin['render function']($template_file, $variables);
   return $output;
