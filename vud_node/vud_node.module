@@ -11,6 +11,8 @@ define('VUD_NODE_DISPLAY_TEASER_ONLY', 1);
 define('VUD_NODE_DISPLAY_FULL_ONLY', 2);
 define('VUD_NODE_DISPLAY_BOTH', 3);
 
+define('VUD_NODE_WIDGET_MESSAGE_TEASER_DENIED', 2);
+
 /**
  * Implementation of hook_perm().
  */
@@ -108,6 +110,13 @@ return system_settings_form($form);
 }
 
 /**
+ * Implementation of hook_vud_widget_message_codes_alter().
+ */
+function vud_node_vud_widget_message_codes_alter(&$widget_message_codes) {
+  $widget_message_codes[VUD_NODE_WIDGET_MESSAGE_TEASER_DENIED] = t('Please go to full version of this content to vote.');
+}
+
+/**
  * Implementation of hook_nodeapi().
  */
 function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
@@ -131,13 +140,20 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $vote_on_teaser = (bool)variable_get('vud_node_widget_vote_on_teaser', TRUE);
         $teaser = $a3;
 
+        if (!$can_edit) {
+          $widget_message_code = VUD_WIDGET_MESSAGE_DENIED;
+        }
+        elseif (!$vote_on_teaser) {
+          $widget_message_code = VUD_NODE_WIDGET_MESSAGE_TEASER_DENIED;
+        }
+
         if ($node_type) {
 
           switch ($widget_showmode) {
             case VUD_NODE_DISPLAY_TEASER_ONLY:
               if ($teaser == 1) {
                 $node->content['vud_node_widget_display'] = array(
-                  '#value' => theme(vud_theme_functions('vud_widget', 'node', $node->nid), $node->nid, 'node', $tag, $widget, !$vote_on_teaser || !$can_edit),
+                  '#value' => theme(vud_theme_functions('vud_widget', 'node', $node->nid), $node->nid, 'node', $tag, $widget, !$vote_on_teaser || !$can_edit, $widget_message_code),
                   '#weight' => -10,
                 );
               }
@@ -145,7 +161,7 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
             case VUD_NODE_DISPLAY_FULL_ONLY:
               if ($teaser == 0) {
                 $node->content['vud_node_widget_display'] = array(
-                  '#value' => theme(vud_theme_functions('vud_widget', 'node', $node->nid), $node->nid, 'node', $tag, $widget, !$can_edit),
+                  '#value' => theme(vud_theme_functions('vud_widget', 'node', $node->nid), $node->nid, 'node', $tag, $widget, !$can_edit, $widget_message_code),
                   '#weight' => -10,
                 );
               }
@@ -158,25 +174,11 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
                 $readonly = !$can_edit;
               }
               $node->content['vud_node_widget_display'] = array(
-                '#value' => theme(vud_theme_functions('vud_widget', 'node', $node->nid), $node->nid, 'node', $tag, $widget, $readonly),
+                '#value' => theme(vud_theme_functions('vud_widget', 'node', $node->nid), $node->nid, 'node', $tag, $widget, $readonly, $widget_message_code),
                 '#weight' => -10,
               );
               break;
           }
-
-          $widget_message = t('Sorry, there was problem on the vote.');
-          if (!$can_edit) {
-            $widget_message = t('You are not allowed to vote.');
-          }
-          elseif (!$vote_on_teaser) {
-            $widget_message = t('Please go to full version of this content to vote.');
-          }
-          drupal_add_js(
-            array(
-              'vud_node' => array('widget_message' => $widget_message),
-            ),
-            'setting'
-          );
 
         }
       }

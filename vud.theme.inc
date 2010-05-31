@@ -6,6 +6,9 @@
  * Theme functions
  */
 
+define('VUD_WIDGET_MESSAGE_ERROR', 0);
+define('VUD_WIDGET_MESSAGE_DENIED', 1);
+
 /**
  * Implementation of hook_ctools_plugin_*.
  *
@@ -103,7 +106,7 @@ function vud_theme() {
 /**
  * Proxy widget function that hook_theme() calls.
  */
-function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NULL) {
+function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NULL, $widget_message_code=VUD_WIDGET_MESSAGE_ERROR) {
   $plugin = vud_widget_get($widget_theme);
   if (empty($plugin) || empty($plugin['widget template'])) {
     return;
@@ -117,15 +120,14 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
     'plugin' => $plugin,
     'tag' => $tag ? $tag : variable_get('vud_tag', 'vote'),
     'id' => 'widget-' . $type . '-' . $content_id,
-    'link_class_up' => 'ctools-use-ajax vud-link-up',
-    'link_class_down' => 'ctools-use-ajax vud-link-down',
+    'link_class_up' => 'vud-link-up',
+    'link_class_down' => 'vud-link-down',
   );
 
   global $user;
   $uid = votingapi_current_user_identifier();
 
   ctools_add_js('ajax-responder');
-  drupal_add_js(drupal_get_path('module', 'vud') . '/vud.js');
   if ($type == 'comment') {
     drupal_add_css(drupal_get_path('module', 'vud_comment') . '/vud_comment.css');
   }
@@ -154,10 +156,7 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
   }
 
   $token_up = drupal_get_token("vote/$type/$content_id/1/$tag/$widget_theme");
-  $variables['link_up'] = url("vote/$type/$content_id/1/$tag/$widget_theme/$token_up");
-
   $token_down = drupal_get_token("vote/$type/$content_id/-1/$tag/$widget_theme");
-  $variables['link_down'] = url("vote/$type/$content_id/-1/$tag/$widget_theme/$token_down");
 
   $result_criteria = array(
     'content_type' => $type,
@@ -183,10 +182,21 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
     }
   }
   $variables['vote_label'] = format_plural($vote_result, 'vote', 'votes');
+
   $variables['readonly'] = $readonly;
   if ($readonly) {
-    $variables['class_up'] .= ' denied';
-    $variables['class_down'] .= ' denied';
+    ctools_include('modal');
+    ctools_modal_add_js();
+    $variables['link_class_up'] .= ' denied ctools-use-modal';
+    $variables['link_class_down'] .= ' denied ctools-use-modal';
+    $variables['link_up'] = url(sprintf('vud/nojs/denied/%d', $widget_message_code));
+    $variables['link_down'] = url(sprintf('vud/nojs/denied/%d', $widget_message_code));
+  }
+  else {
+    $variables['link_class_up'] .= ' ctools-use-ajax';
+    $variables['link_class_down'] .= ' ctools-use-ajax';
+    $variables['link_up'] = url("vote/$type/$content_id/1/$tag/$widget_theme/$token_up");
+    $variables['link_down'] = url("vote/$type/$content_id/-1/$tag/$widget_theme/$token_down");
   }
 
   $output = $plugin['render function']($template_file, $variables);
