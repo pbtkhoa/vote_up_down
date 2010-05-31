@@ -48,6 +48,12 @@ function vud_menu() {
     'type'             => MENU_NORMAL_ITEM,
   );
 
+  $items['admin/settings/voteupdown/advanced'] = array(
+    'title'  => 'General',
+    'type'   => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
   $items['vote/%/%/%/%/%/%'] = array(
     'title'            => 'Vote',
     'page callback'    => 'vud_vote',
