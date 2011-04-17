@@ -141,10 +141,11 @@ function vud_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       if (in_array($node->build_mode, $exclude_modes)) {
         break;
       }
-      if (($can_edit=user_access('use vote up/down on nodes')) || user_access('view vote up/down count on nodes')) {
+      $tag = variable_get('vud_tag', 'vote');
+      $can_edit = (user_access('use vote up/down on nodes') && vud_access_callback('use vote up/down', 'node', $node->nid, 0, $tag));
+      if ($can_edit || user_access('view vote up/down count on nodes')) {
         $node_type = in_array($node->type, variable_get('vud_node_types', array()), TRUE);
         $widget_showmode = variable_get('vud_node_widget_show', VUD_NODE_DISPLAY_BOTH);
-        $tag = variable_get('vud_tag', 'vote');
         $widget = variable_get('vud_node_widget', 'plain');
         $vote_on_teaser = (bool)variable_get('vud_node_widget_vote_on_teaser', TRUE);
         $teaser = $a3;
