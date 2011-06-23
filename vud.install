@@ -48,3 +48,10 @@ function vud_update_6200() {
 
   return $ret;
 }
+
+/**
+ * Rebuild menu for the path change on user statistics.
+ */
+function vud_update_6300() {
+  menu_rebuild();
+}
