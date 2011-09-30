@@ -52,6 +52,8 @@ function vud_update_6200() {
 /**
  * Rebuild menu for the path change on user statistics.
  */
-function vud_update_6300() {
+function vud_update_6201() {
+  $ret = array();
   menu_rebuild();
+  return $ret;
 }
