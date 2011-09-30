@@ -165,16 +165,16 @@ function vud_perm() {
 
 
 function vud_can_see_votes($account) {
-  return user_access('access vote up/down statistics') || user_access('administer users');
+  if ($account->status != 1) {
+    return user_view_access($account);
+  }
+  return user_access('access vote up/down statistics') || user_view_access($account);
 }
 
 /**
  * Menu callback; display all votes for a user.
  */
 function vud_user_votes($account) {
-  if ($account->status != 1) {
-    drupal_not_found();
-  }
   $header = array(
     array('data' => t('Node')),
     array('data' => t('Vote')),
