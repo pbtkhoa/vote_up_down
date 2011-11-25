@@ -361,31 +361,32 @@ function vud_vote($type, $content_id, $value, $tag, $widget, $token) {
 
     // Sanity-check the incoming values.
     if ($value > 0) {
-        $value = 1;
+      $value = 1;
     }
     elseif ($value < 0) {
       $value = -1;
     }
     else {
-      $value = FALSE;
+      // Invalid value.
+      watchdog('vud', 'Invalid vote on @type @content_id, with value @value, tag @tag and token @token',
+        array('@type' => $type, '@content_id' => $content_id, '@value' => $value, '@tag' => $tag, '@token' => $token));
+      return;
     }
 
-    // Do not allow vote with the same value
-    if ( ($casted_vote > 0 && $value > 0) || ($casted_vote < 0 && $value < 0) ) {
-      $value = FALSE;
-    }
+    $vote['value'] = $value;
+    $vote['value_type'] = 'points';
+    $tag = $tag ? $tag : variable_get('vud_tag', 'vote');
+    $vote['tag'] = $tag;
+    $vote['content_id'] = $content_id;
+    $vote['content_type'] = $type;
+    $votes = array(0 => $vote);
+    drupal_alter('vud_votes', $votes);
 
-    if ($value !== FALSE) {
-      $vote['value'] = $value;
-      $vote['value_type'] = 'points';
-      $tag = $tag ? $tag : variable_get('vud_tag', 'vote');
-      $vote['tag'] = $tag;
-      $vote['content_id'] = $content_id;
-      $vote['content_type'] = $type;
-      $votes = array(0 => $vote);
-      drupal_alter('vud_votes', $votes);
-      votingapi_set_votes($votes);
+    // Do not allow to vote with the same value.
+    if ($casted_vote == $votes[0]['value']) {
+      return;
     }
+    votingapi_set_votes($votes);
   }
   else {
     watchdog('vud',
