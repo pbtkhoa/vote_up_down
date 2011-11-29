@@ -57,3 +57,12 @@ function vud_update_6300() {
   menu_rebuild();
   return $ret;
 }
+
+/**
+ * Rebuild menu for 'votereset/%/%/%/%/%'.
+ */
+function vud_update_6301() {
+  $result = array();
+  menu_rebuild();
+  return $result;
+}

@@ -135,6 +135,9 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
     'id' => 'widget-' . $type . '-' . $content_id,
     'link_class_up' => 'vud-link-up',
     'link_class_down' => 'vud-link-down',
+    'link_class_reset' => 'vud-link-reset',
+    'reset_long_text' => t('Reset your vote'),
+    'reset_short_text' => t('(reset)'),
   );
 
   global $user;
@@ -159,18 +162,24 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
   if ($user_vote > 0) {
     $variables['class_up'] = 'up-active';
     $variables['class_down'] = 'down-inactive';
+    $variables['class_reset'] = 'reset-active';
   }
   elseif ($user_vote < 0) {
     $variables['class_up'] = 'up-inactive';
     $variables['class_down'] = 'down-active';
+    $variables['class_reset'] = 'reset-active';
   }
   else {
     $variables['class_up'] = 'up-inactive';
     $variables['class_down'] = 'down-inactive';
+    $variables['class_reset'] = 'reset-inactive';
   }
+
+  $variables['show_reset'] = ($variables['class_reset'] == 'reset-active') && vud_access_callback('reset vote up/down votes', $type, $content_id, NULL, $variables['tag']);
 
   $token_up = drupal_get_token("vote/$type/$content_id/1/$tag/$widget_theme");
   $token_down = drupal_get_token("vote/$type/$content_id/-1/$tag/$widget_theme");
+  $token_reset = drupal_get_token("votereset/$type/$content_id/$tag/$widget_theme");
 
   $result_criteria = array(
     'content_type' => $type,
@@ -213,6 +222,7 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
   $variables['readonly'] = $readonly;
   $link_up = url("vote/$type/$content_id/1/$tag/$widget_theme/$token_up");
   $link_down = url("vote/$type/$content_id/-1/$tag/$widget_theme/$token_down");
+  $link_reset = url("votereset/$type/$content_id/$tag/$widget_theme/$token_reset");
   $message_on_deny = variable_get('vud_message_on_deny', FALSE);
   $variables['show_links'] = !$readonly || $message_on_deny;
   $variables['show_up_as_link'] = $variables['show_links'] && ($user_vote <= 0);
@@ -220,27 +230,33 @@ function vud_widget_proxy($content_id, $type, $tag, $widget_theme, $readonly=NUL
   if ($readonly) {
     $variables['link_class_up'] .= ' denied';
     $variables['link_class_down'] .= ' denied';
+    $variables['link_class_reset'] .= ' denied';
     if ($message_on_deny) {
       ctools_include('modal');
       ctools_modal_add_js();
       $variables['link_class_up'] .= ' ctools-use-modal';
       $variables['link_class_down'] .= ' ctools-use-modal';
+      $variables['link_class_reset'] .= ' ctools-use-modal';
       $link_up = url(sprintf('vud/nojs/denied/%d', $widget_message_code));
       $link_down = url(sprintf('vud/nojs/denied/%d', $widget_message_code));
+      $link_reset = url(sprintf('vud/nojs/denied/%d', $widget_message_code));
     }
     else {
       // no vote access, so avoid show the link at template
       $link_up = '#';
       $link_down = '#';
+      $link_reset = '#';
     }
   }
   else {
     $variables['link_class_up'] .= ' ctools-use-ajax';
     $variables['link_class_down'] .= ' ctools-use-ajax';
+    $variables['link_class_reset'] .= ' ctools-use-ajax';
   }
 
   $variables['link_up'] = $link_up;
   $variables['link_down'] = $link_down;
+  $variables['link_reset'] = $link_reset;
 
   $template_file = vud_pseudo_theming($type, 'widget', $plugin, $variables);
 
@@ -378,6 +394,53 @@ function vud_vote($type, $content_id, $value, $tag, $widget, $token) {
       'Could not vote on @type @content_id, with value @value, tag @tag and token @token',
       array('@type' => $type, '@content_id' => $content_id, '@value' => $value, '@tag' => $tag, '@token' => $token));
     drupal_set_message(t("Oops! There was an error in submitting your vote!"), 'warning');
+  }
+
+  if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+    ctools_include('ajax');
+    $plugin = vud_widget_get($widget);
+
+    if ($function = ctools_plugin_get_function($plugin, 'ajax render')) {
+      $commands = $function($type, $content_id, $value, $tag, $token, $widget);
+    }
+    else {
+      $commands = array();
+      if (!empty($plugin['widget template'])) {
+        $commands[] = ctools_ajax_command_replace("#widget-$type-$content_id", theme('vud_widget', $content_id, $type, $tag, $widget));
+      }
+
+      if (!empty($plugin['votes template'])) {
+        $commands[] = ctools_ajax_command_replace("#votes-$type-$content_id", theme('vud_votes', $content_id, $type, $tag, $widget));
+      }
+    }
+
+    // This is the default set of commands. It can be overridden by an individual
+    // widget if it wants to.
+    ctools_ajax_render($commands);
+  }
+  else {
+    drupal_goto($_SERVER['HTTP_REFERER']);
+  }
+}
+
+/**
+ * Function for the reset handler with Ajax support.
+ */
+function vud_reset($type, $content_id, $tag, $widget, $token) {
+  if (drupal_valid_token($token, "votereset/$type/$content_id/$tag/$widget", TRUE)) {
+    $criteria = array(
+      'content_type' => $type,
+      'content_id' => $content_id,
+      'tag' => $tag,
+    ) + votingapi_current_user_identifier();
+    votingapi_delete_votes(votingapi_select_votes($criteria));
+    votingapi_recalculate_results($type, $content_id);
+  }
+  else {
+    watchdog('vud',
+      'Could not reset votes on @type @content_id, tag @tag and token @token',
+      array('@type' => $type, '@content_id' => $content_id, '@tag' => $tag, '@token' => $token));
+    drupal_set_message(t('Oops! There was an error resetting your vote!'), 'warning');
   }
 
   if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
