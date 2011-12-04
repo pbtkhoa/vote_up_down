@@ -164,12 +164,19 @@ function vud_perm() {
   return array('use vote up/down', 'administer vote up/down', 'access vote up/down statistics', 'reset vote up/down votes');
 }
 
-
+/**
+ * Menu access callback for 'user/%user/vote_up_down/votes'.
+ *
+ * @see user_view_access()
+ */
 function vud_can_see_votes($account) {
-  if ($account->status != 1) {
-    return user_view_access($account);
-  }
-  return user_access('access vote up/down statistics') || user_view_access($account);
+  return $account && $account->uid &&
+    (
+      // Administrators can view all accounts.
+      user_access('administer users') ||
+      // The user is enabled and logged in at least once.
+      ($account->access && ($account->status == 1) && user_access('access vote up/down statistics'))
+    );
 }
 
 /**
