@@ -5,7 +5,7 @@
  * widget.tpl.php
  *
  * UpAndDown widget theme for Vote Up/Down
- * TODO use $show_up_as_link and $show_down_as_link
+ * @todo use $show_up_as_link and $show_down_as_link
  */
 ?>
 <div class="vud-widget vud-widget-upanddown" id="<?php print $id; ?>">
