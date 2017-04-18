@@ -3,3 +3,5 @@ description = "Allows adding an up/down voting widget to selected content types.
 dependencies[] = vud
 package = Voting
 core = 7.x
+files[] = views/vud_node.views.inc
+files[] = views/vud_node_handler_field_widget.inc
