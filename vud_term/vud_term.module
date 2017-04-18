@@ -125,7 +125,12 @@ function _vud_term_generate_table(&$node) {
       $rows[] = array(
         check_plain($tdetails->name),
         check_plain($tdetails->description),
-        theme('vud_widget', $entity_id, "term", $tag, $widget),
+        theme('vud_widget', array(
+                'entity_id' => $entity_id,
+                'type' => 'term',
+                'tag' => $tag,
+                'widget_theme' => $widget,
+              )),
         "<span id=\"total-votes-term-$entity_id\">". _vud_term_get_row_votes($entity_id, $tag) .'</span>',
         l('Reset your vote', "votereset/term/$entity_id/$tag/$reset_token"),
       );
@@ -140,13 +145,25 @@ function _vud_term_generate_table(&$node) {
       $rows[] = array(
         check_plain($tdetails->name),
         check_plain($tdetails->description),
-        theme('vud_widget', $entity_id, "term", $tag, $widget),
+        theme('vud_widget', array(
+                'entity_id' => $entity_id,
+                'type' => 'term',
+                'tag' => $tag,
+                'widget_theme' => $widget,
+              )),
         "<span id=\"total-votes-term-$entity_id\">". _vud_term_get_row_votes($entity_id, $tag) .'</span>',
       );
     }
   }
   $node->content['vud_term_show_table'] = array(
-    '#value' => theme('table', $header, $rows, $attributes = array('class' => 'vud-term-table', 'id' => "term-table-$node->nid")),
+    '#markup' => theme('table', array(
+        'header' => $header,
+        'rows' => $rows,
+        'attributes' => array(
+            'class' => 'vud-term-table',
+            'id' => "term-table-$node->nid"
+          )
+        )),
     '#weight' => 0,
   );
 }
