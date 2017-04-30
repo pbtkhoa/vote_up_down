@@ -254,7 +254,7 @@ function vud_node_tracker() {
     foreach ($votes as $vote) {
       $account = user_load($vote['uid']);
       $rows[] = array(
-        theme('username', array('account' => $account)),
+        theme('username', $account),
         $vote['value'],
         array('data' => format_date($vote['timestamp'], 'small'), 'class' => 'nowrap')
       );
