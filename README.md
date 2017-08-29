@@ -55,7 +55,7 @@ This module requires the following modules:
 
  You can write your own widget for Vote Up/Down, and you can put it in
   your module or in your theme. Please take a look to
-  [WIDGETAPI.txt](WIDGETAPI.txt) for more information.
+  [WIDGETAPI.md](WIDGETAPI.md) for more information.
 
  ## Theming widgets and votes
    

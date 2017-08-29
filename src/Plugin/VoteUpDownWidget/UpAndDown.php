@@ -14,7 +14,6 @@ use Drupal\vud\Plugin\VoteUpDownWidgetBase;
  *  )
  */
 class UpAndDown extends VoteUpDownWidgetBase {
-
   /**
    * {@inheritdoc}
    */

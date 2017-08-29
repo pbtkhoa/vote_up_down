@@ -14,7 +14,6 @@ use Drupal\vud\Plugin\VoteUpDownWidgetBase;
  *  )
  */
 class Thumbs extends VoteUpDownWidgetBase {
-
   /**
    * {@inheritdoc}
    */
@@ -30,5 +29,5 @@ class Thumbs extends VoteUpDownWidgetBase {
     $vote_result = votingapi_select_single_result_value($criteria);
     $variables['vote_sum'] = ($vote_result) ? $vote_result : 0;
   }
-
+  
 }
