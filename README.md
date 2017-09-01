@@ -106,4 +106,6 @@ Original Author - Fredrik Jonsson fredrik at combonet dot se
 
 Orginal 2.x version - Pratul Kalia (lut4rp)
 
+Orginal Port to Drupal 8: Sudhanshu Gautam (sudhanshug)
+
 Current Maintainer: Marco Villegas (marvil07)
