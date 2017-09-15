@@ -17,7 +17,7 @@ module_load_include('inc', 'vud', 'vud.theme');
  * @return bool
  */
 function vud_can_vote($account){
-  return $account->hasPermission("use Vote Up/Down");
+  return $account->hasPermission('use vote up/down');
 }
 
 /**
