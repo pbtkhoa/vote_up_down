@@ -106,7 +106,7 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
 
     $this->getWidgetTemplateVars($module_path, $widgetTemplateId, $variables);
 
-    $variables['#attached']['drupalSettings']['points'] = $points;
+    $variables['#attached']['drupalSettings']['points'][$entityTypeId][$entityId] = $points;
 
     if(vud_can_vote($currentUser)){
       $user_votes_current_entity = $vote_storage->getUserVotes(
@@ -142,7 +142,7 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
         $user_vote = $vote_storage->load($user_vote_id)->getValue();
 
         if($user_vote != 0) {
-          $variables['#attached']['drupalSettings']['uservote'] = $user_vote;
+          $variables['#attached']['drupalSettings']['uservote'][$entityTypeId][$entityId] = $user_vote;
 
           if($user_vote == 1){
             $variables['#link_class_up'] = 'up active';
