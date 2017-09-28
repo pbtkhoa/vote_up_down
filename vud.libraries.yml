@@ -1,6 +1,5 @@
 ajax:
   js:
-    /core/misc/ajax.js: {}
     js/VoteUpDownService.js: {}
     js/VoteUpDown.js: {}
   dependencies:
