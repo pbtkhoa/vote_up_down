@@ -30,7 +30,10 @@ class VoteUpDownFormatterType extends FormatterBase {
     $widget = \Drupal::service('plugin.manager.vud')
       ->createInstance($this->getFieldSetting('widget'));
 
-    return $widget->build($items->getEntity());
+    $element = $widget->build($items->getEntity());
+    $element['items'] = [];
+
+    return $element;
   }
 
 }
