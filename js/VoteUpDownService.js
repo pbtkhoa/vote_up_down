@@ -24,32 +24,12 @@
               $(this).removeClass('inactive').addClass('active');
             });
             baseWidget.find('.reset').removeClass('element-invisible');
+            points -= uservote;
           }
-          switch (operation) {
-            case 'up':
-              points -= uservote;
-              points += 1;
-              uservote = 1;
-              break;
-            case 'down':
-              points -= uservote;
-              points -= 1;
-              uservote = -1;
-              break;
-            case 'reset':
-              points -= uservote;
-              uservote = 0;
-              break;
-          }
-          baseWidget.find('.vote-current-score strong').text(points);
-
-          var data = url.split('?');
-          var url_data = data[0].split('/');
-          var entity_type = url_data[2];
-          var entity_id = url_data[3];
-
-          drupalSettings.points[entity_type][entity_id] = points;
-          drupalSettings.uservote[entity_type][entity_id] = uservote;
+          else if(operation === 'up')
+            points -= uservote + 1;
+          else
+            points -= uservote - 1;
         }
       });
     };
