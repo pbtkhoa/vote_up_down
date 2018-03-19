@@ -23,6 +23,7 @@
           operation = 'reset';
 
         voteUpDownService.vote(baseWidget, routeUrl, operation, settings.basePath, settings.points, settings.uservote);
+        e.stopImmediatePropagation();
       });
     }
   };
