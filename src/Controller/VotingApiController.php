@@ -4,6 +4,7 @@ namespace Drupal\vud\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\votingapi\Entity\Vote;
+use Drupal\votingapi\Entity\VoteType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,11 +39,12 @@ class VotingApiController extends ControllerBase {
 
     $vote_storage = $this->entityTypeManager()->getStorage('vote');
 
-    $voteTypeId = 'points';
+    $voteTypeId = \Drupal::config('vud.settings')->get('tag', 'vote');
+    $voteType = VoteType::load($voteTypeId);
 
     $vote_storage->deleteUserVotes(
       $this->currentUser()->id(),
-      'points',
+      $voteTypeId,
       $entity_type_id,
       $entity_id
     );
@@ -54,7 +56,7 @@ class VotingApiController extends ControllerBase {
     $vote = Vote::create(['type' => $voteTypeId]);
     $vote->setVotedEntityId($entity_id);
     $vote->setVotedEntityType($entity_type_id);
-    $vote->setValueType('points');
+    $vote->setValueType($voteType->getValueType());
     $vote->setValue($vote_value);
     $vote->save();
 
@@ -95,11 +97,13 @@ class VotingApiController extends ControllerBase {
       ->getStorage($entity_type_id)
       ->load($entity_id);
 
+    $voteTypeId = \Drupal::config('vud.settings')->get('tag', 'vote');
+
     $vote_storage = $this->entityTypeManager()->getStorage('vote');
 
     $vote_storage->deleteUserVotes(
       $this->currentUser()->id(),
-      'points',
+      $voteTypeId,
       $entity_type_id,
       $entity_id
     );

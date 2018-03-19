@@ -35,7 +35,7 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
     $criteria = [];
     $criteria['entity_id'] = $variables['entity_id'];
     $criteria['entity_type'] = $variables['type'];
-    $criteria['value_type'] = 'points';
+    $criteria['value_type'] =  \Drupal::config('vud.settings')->get('tag', 'vote');;
 
     $voteResultManager = \Drupal::service('plugin.manager.votingapi.resultfunction');
 
@@ -109,9 +109,10 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
     $variables['#attached']['drupalSettings']['points'] = $points;
 
     if(vud_can_vote($currentUser)){
+      $vote_type = \Drupal::config('vud.settings')->get('tag', 'vote');
       $user_votes_current_entity = $vote_storage->getUserVotes(
         $currentUser->id(),
-        'points',
+        $vote_type,
         $entityTypeId,
         $entityId
       );
