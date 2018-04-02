@@ -68,14 +68,14 @@ class VoteUpDownField extends FieldItemBase {
       $widgets_options[$vote_plugin['id']] = $vote_plugin['admin_label'];
     }
 
-    $element['widget'] = array(
+    $element['widget'] = [
       '#type' => 'select',
       '#title' => t('Vote Up/Down widget'),
       '#options' => $widgets_options,
       '#required' => TRUE,
       '#default_value' => $this->getSetting('widget'),
       '#disabled' => $has_data,
-    );
+    ];
 
     return $element;
 
