@@ -43,15 +43,15 @@ class VudAdminAdvancedSettings extends ConfigFormBase {
     $vud_settings = $this->config('vud.settings');
     $form['vud_tag'] = [
       '#type' => 'textfield',
-      '#title' => t('Voting API tag'),
+      '#title' => $this->t('Voting API tag'),
       '#default_value' => $vud_settings->get('tag'),
-      '#description' => t('Since Vote Up/Down uses Voting API, all votes will be tagged with this term. (default: vote)<br />This tag is useful if you have deployed various modules that use Voting API. It should always be a unique value. Usually, there is NO need to change this.'),
+      '#description' => $this->t('Since Vote Up/Down uses Voting API, all votes will be tagged with this term. (default: vote)<br />This tag is useful if you have deployed various modules that use Voting API. It should always be a unique value. Usually, there is NO need to change this.'),
     ];
     $form['vud_message_on_deny'] = [
       '#type' => 'checkbox',
-      '#title' => t('Message on denied permission'),
+      '#title' => $this->t('Message on denied permission'),
       '#default_value' => $vud_settings->get('message_on_deny'),
-      '#description' => t('When this flag is active, a modal window will be shown to the end user instead of avoid showing the voting links'),
+      '#description' => $this->t('When this flag is active, a modal window will be shown to the end user instead of avoid showing the voting links'),
     ];
 
     return parent::buildForm($form, $form_state);

@@ -76,7 +76,7 @@ class VotingApiController extends ControllerBase {
         'vote' => $vote_value,
         'message_type' => 'status',
         'operation' => 'voted',
-        'message' => t('Your vote was added.'),
+        'message' => $this->t('Your vote was added.'),
       ]);
     }
 
@@ -117,7 +117,7 @@ class VotingApiController extends ControllerBase {
       return new JsonResponse([
         'message_type' => 'status',
         'operation' => 'reset',
-        'message' => t('Your vote was reset.'),
+        'message' => $this->t('Your vote was reset.'),
       ]);
     }
 
