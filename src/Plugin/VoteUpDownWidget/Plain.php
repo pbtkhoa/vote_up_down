@@ -2,7 +2,6 @@
 
 namespace Drupal\vud\Plugin\VoteUpDownWidget;
 
-use Drupal\Core\Annotation\Translation;
 use Drupal\vud\Plugin\VoteUpDownWidgetBase;
 
 /**

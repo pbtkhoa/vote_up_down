@@ -5,7 +5,6 @@ namespace Drupal\vud\Plugin;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
-use Drupal\votingapi\VoteResultFunctionManager;
 
 /**
  * Defines a plugin base implementation that corresponding plugins will extend.
