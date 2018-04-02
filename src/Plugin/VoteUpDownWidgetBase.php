@@ -132,8 +132,8 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
           'entity_id' => $entityId,
         ]),
         '#show_reset' => TRUE,
-        '#reset_long_text' => t('Reset your vote'),
-        '#reset_short_text' => t('(reset)'),
+        '#reset_long_text' => $this->t('Reset your vote'),
+        '#reset_short_text' => $ths->t('(reset)'),
         '#link_class_reset' => 'reset element-invisible',
       ];
 

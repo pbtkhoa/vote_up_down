@@ -70,7 +70,7 @@ class VoteUpDownField extends FieldItemBase {
 
     $element['widget'] = [
       '#type' => 'select',
-      '#title' => t('Vote Up/Down widget'),
+      '#title' => $this->t('Vote Up/Down widget'),
       '#options' => $widgets_options,
       '#required' => TRUE,
       '#default_value' => $this->getSetting('widget'),
@@ -93,7 +93,7 @@ class VoteUpDownField extends FieldItemBase {
         'value' => [
           'Length' => [
             'max' => $max_length,
-            'maxMessage' => t('%name: may not be longer than @max characters.', [
+            'maxMessage' => $this->t('%name: may not be longer than @max characters.', [
               '%name' => $this->getFieldDefinition()->getLabel(),
               '@max' => $max_length
             ]),
