@@ -48,7 +48,8 @@ class VoteUpDownWidgetManagerTest extends UnitTestCase {
   }
 
   /**
-   * Tests if the plugin created by the test is same as that of the original definition.
+   * Tests if the plugin created by the test is same as that of the original
+   * definition.
    */
   public function testDefinitions() {
     $definitions = $this->voteUpDownWidgetManager->getDefinitions();
