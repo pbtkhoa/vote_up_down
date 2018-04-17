@@ -133,7 +133,7 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
         ]),
         '#show_reset' => TRUE,
         '#reset_long_text' => $this->t('Reset your vote'),
-        '#reset_short_text' => $ths->t('(reset)'),
+        '#reset_short_text' => $this->t('(reset)'),
         '#link_class_reset' => 'reset element-invisible',
       ];
 
