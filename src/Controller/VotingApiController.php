@@ -2,40 +2,46 @@
 
 namespace Drupal\vud\Controller;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultAllowed;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\votingapi\Entity\Vote;
 use Drupal\votingapi\Entity\VoteType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Drupal\Core\Access\AccessResultAllowed;
-use Drupal\Core\Access\AccessResult;
 
 /**
- * Implements VotingAPI. Provides logical methods to the route endpoints.
+ * Controller for voting.
  *
- * Class VotingApiController
- *
- * @package Drupal\vud\Controller
+ * Provides logical methods to the route endpoints.
+ * @todo Fix docs.
+ * @todo Fix coding standards.
  */
 class VotingApiController extends ControllerBase {
 
   /**
+   * Cast a vote.
+   *
    * @param $entity_id
    *  EntityId of the referenced entity
    * @param $entity_type_id
    *  EntityTypeId of the referenced entity
    * @param $vote_value
    *  Value of vote to be stored.
-   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param $widget_name
+   *   Widget name.
+   * @param string $js
+   *   Ajax is enabled? Not working now, core bug?
    *
-   * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return \Drupal\Core\Ajax\AjaxResponse|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function vote($entity_id, $entity_type_id, $vote_value, Request $request) {
-
+  public function vote($entity_type_id, $entity_id, $vote_value, $widget_name, $js) {
     $entity = $this->entityTypeManager()
       ->getStorage($entity_type_id)
       ->load($entity_id);
+    $widget = \Drupal::service('plugin.manager.vud')
+      ->createInstance($widget_name);
 
     $vote_storage = $this->entityTypeManager()->getStorage('vote');
 
@@ -70,32 +76,36 @@ class VotingApiController extends ControllerBase {
       'value_type' => $voteTypeId,
     ];
 
-    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-      // AJAX request
-      return new JsonResponse([
-        'vote' => $vote_value,
-        'message_type' => 'status',
-        'operation' => 'voted',
-        'message' => $this->t('Your vote was added.'),
-      ]);
+    if ($js == 'ajax') {
+      $response = new AjaxResponse();
+      $widget_element = $widget->build($entity);
+      $response->addCommand(new ReplaceCommand("#vud-widget-$entity_type_id-$entity_id", $widget_element));
+      return $response;
     }
 
     return new RedirectResponse($entity->toUrl()->toString());
   }
 
   /**
+   * Reset a vote.
+   *
    * @param $entity_id
    *  EntityId of the referenced entity
    * @param $entity_type_id
    *  EntityTypeId of the referenced entity
-   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param $widget_name
+   *   Widget name.
+   * @param string $js
+   *   Ajax is enabled? Not working now, core bug?
    *
-   * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return \Drupal\Core\Ajax\AjaxResponse|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function resetVote($entity_type_id, $entity_id, Request $request){
+  public function resetVote($entity_type_id, $entity_id, $widget_name, $js){
     $entity = $this->entityTypeManager()
       ->getStorage($entity_type_id)
       ->load($entity_id);
+    $widget = \Drupal::service('plugin.manager.vud')
+      ->createInstance($widget_name);
 
     $voteTypeId = \Drupal::config('vud.settings')->get('tag', 'vote');
 
@@ -112,13 +122,11 @@ class VotingApiController extends ControllerBase {
       ->getViewBuilder($entity_type_id)
       ->resetCache([$entity]);
 
-    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-      // AJAX request
-      return new JsonResponse([
-        'message_type' => 'status',
-        'operation' => 'reset',
-        'message' => $this->t('Your vote was reset.'),
-      ]);
+    if ($js == 'ajax') {
+      $response = new AjaxResponse();
+      $widget_element = $widget->build($entity);
+      $response->addCommand(new ReplaceCommand("#vud-widget-$entity_type_id-$entity_id", $widget_element));
+      return $response;
     }
 
     return new RedirectResponse($entity->toUrl()->toString());

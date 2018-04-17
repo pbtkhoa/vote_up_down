@@ -7,6 +7,8 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
  * Defines an interface for Vote Up/Down Widget plugins.
+ *
+ * @todo Finish documentation.
  */
 interface VoteUpDownWidgetInterface extends PluginInspectionInterface {
 
@@ -37,12 +39,11 @@ interface VoteUpDownWidgetInterface extends PluginInspectionInterface {
    * Returns the path to the widget template to be used.
    *
    * @param $base_path
-   * @param $widget_template
    * @param $variables
    *
    * @return array
    */
-  public function getWidgetTemplateVars($base_path, $widget_template, &$variables);
+  public function getWidgetTemplateVars($base_path, &$variables);
 
   /**
    * Returns renderable array for the plugin

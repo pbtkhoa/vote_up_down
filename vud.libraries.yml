@@ -1,14 +1,9 @@
-ajax:
-  js:
-    js/VoteUpDownService.js: {}
-    js/VoteUpDown.js: {}
-  dependencies:
-    - core/drupal
-    - core/jquery.once
 common:
   css:
     theme:
       css/vud.css: {}
+  dependencies:
+    - core/drupal.ajax
 alternate:
   css:
     theme:
