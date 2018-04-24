@@ -33,14 +33,7 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
    * {@inheritdoc}
    */
   public function alterTemplateVariables(&$variables) {
-    $criteria = [];
-    $criteria['entity_id'] = $variables['entity_id'];
-    $criteria['entity_type'] = $variables['type'];
-    $criteria['value_type'] =  \Drupal::config('vud.settings')->get('tag', 'vote');;
-
-    $voteResultManager = \Drupal::service('plugin.manager.votingapi.resultfunction');
-
-    // TODO: Implement votingAPI result functions instead of custom queries
+    // Nothing by default.
   }
 
   /**
@@ -66,6 +59,7 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
     $module_handler = \Drupal::service('module_handler');
     $module_path = $module_handler->getModule('vud')->getPath();
 
+    // @todo: Implement voting API result functions instead of custom queries.
     $up_points = \Drupal::entityQuery('vote')
       ->condition('value', 1)
       ->condition('entity_type', $entityTypeId)
@@ -174,6 +168,9 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
         '#link_class_reset' => 'reset',
       ];
     }
+
+    // Let widgets change variables at the end.
+    $this->alterTemplateVariables($variables);
 
     return $variables;
   }
