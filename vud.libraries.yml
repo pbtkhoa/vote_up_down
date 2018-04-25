@@ -26,3 +26,7 @@ updown:
   css:
     theme:
       widgets/updown/updown.css: {}
+yesno:
+  css:
+    theme:
+      widgets/yesno/yesno.css: {}
