@@ -55,3 +55,18 @@ function vud_theme() {
     ],
   ];
 }
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function vud_theme_suggestions_vud_widget(array $variables) {
+  $suggestions = [];
+  $widget_name = $variables['widget_name'];
+  $entity_type_id = $variables['entity_type_id'];
+
+  $suggestions[] = 'vud_widget__' . $widget_name;
+  $suggestions[] = 'vud_widget__' . $entity_type_id;
+  $suggestions[] = 'vud_widget__' . $entity_type_id . '__' . $widget_name;
+
+  return $suggestions;
+}
