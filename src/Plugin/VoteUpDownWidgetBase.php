@@ -125,6 +125,10 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
       $down_access = $user_vote >= 0;
       $reset_access = ($user_vote != 0) && $currentUser->hasPermission("reset vote up/down votes");
     }
+    else {
+      $variables['#class_up'] = '';
+      $variables['#class_down'] = '';
+    }
 
     if ($up_access) {
       $variables['#show_up_as_link'] = TRUE;
