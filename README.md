@@ -26,6 +26,9 @@ This module requires the following modules:
 
 # Installation
 
+ The module currently depends on a drupal core change from #2670798-4.
+ Please use that patch to improve a bit core ajax api, its full url is https://www.drupal.org/files/issues/drupal-exclude-csrf-paramaters-2670798-4.patch
+
  Install as usual, see https://www.drupal.org/docs/8/extending-drupal-8/installing-modules for further information.
 
 # Configuration
