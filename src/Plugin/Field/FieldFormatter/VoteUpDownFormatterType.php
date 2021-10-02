@@ -23,14 +23,10 @@ class VoteUpDownFormatterType extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
-
     $widget = \Drupal::service('plugin.manager.vud')
       ->createInstance($this->getFieldSetting('widget'));
-
-    $element = $widget->build($items->getEntity());
-    $element['items'] = [];
-
-    return $element;
+    $elements[] = $widget->build($items->getEntity());
+    return $elements;
   }
 
 }
