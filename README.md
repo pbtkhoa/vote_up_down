@@ -26,10 +26,29 @@ This module requires the following modules:
 
 # Installation
 
- The module currently depends on a drupal core change from #2670798-4.
- Please use that patch to improve a bit core ajax api, its full url is https://www.drupal.org/files/issues/drupal-exclude-csrf-paramaters-2670798-4.patch
+ The module currently depends on a drupal core change from [#2670798-4:
+ "nojs"/"ajax" route parameter in use-ajax link breaks CSRF
+ protection](https://www.drupal.org/project/drupal/issues/2670798#comment-10868390).
+ Please use that patch to improve a bit core ajax api, its full url is
+ https://www.drupal.org/files/issues/drupal-exclude-csrf-paramaters-2670798-4.patch
 
- Install as usual, see https://www.drupal.org/docs/8/extending-drupal-8/installing-modules for further information.
+ With current drupal core and current implementation, vote_up_down cannot support
+ anonymous voting, details at [#2955847: Anonymous users can not
+ vote](https://www.drupal.org/project/vote_up_down/issues/2955847).
+ The Drupal core issue [#2730351: CSRF check always fails for users without a
+ session](https://www.drupal.org/project/drupal/issues/2730351) is the
+ underlying reason.
+ The changes at
+ [#2730351-57](https://www.drupal.org/project/drupal/issues/2730351#comment-11989824)
+ enable it for Drupal 8.9.x.
+ On Drupal 9.x.x, there is not any current solution yet that have been verified
+ with this module, if you know one, please add a comment to [the related
+ vote_up_down issue
+ #2955847](https://www.drupal.org/project/vote_up_down/issues/2955847).
+
+ Install as usual, see
+ https://www.drupal.org/docs/8/extending-drupal-8/installing-modules for further
+ information.
 
 # Configuration
 
