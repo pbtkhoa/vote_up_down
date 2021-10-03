@@ -56,27 +56,28 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
     $entityTypeId = $entity->getEntityTypeId();
     $entityId = $entity->id();
 
-    if (!$entityId) {
-      return [];
-    }
-
     $module_handler = \Drupal::service('module_handler');
     $module_path = $module_handler->getModule('vud')->getPath();
 
     // @todo: Implement voting API result functions instead of custom queries.
-    $up_points = \Drupal::entityQuery('vote')
-      ->condition('value', 1)
-      ->condition('entity_type', $entityTypeId)
-      ->condition('entity_id', $entityId)
-      ->count()
-      ->execute();
-    $down_points = \Drupal::entityQuery('vote')
-      ->condition('value', -1)
-      ->condition('entity_type', $entityTypeId)
-      ->condition('entity_id', $entityId)
-      ->count()
-      ->execute();
-
+    if ($entityTypeId && $entityId) {
+      $up_points = \Drupal::entityQuery('vote')
+        ->condition('value', 1)
+        ->condition('entity_type', $entityTypeId)
+        ->condition('entity_id', $entityId)
+        ->count()
+        ->execute();
+      $down_points = \Drupal::entityQuery('vote')
+        ->condition('value', -1)
+        ->condition('entity_type', $entityTypeId)
+        ->condition('entity_id', $entityId)
+        ->count()
+        ->execute();
+    }
+    else {
+        $up_points = 0;
+        $down_points = 0;
+    }
     $points = $up_points - $down_points;
     $unsigned_points = $up_points + $down_points;
 
@@ -134,47 +135,49 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
       $variables['#class_down'] = '';
     }
 
-    if ($up_access) {
-      $variables['#show_up_as_link'] = TRUE;
-      $variables['#link_up'] = Url::fromRoute('vud.vote', [
-        'entity_type_id' => $entityTypeId,
-        'entity_id' => $entityId,
-        'vote_value' => 1,
-        'widget_name' => $widget_name,
-        'js' => 'nojs',
-      ]);
-      $variables['#class_up'] .= ' active';
-    }
-    else {
-      $variables['#class_up'] .= ' inactive';
-    }
-    if ($down_access) {
-      $variables['#show_down_as_link'] = TRUE;
-      $variables['#link_down'] = Url::fromRoute('vud.vote', [
-        'entity_type_id' => $entityTypeId,
-        'entity_id' => $entityId,
-        'vote_value' => -1,
-        'widget_name' => $widget_name,
-        'js' => 'nojs',
-      ]);
-      $variables['#class_down'] .= ' active';
-    }
-    else {
-      $variables['#class_down'] .= ' inactive';
-    }
-    if ($reset_access) {
-      $variables['#show_reset'] = TRUE;
-      $variables['#link_reset'] = Url::fromRoute('vud.reset', [
-        'entity_type_id' => $entityTypeId,
-        'entity_id' => $entityId,
-        'widget_name' => $widget_name,
-        'js' => 'nojs',
-      ]);
-      $variables += [
-        '#reset_long_text' => $this->t('Reset your vote'),
-        '#reset_short_text' => $this->t('(reset)'),
-        '#link_class_reset' => 'reset',
-      ];
+    if ($entityTypeId && $entityId) {
+      if ($up_access) {
+        $variables['#show_up_as_link'] = TRUE;
+        $variables['#link_up'] = Url::fromRoute('vud.vote', [
+          'entity_type_id' => $entityTypeId,
+          'entity_id' => $entityId,
+          'vote_value' => 1,
+          'widget_name' => $widget_name,
+          'js' => 'nojs',
+        ]);
+        $variables['#class_up'] .= ' active';
+      }
+      else {
+        $variables['#class_up'] .= ' inactive';
+      }
+      if ($down_access) {
+        $variables['#show_down_as_link'] = TRUE;
+        $variables['#link_down'] = Url::fromRoute('vud.vote', [
+          'entity_type_id' => $entityTypeId,
+          'entity_id' => $entityId,
+          'vote_value' => -1,
+          'widget_name' => $widget_name,
+          'js' => 'nojs',
+        ]);
+        $variables['#class_down'] .= ' active';
+      }
+      else {
+        $variables['#class_down'] .= ' inactive';
+      }
+      if ($reset_access) {
+        $variables['#show_reset'] = TRUE;
+        $variables['#link_reset'] = Url::fromRoute('vud.reset', [
+          'entity_type_id' => $entityTypeId,
+          'entity_id' => $entityId,
+          'widget_name' => $widget_name,
+          'js' => 'nojs',
+        ]);
+        $variables += [
+          '#reset_long_text' => $this->t('Reset your vote'),
+          '#reset_short_text' => $this->t('(reset)'),
+          '#link_class_reset' => 'reset',
+        ];
+      }
     }
 
     // Let widgets change variables at the end.
