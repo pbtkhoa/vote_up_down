@@ -2,7 +2,6 @@
 
 namespace Drupal\vud\Plugin;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
@@ -13,22 +12,22 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 interface VoteUpDownWidgetInterface extends PluginInspectionInterface {
 
   /**
-   * Returns the label of the specific plugin instance
+   * Returns the label of the specific plugin instance.
    *
    * @return mixed
    */
   public function getWidgetId();
 
   /**
-   * Returns the widget template for a specific plugin instance
+   * Returns the widget template for a specific plugin instance.
    *
    * @return mixed
    */
   public function getWidgetTemplate();
 
   /**
+   * Array containing all info for a plugin instance.
    *
-   * Array containing all info for a plugin instance
    * @param $variables
    *
    * @return mixed
@@ -46,9 +45,9 @@ interface VoteUpDownWidgetInterface extends PluginInspectionInterface {
   public function getWidgetTemplateVars($base_path, &$variables);
 
   /**
-   * Returns renderable array for the plugin
+   * Returns renderable array for the plugin.
    *
-   * @param $entity EntityInterface
+   * @param EntityInterface $entity
    *
    * @return array
    */

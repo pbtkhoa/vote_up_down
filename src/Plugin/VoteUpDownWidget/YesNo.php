@@ -5,7 +5,7 @@ namespace Drupal\vud\Plugin\VoteUpDownWidget;
 use Drupal\vud\Plugin\VoteUpDownWidgetBase;
 
 /**
- * Provides the "yesno" Vote Up/Down widget
+ * Provides the "yesno" Vote Up/Down widget.
  *
  * @VoteUpDownWidget(
  *   id = "yesno",

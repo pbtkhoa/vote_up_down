@@ -5,7 +5,7 @@ namespace Drupal\vud\Plugin\VoteUpDownWidget;
 use Drupal\vud\Plugin\VoteUpDownWidgetBase;
 
 /**
- * Provides the "upanddown" Vote Up/Down widget
+ * Provides the "upanddown" Vote Up/Down widget.
  *
  * @VoteUpDownWidget(
  *   id = "upanddown",
@@ -14,10 +14,11 @@ use Drupal\vud\Plugin\VoteUpDownWidgetBase;
  *  )
  */
 class UpAndDown extends VoteUpDownWidgetBase {
+
   /**
    * {@inheritdoc}
    */
-  function alterTemplateVars($widget_template, &$variables) {
+  public function alterTemplateVars($widget_template, &$variables) {
     $criteria = [
       'entity_type' => $variables['entity_type'],
       'entity_id' => $variables['entity_id'],

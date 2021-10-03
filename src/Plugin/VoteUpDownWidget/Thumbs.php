@@ -5,7 +5,7 @@ namespace Drupal\vud\Plugin\VoteUpDownWidget;
 use Drupal\vud\Plugin\VoteUpDownWidgetBase;
 
 /**
- * Provides the "thumbs" Vote Up/Down widget
+ * Provides the "thumbs" Vote Up/Down widget.
  *
  * @VoteUpDownWidget(
  *   id = "thumbs",
@@ -14,10 +14,11 @@ use Drupal\vud\Plugin\VoteUpDownWidgetBase;
  *  )
  */
 class Thumbs extends VoteUpDownWidgetBase {
+
   /**
    * {@inheritdoc}
    */
-  function alterTemplateVars($widget_template, &$variables) {
+  public function alterTemplateVars($widget_template, &$variables) {
     $criteria = [
       'entity_type' => $variables['entity_type'],
       'entity_id' => $variables['entity_id'],
@@ -29,5 +30,5 @@ class Thumbs extends VoteUpDownWidgetBase {
     $vote_result = votingapi_select_single_result_value($criteria);
     $variables['vote_sum'] = ($vote_result) ? $vote_result : 0;
   }
-  
+
 }

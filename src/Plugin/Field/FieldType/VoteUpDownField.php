@@ -61,6 +61,9 @@ class VoteUpDownField extends FieldItemBase {
     return $schema;
   }
 
+  /**
+   *
+   */
   public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
     $element = [];
     $widgets = \Drupal::service('plugin.manager.vud')->getDefinitions();
@@ -96,7 +99,7 @@ class VoteUpDownField extends FieldItemBase {
             'max' => $max_length,
             'maxMessage' => $this->t('%name: may not be longer than @max characters.', [
               '%name' => $this->getFieldDefinition()->getLabel(),
-              '@max' => $max_length
+              '@max' => $max_length,
             ]),
           ],
         ],

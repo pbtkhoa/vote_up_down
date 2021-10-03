@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * Controller for voting.
  *
  * Provides logical methods to the route endpoints.
+ *
  * @todo Fix docs.
  * @todo Fix coding standards.
  */
@@ -24,11 +25,11 @@ class VotingApiController extends ControllerBase {
    * Cast a vote.
    *
    * @param $entity_id
-   *  EntityId of the referenced entity
+   *   EntityId of the referenced entity
    * @param $entity_type_id
-   *  EntityTypeId of the referenced entity
+   *   EntityTypeId of the referenced entity
    * @param $vote_value
-   *  Value of vote to be stored.
+   *   Value of vote to be stored.
    * @param $widget_name
    *   Widget name.
    * @param string $js
@@ -90,9 +91,9 @@ class VotingApiController extends ControllerBase {
    * Reset a vote.
    *
    * @param $entity_id
-   *  EntityId of the referenced entity
+   *   EntityId of the referenced entity
    * @param $entity_type_id
-   *  EntityTypeId of the referenced entity
+   *   EntityTypeId of the referenced entity
    * @param $widget_name
    *   Widget name.
    * @param string $js
@@ -100,7 +101,7 @@ class VotingApiController extends ControllerBase {
    *
    * @return \Drupal\Core\Ajax\AjaxResponse|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function resetVote($entity_type_id, $entity_id, $widget_name, $js){
+  public function resetVote($entity_type_id, $entity_id, $widget_name, $js) {
     $entity = $this->entityTypeManager()
       ->getStorage($entity_type_id)
       ->load($entity_id);

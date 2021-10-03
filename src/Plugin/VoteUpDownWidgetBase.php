@@ -52,14 +52,14 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
    */
   public function build($entity) {
     $vote_storage = \Drupal::service('entity_type.manager')->getStorage('vote');
-    $currentUser =  \Drupal::currentUser();
+    $currentUser = \Drupal::currentUser();
     $entityTypeId = $entity->getEntityTypeId();
     $entityId = $entity->id();
 
     $module_handler = \Drupal::service('module_handler');
     $module_path = $module_handler->getModule('vud')->getPath();
 
-    // @todo: Implement voting API result functions instead of custom queries.
+    // @todo Implement voting API result functions instead of custom queries.
     if ($entityTypeId && $entityId) {
       $up_points = \Drupal::entityQuery('vote')
         ->condition('value', 1)
@@ -75,8 +75,8 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
         ->execute();
     }
     else {
-        $up_points = 0;
-        $down_points = 0;
+      $up_points = 0;
+      $down_points = 0;
     }
     $points = $up_points - $down_points;
     $unsigned_points = $up_points + $down_points;
@@ -99,7 +99,7 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
       '#attached' => [
         'library' => [
           'vud/common',
-        ]
+        ],
       ],
     ];
 
@@ -120,7 +120,7 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
         $entityId
       );
       if ($user_votes_current_entity != NULL) {
-        $user_vote_id = (int)array_values($user_votes_current_entity)[0];
+        $user_vote_id = (int) array_values($user_votes_current_entity)[0];
         $user_vote = $vote_storage->load($user_vote_id)->getValue();
       }
       else {

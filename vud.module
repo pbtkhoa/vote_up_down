@@ -12,11 +12,11 @@ module_load_include('inc', 'vud', 'vud.theme');
  * Check if the passed user can vote.
  *
  * @param $account
- *  Entity object of an User
+ *   Entity object of an User
  *
  * @return bool
  */
-function vud_can_vote($account){
+function vud_can_vote($account) {
   return $account->hasPermission('use vote up/down');
 }
 
@@ -24,11 +24,11 @@ function vud_can_vote($account){
  * Check if the passed user can reset vote.
  *
  * @param $account
- *  Entity object of an User
+ *   Entity object of an User
  *
  * @return bool
  */
-function vud_can_reset_vote($account){
+function vud_can_reset_vote($account) {
   return $account->hasPermission("reset vote up/down votes");
 }
 
@@ -47,10 +47,10 @@ function vud_preprocess(&$variables, $hook) {
 function vud_help($path, $arg) {
   switch ($path) {
     case 'admin.page.vud':
-      $output = '<p>'. t('Provides a configurable up/down voting widget for other modules to use.') .'</p>';
+      $output = '<p>' . t('Provides a configurable up/down voting widget for other modules to use.') . '</p>';
       return $output;
+
     default:
       return FALSE;
-      break;
   }
 }

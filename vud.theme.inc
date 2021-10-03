@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Theme functions
+ * Theme functions.
  */
 
 define('VUD_WIDGET_MESSAGE_ERROR', 0);
