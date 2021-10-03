@@ -27,6 +27,7 @@ class VoteUpDownField extends FieldItemBase {
    */
   public static function defaultStorageSettings() {
     return [
+      'max_length' => 255,
       'widget' => '',
     ] + parent::defaultStorageSettings();
   }
