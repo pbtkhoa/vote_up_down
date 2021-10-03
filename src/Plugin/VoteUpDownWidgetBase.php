@@ -51,10 +51,14 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
    * @fixme Do not use camelcase on variables, and fix coding standards.
    */
   public function build($entity) {
-    $vote_storage = \Drupal::service('entity.manager')->getStorage('vote');
+    $vote_storage = \Drupal::service('entity_type.manager')->getStorage('vote');
     $currentUser =  \Drupal::currentUser();
     $entityTypeId = $entity->getEntityTypeId();
     $entityId = $entity->id();
+
+    if (!$entityId) {
+      return [];
+    }
 
     $module_handler = \Drupal::service('module_handler');
     $module_path = $module_handler->getModule('vud')->getPath();

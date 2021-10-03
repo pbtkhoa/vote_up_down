@@ -37,8 +37,8 @@ class VoteUpDownWidgetManagerTest extends UnitTestCase {
     $discovery->getDefinitions()->willReturn([
       'newPlugin' => [
         'id' => 'new_plugin',
-        'admin_label' => @t('New Plugin'),
-        'description' => 'New plugin type'
+        'admin_label' => 'New Plugin',
+        'description' => 'New plugin type',
       ],
     ]);
 
