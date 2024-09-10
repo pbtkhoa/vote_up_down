@@ -17,7 +17,7 @@
         "source": "https://git.drupalcode.org/project/vote_up_down"
     },
     "require": {
-        "drupal/core": "^8.7 || ^9",
+        "drupal/core": "^8.7 || ^9 || ^10",
         "drupal/votingapi": "^3.0@beta"
     }
 }
